@@ -8,7 +8,7 @@ import android.graphics.Rect;
 public class Label extends ScreenElement {
 	
 	private String mText;
-	private float mTextSize;
+	private int mTextSize;
 	
 	public Label(int id, float x, float y, String mText) {
 		this.id = id;
@@ -19,6 +19,11 @@ public class Label extends ScreenElement {
 	}
 	
 	public Label(double value) {
+		mText = String.valueOf(value);
+		mBoundingBox = new Rect();
+	}
+	
+	public Label(int value) {
 		mText = String.valueOf(value);
 		mBoundingBox = new Rect();
 	}
@@ -39,7 +44,7 @@ public class Label extends ScreenElement {
 		return mText;
 	}
 	
-	public void setTextSize(float mTextSize) {
+	public void setTextSize(int mTextSize) {
 		this.mTextSize = mTextSize;
 		Paint p = new Paint();
 		Rect rect = new Rect();

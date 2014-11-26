@@ -171,7 +171,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		// Label de esperando conexión
 		mLabelAwaitingConnections = new Label();
 		mLabelAwaitingConnections.setText("Esperando conexiones entrantes");
-		float textSize = getBoundedTextSize(mLabelAwaitingConnections
+		int textSize = getBoundedTextSize(mLabelAwaitingConnections
 											, 0.9 * BitmapManager.getBackgroundLogoWidth()
 											, 0.15 * BitmapManager.getBackgroundLogoHeight());
 		mLabelAwaitingConnections.setTextSize(textSize);
@@ -382,13 +382,10 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 				float lowerBound = offset - (InfoBox.getBoxHeight() / 2);
 				float upperBound = offset + (InfoBox.getBoxHeight() / 2) - 1;
 
-				//if ((y0 > lowerBound && y0 < upperBound) && (yf > lowerBound && yf < upperBound)) {
-
-					if (mChannelList.size() <= 2) canvas.drawLine(x0, y0, xf, yf, mPaint);
-
-					if (mChannelList.size() > 2) canvas.drawPoint(x0, y0, mPaint);
-
-				//}
+				if ((y0 > lowerBound && y0 < upperBound) && (yf > lowerBound && yf < upperBound)) {
+					canvas.drawPoint(x0, y0, mPaint);
+				}
+				
 			}
 		}
 	}
@@ -585,12 +582,23 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 	// Dibujo otros labels
 	private void drawOtherLabels(Canvas canvas) {
-		if (mChannelList.size() == 0) {
+		if(mChannelList.size() == 0) {
 			mPaint.setTextSize(mLabelAwaitingConnections.getTextSize());
 			canvas.drawText(mLabelAwaitingConnections.getText()
 							, mLabelAwaitingConnections.getX()
 							, mLabelAwaitingConnections.getY()
 							, mPaint);
+		}
+		
+		if(mChannelList.getDeletedChannelsLabels().size() > 0 && mUiVisibility == true) {
+			for(int i = 0; i < mChannelList.getDeletedChannelsLabels().size(); i++) {
+				int channelKey = mChannelList.getDeletedChannelsLabels().keyAt(i);
+				Label label = mChannelList.getDeletedChannelsLabels().get(channelKey);
+				label.setTextSize(getBoundedTextSize(label, BitmapManager.getIconsWidth(), BitmapManager.getIconsHeight()));
+				label.setX((int) ((0.05 * mTotalHeight) + (i*BitmapManager.getIconsWidth())));
+				label.setY(mTotalHeight - BitmapManager.getIconsHeight());
+				canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
+			}
 		}
 	}
 
@@ -1096,10 +1104,10 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 *****************************************************************************************/
 	// Método para obtener el tamaño de texto apropiado para los labels del
 	// InfoBox
-	private float getBoundedTextSize(Label label, double boxWidth, double boxHeight) {
+	private int getBoundedTextSize(Label label, double boxWidth, double boxHeight) {
 		
 		Rect rect = new Rect();
-		float i = 0;
+		int i = 0;
 
 		while (true) {
 			mPaint.setTextSize(i);
@@ -1140,7 +1148,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		// Inicializo thread de graficación
 		startDrawingThread();
 		// Todo OK. Instancio mSurfaceViewVisualizador en Visualizador.java
-		((StudyActivity) getContext()).main();
+		((StudyActivity) getContext()).setupAfterSurfaceCreated();
 	}
 
 	// Método que se llama cuando el SurfaceView sufre algún cambio

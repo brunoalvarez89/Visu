@@ -7,10 +7,12 @@ public class ChannelList {
 
 	private SparseArray<Channel> mChannelList;
 	private SparseArray<Channel> mDeletedChannels;
-
+	private SparseArray<Label> mDeletedChannelsLabels;
+	
 	public ChannelList() {
 		mChannelList = new SparseArray<Channel>();
 		mDeletedChannels = new SparseArray<Channel>();
+		mDeletedChannelsLabels = new SparseArray<Label>();
 	}
 	
 	public void addChannel(Channel channel) {
@@ -20,16 +22,21 @@ public class ChannelList {
 		updateChannels();
 	}
 	
+	/*
 	public void removeChannelAtKey(int channelKey) {
 		mDeletedChannels.append(channelKey, mChannelList.get(channelKey));
 		mChannelList.remove(channelKey);
 		// Actualizo todos los canales
 		updateChannels();
 	}
+	*/
 	
 	public void removeChannelAtIndex(int channelIndex) {
-		mDeletedChannels.append(mChannelList.keyAt(channelIndex), mChannelList.get(channelIndex));
-		mChannelList.remove(mChannelList.keyAt(channelIndex));
+		int channelKey = mChannelList.keyAt(channelIndex);
+		mDeletedChannels.append(channelKey, mChannelList.get(channelIndex));
+		Label label = new Label(channelKey+1);
+		mDeletedChannelsLabels.append(channelKey, label);
+		mChannelList.remove(channelIndex);
 		// Actualizo todos los canales
 		updateChannels();
 	}
@@ -54,5 +61,9 @@ public class ChannelList {
 	
 	public int getChannelKey(int index) {
 		return mChannelList.keyAt(index);
+	}
+	
+	public SparseArray<Label> getDeletedChannelsLabels() {
+		return mDeletedChannelsLabels;
 	}
 }

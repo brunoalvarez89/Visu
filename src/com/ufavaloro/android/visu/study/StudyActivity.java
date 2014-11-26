@@ -6,7 +6,6 @@
 
 package com.ufavaloro.android.visu.study;
 
-
 import java.io.File;
 
 import com.ufavaloro.android.visu.R;
@@ -50,32 +49,6 @@ public class StudyActivity extends Activity {
 	private View mRootView;
 	
 	private boolean mConfigurationOk;
-	
-	// No tocar!
-	public void main() {
-		
-		mStudy = new Study(this);
-		
-		// Agrego conexión Bluetooth
-		mStudy.newBluetoothConnection();
-	    
-	}
-	
-	public void onConfigurationOk() {
-		
-		mConfigurationOk = true;
-		
-		// Creo canales de dibujo
-		int totalAdcChannels = mStudy.getTotalAdcChannels();
-		for(int i = 0; i < totalAdcChannels; i++) {
-			mStudy.addChannel(i);
-		}
-		
-		// Empiezo a dibujar
-		mStudy.startDrawing();
-
-	}
-	
 	
 /*****************************************************************************************
 * Menúes de usuario													   					 *
@@ -123,16 +96,29 @@ public class StudyActivity extends Activity {
 /*****************************************************************************************
 * Inicio de métodos de clase           												   	 *
 *****************************************************************************************/
-/*****************************************************************************************
-* Métodos principales								      						         *
-*****************************************************************************************/
-	// Método que remueve un canal del SurfaceView
-	private void removeDrawBuffer(int channel) {
-		
-    	//mStudy.draw.removeDrawBuffer(channel);
-	
+	public void setupAfterSurfaceCreated() {	
+		mStudy = new Study(this);		
+		// Agrego conexión Bluetooth
+		mStudy.newBluetoothConnection();    
 	}
+	
+	public void onConfigurationOk() {	
+		mConfigurationOk = true;
+		
+		// Creo canales de dibujo
+		int totalAdcChannels = mStudy.getTotalAdcChannels();
+		for(int i = 0; i < totalAdcChannels; i++) {
+			mStudy.addChannel(i);
+		}
+		
+		// Empiezo a dibujar
+		mStudy.startDrawing();
+		
+		mStudy.removeChannel(1);
+		mStudy.removeChannel(1);
 
+	}
+	
 	private void removeChannel(int channel) {
 		mStudy.removeChannel(channel);
 	}
@@ -155,7 +141,7 @@ public class StudyActivity extends Activity {
 	public void channelOptionsDialog(final int channel) {
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(StudyActivity.this);
-		builder.setTitle("Canal " + (channel + 1));
+		//builder.setTitle("Canal " + (channel + 1));
 	
 		builder.setItems(mOfflineChannelOptions, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {

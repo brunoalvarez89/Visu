@@ -205,11 +205,11 @@ public class SignalBox{
 
 	}
 	
-	private float getBoundedTextSize(Label label) {
+	private int getBoundedTextSize(Label label) {
 		Rect rect = new Rect();
 		double altoColumna = 0.05 * mHeight;
 
-		float i = 0;
+		int i = 0;
 		Paint paint = new Paint();
 		
 		while (true) {
