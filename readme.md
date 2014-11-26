@@ -1,6 +1,6 @@
 # Visu
 
-Visu is the final project of my master's degree in Biomedical Engineering. What this program does is:
+Visu is the final project of my master's degree in Biomedical Engineering. With this program you can:
 
 * Receive multiple-channel ADC samples via Bluetooth Connection
 * Proccess those samples and visualize them in the UI
