@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/saveFileDialog"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/fileList"
+        android:layout_width="fill_parent"
+        android:layout_height="253dp"
+        android:layout_weight="0.44"
+        android:padding="10dp" />
+   
+    <ScrollView 
+       		android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5">
+	  
+        <LinearLayout
+            android:id="@+id/fileLinearLayout2"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <EditText
+                    android:id="@+id/fileName"
+                    android:layout_width="132dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="Enter file name"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:padding="10dp" />
+
+                <Spinner
+                    android:id="@+id/fileFilter"
+                    android:layout_width="74dp"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+	        
+	        <LinearLayout
+	            android:id="@+id/fileLinearLayout3"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal" >
+	           
+	            <Button
+	                android:id="@+id/fileSaveLoad"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1"
+	                android:padding="10dp"
+	                android:text="Save" />
+	            
+	            <Button
+	                android:id="@+id/fileCancel"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1"
+	                android:padding="10dp"
+	                android:text="Cancel" />            
+	        </LinearLayout>
+
+	    </LinearLayout>
+    </ScrollView>
+</LinearLayout>
