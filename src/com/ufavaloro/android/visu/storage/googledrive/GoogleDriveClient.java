@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -103,10 +104,16 @@ com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener {
 	// Método que responde a una conexión fallida
 	@Override
 	public void onConnectionFailed(ConnectionResult result) {
-	
-		mHandler.obtainMessage(GoogleDriveClientMessage.CONNECTION_FAILED.getValue(), -1, -1
-							   , result.getErrorCode()).sendToTarget();
-	        
+		if(result.hasResolution()) {
+			try {
+				result.startResolutionForResult(mContextActivity, 1001);
+			} catch (SendIntentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//mHandler.obtainMessage(GoogleDriveClientMessage.CONNECTION_FAILED.getValue()
+				//				   , -1, -1, result.getErrorCode()).sendToTarget();
+		}
 	}
 
 	// Método que responde a una conexón exitosa

@@ -173,9 +173,9 @@ public class StorageHelper {
 		
 	}
 	
-	private void onGoogleDriveConnectionFailed(int errorCode) {
+	private void onGoogleDriveConnectionFailed(Message msg) {
 		mHandler.obtainMessage(StorageHelperMessage.GOOGLE_DRIVE_CONNECTION_FAILED.getValue()
-							   , -1, -1, errorCode).sendToTarget();
+							   , -1, -1, msg).sendToTarget();
 	}
 	
 	// Método que recibe el paquete de muestras, lo procesa y lo manda a almacenar con writeSamples
@@ -232,7 +232,7 @@ public class StorageHelper {
 					break;
 					
 				case GOOGLE_DRIVE_CONNECTION_FAILED:
-					onGoogleDriveConnectionFailed((Integer)msg.obj);
+					onGoogleDriveConnectionFailed(msg);
 
 				default:
 					break;

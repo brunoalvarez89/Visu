@@ -178,9 +178,9 @@ public class GoogleDriveManager {
 		}
 	}
 	
-	private void onConnectionFailed(int errorCode) {
+	private void onConnectionFailed(Message msg) {
 		mHandler.obtainMessage(GoogleDriveManagerMessage.GOOGLE_DRIVE_CONNECTION_FAILED.getValue()
-							   , -1, -1, errorCode).sendToTarget();
+							   , -1, -1, msg).sendToTarget();
 	}
 	
 	public void connect() {
@@ -233,7 +233,7 @@ public class GoogleDriveManager {
 				
 				// Connection failed
 				case CONNECTION_FAILED:
-					onConnectionFailed((Integer)msg.obj);
+					onConnectionFailed(msg);
 					
 				// Folder created succesfully
 				case FOLDER_CREATED:

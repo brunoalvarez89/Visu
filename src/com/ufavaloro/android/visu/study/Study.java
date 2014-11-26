@@ -7,6 +7,7 @@ package com.ufavaloro.android.visu.study;
 
 import java.util.ArrayList;
 
+import android.content.IntentSender.SendIntentException;
 import android.os.Handler;
 import android.os.Message;
 
@@ -19,6 +20,7 @@ import com.ufavaloro.android.visu.storage.StorageHelperMessage;
 import com.ufavaloro.android.visu.storage.data.AcquisitionData;
 import com.ufavaloro.android.visu.storage.data.AdcData;
 import com.ufavaloro.android.visu.storage.data.StudyData;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.drive.DriveId;
 
@@ -247,8 +249,9 @@ public class Study {
  		
  	}
  	
- 	private void onGoogleDriveConnectionFailed(int errorCode) {
- 		GooglePlayServicesUtil.getErrorDialog(errorCode, studyActivity, 0).show();
+ 	private void onGoogleDriveConnectionFailed(Message msg) {
+ 
+ 		
  	}
  	
 	private final Handler mBluetoothProtocolHandler = new Handler() {
@@ -310,7 +313,7 @@ public class Study {
 					break;
 					
 				case GOOGLE_DRIVE_CONNECTION_FAILED:
-					onGoogleDriveConnectionFailed((Integer)msg.obj);
+					onGoogleDriveConnectionFailed(msg);
 					break;
 					
 				case GOOGLE_DRIVE_FILE_OPENED:
