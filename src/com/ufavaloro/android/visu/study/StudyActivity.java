@@ -73,8 +73,7 @@ public class StudyActivity extends Activity {
 		
 		// Empiezo a dibujar
 		mStudy.startDrawing();
-		
-		//mStudy.removeChannel(1);
+
 	}
 	
 	

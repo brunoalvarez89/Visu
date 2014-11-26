@@ -624,9 +624,9 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 	}
 
-	public synchronized void removeChannel(int channelKey) {
+	public synchronized void removeChannel(int channelIndex) {
 	
-		mChannelList.removeChannelAtKey(channelKey);
+		mChannelList.removeChannelAtIndex(channelIndex);
 		mReferenceMatrix.removeChannel();
 	}
 	

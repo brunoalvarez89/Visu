@@ -27,8 +27,11 @@ public class ChannelList {
 		updateChannels();
 	}
 	
-	public void removeChannelAtIndex(int index) {
-	
+	public void removeChannelAtIndex(int channelIndex) {
+		mDeletedChannels.append(mChannelList.keyAt(channelIndex), mChannelList.get(channelIndex));
+		mChannelList.remove(mChannelList.keyAt(channelIndex));
+		// Actualizo todos los canales
+		updateChannels();
 	}
 	
 	private void updateChannels() {
