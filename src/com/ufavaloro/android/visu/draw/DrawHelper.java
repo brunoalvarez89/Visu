@@ -322,7 +322,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	private void drawSignalBoxes(Canvas canvas) {
 
 		// Dibujo señal
-		drawSignals(canvas);
+		//drawSignals(canvas);
 		
 		// Dibujo labels de amplitud
 		drawAmplitudeLabels(canvas);
@@ -590,13 +590,20 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 							, mPaint);
 		}
 		
-		if(mChannelList.getDeletedChannelsLabels().size() > 0 && mUiVisibility == true) {
+		if(mChannelList.getDeletedChannelsLabels().size() > 0 && mUiVisibility == true || mChannelList.size() == 0) {
 			for(int i = 0; i < mChannelList.getDeletedChannelsLabels().size(); i++) {
 				int channelKey = mChannelList.getDeletedChannelsLabels().keyAt(i);
 				Label label = mChannelList.getDeletedChannelsLabels().get(channelKey);
 				label.setTextSize(getBoundedTextSize(label, BitmapManager.getIconsWidth(), BitmapManager.getIconsHeight()));
 				label.setX((int) ((0.05 * mTotalHeight) + (i*BitmapManager.getIconsWidth())));
 				label.setY(mTotalHeight - BitmapManager.getIconsHeight());
+				Channel deletedChannel = mChannelList.getDeletedChannels().get(channelKey);
+				
+				if(deletedChannel != null) {
+					int[] rgb = deletedChannel.getColor().getRGB();
+					setPaint(Color.rgb(rgb[0], rgb[1], rgb[2]), 5);
+				}
+				
 				canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 			}
 		}
@@ -633,7 +640,6 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	public synchronized void removeChannel(int channelIndex) {
-	
 		mChannelList.removeChannelAtIndex(channelIndex);
 		mReferenceMatrix.removeChannel();
 	}

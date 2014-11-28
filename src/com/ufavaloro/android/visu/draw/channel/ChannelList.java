@@ -36,7 +36,7 @@ public class ChannelList {
 		mDeletedChannels.append(channelKey, mChannelList.get(channelIndex));
 		Label label = new Label(channelKey+1);
 		mDeletedChannelsLabels.append(channelKey, label);
-		mChannelList.remove(channelIndex);
+		mChannelList.remove(channelKey);
 		// Actualizo todos los canales
 		updateChannels();
 	}
@@ -65,5 +65,9 @@ public class ChannelList {
 	
 	public SparseArray<Label> getDeletedChannelsLabels() {
 		return mDeletedChannelsLabels;
+	}
+
+	public SparseArray<Channel> getDeletedChannels() {
+		return mDeletedChannels;
 	}
 }

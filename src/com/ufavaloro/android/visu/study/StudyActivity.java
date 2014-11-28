@@ -114,9 +114,6 @@ public class StudyActivity extends Activity {
 		// Empiezo a dibujar
 		mStudy.startDrawing();
 		
-		mStudy.removeChannel(1);
-		mStudy.removeChannel(1);
-
 	}
 	
 	private void removeChannel(int channel) {
