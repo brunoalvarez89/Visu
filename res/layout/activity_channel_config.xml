@@ -4,48 +4,77 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/textViewChannel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Canal" />
+
+    <Spinner
+        android:id="@+id/spinnerChannel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textViewStudyType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Tipo de estudio" />
 
     <Spinner
-        android:id="@+id/spinner1"
+        android:id="@+id/spinnerStudyType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:orientation="vertical" 
+            android:layout_weight="1">
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/textViewBits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="V+" />
+                android:layout_gravity="center_horizontal"
+                android:text="Resolución" />
 
             <EditText
-                android:id="@+id/editText1"
-                android:layout_width="149dp"
+                android:id="@+id/editTextBits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/textViewVMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Voltaje Máximo" />
+
+            <EditText
+                android:id="@+id/editTextVMax"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/textViewAMax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="A+" />
+                android:layout_gravity="center_horizontal"
+                android:text="Amplitud Máxima" />
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/editTextAMax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
@@ -55,35 +84,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Button" />
-
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.14"
-            android:orientation="vertical" >
+            android:orientation="vertical" 
+            android:layout_weight="1">
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textViewFs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="V-" />
-            
+                android:layout_gravity="center_horizontal"
+                android:text="Frecuencia de Muestreo" />
+
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/editTextFs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/textViewVMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="A-" />
+                android:layout_gravity="center_horizontal"
+                android:text="Voltaje Mínimo" />
 
             <EditText
-                android:id="@+id/editText4"
+                android:id="@+id/editTextVMin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/textViewAMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Amplitud Mínima" />
+
+            <EditText
+                android:id="@+id/editTextAMin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -92,7 +135,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Button" />
-
         </LinearLayout>
     </LinearLayout>
 

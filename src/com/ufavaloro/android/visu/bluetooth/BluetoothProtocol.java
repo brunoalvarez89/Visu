@@ -22,13 +22,8 @@ public class BluetoothProtocol extends Thread{
 /*****************************************************************************************
 * Inicio de atributos de clase											   				 *
 *****************************************************************************************/
-	//double[] mVoltages;
-	//double[] mAmplitudes;
-	//double[] mFs;
-	//int[] mBits;
 	private AdcData[] adcData;
 	private Handler mHandler;
-
 	
 /*****************************************************************************************
 * Variables de control													   				 *
@@ -331,7 +326,7 @@ public class BluetoothProtocol extends Thread{
 		// 3) Frecuencia de muestreo de cada canal (8 bytes)
 		// 4) Resolución de cada canal (4 bytes)
 		// 5) Cantidad de muestras por paquete (4 bytes)
-		// 6)Cantidad de bytes por muestra (4 bytes)
+		// 6) Cantidad de bytes por muestra (4 bytes)
 		//
 		// TAMAÑO TOTAL = (32*mCantCanales + 20) bytes
 		

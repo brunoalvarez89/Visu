@@ -124,43 +124,42 @@ public class StudyActivity extends Activity {
 * Menúes de usuario																         *
 *****************************************************************************************/
 	/*************************************************************************************
-	* Channel Config Dialog												         		 *
+	* Study Dialog																         *
 	*************************************************************************************/
-	// Que hago con el resultado del Dialog	
-	protected void channelConfigDialog(final int channel) {
-	
-	}
-	
-	/*************************************************************************************
-	* Channel Options Dialog													         *
-	*************************************************************************************/
-	// Dialog con las opciones del canal
-	public void channelOptionsDialog(final int channel) {
+	// Menú de abrir estudio
+	public void studyDialog() {
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(StudyActivity.this);
-		//builder.setTitle("Canal " + (channel + 1));
-	
-		builder.setItems(mOfflineChannelOptions, new DialogInterface.OnClickListener() {
+		builder.setTitle("Seleccione una acción");
+		
+		builder.setItems(mStudySource, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				switch(item) {
-				// Configurar
-				case 0:
-					//openStudy();
-					break;
-					
-				// Eliminar canal
-    			case 1: 
-    				removeChannel(channel);
-    				break;
-    				
-    			default:
-    				break;
-				}
+        		switch(item) {
+        		
+        		// Nuevo estudio on-line
+        		case 0:
+        			newStudyDialog();
+        			break;
+        		
+        		// Abro desde memoria interna
+        		case 1:
+        			loadFileFromLocalStorage();
+        			break;
+        		
+        		// Abro desde Google Drive
+        		case 2:
+        			loadFileFromGoogleDrive();
+        			break;
+     
+        		default:
+        			break;
+        		}
         	}
         });
 	
-	   AlertDialog alert = builder.create();
-       alert.show();
+		AlertDialog alert = builder.create();
+	    alert.show();
+	    
 	}
 	
 	/*************************************************************************************
@@ -249,91 +248,10 @@ public class StudyActivity extends Activity {
 		mNewStudyDialog.dismiss();
 		
 	}
-
+	
 	/*************************************************************************************
-	* Stop Study Dialog															         *
+	* Load File from Local Storage Dialog										         *
 	*************************************************************************************/
-	// Dialog de parar estudio
-	public void stopStudyDialog() {
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder(StudyActivity.this);
-		builder.setTitle("¡ATENCIÓN!");
-		builder.setMessage("¿Está seguro que desea dejar de adquirir?");
-		
-		builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int id) {
-		    	stopStudyDialogResult(true);
-		     }
-		});
-		
-		builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int id) {
-		    	stopStudyDialogResult(false);
-		     }
-		});
-			
-		mStopStudyDialog = builder.create();
-	    mStopStudyDialog.show();
-	
-	}
-	
-	// Resultado del dialog de parar estudio
-	private void stopStudyDialogResult(boolean result) {
-		
-		// Parar estudio == true
-		if(result == true) {
-			
-			mStudy.stopRecording();
-			
-			mStudy.saveStudyToGoogleDrive();
-			
-			longToast("Estudio finalizado");
-			
-		}
-		
-		mStopStudyDialog.dismiss();
-	
-	}
-		
-	/*************************************************************************************
-	* Open Study Dialog															         *
-	*************************************************************************************/
-	// Menú de abrir estudio
-	public void actionDialog() {
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder(StudyActivity.this);
-		builder.setTitle("Seleccione una acción");
-		
-		builder.setItems(mStudySource, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int item) {
-        		switch(item) {
-        		
-        		// Nuevo estudio on-line
-        		case 0:
-        			newStudyDialog();
-        			break;
-        		
-        		// Abro desde memoria interna
-        		case 1:
-        			loadFileFromLocalStorage();
-        			break;
-        		
-        		// Abro desde Google Drive
-        		case 2:
-        			loadFileFromGoogleDrive();
-        			break;
-     
-        		default:
-        			break;
-        		}
-        	}
-        });
-	
-		AlertDialog alert = builder.create();
-	    alert.show();
-	    
-	}
-	
 	// Método para abrir archivo desde memoria interna
 	public void loadFileFromLocalStorage() {
 		
@@ -358,6 +276,9 @@ public class StudyActivity extends Activity {
 	
 	};
 	
+	/*************************************************************************************
+	* Load File from Google Drive Dialog										         *
+	*************************************************************************************/
 	// Método para abrir archivo desde Google Drive
 	public void loadFileFromGoogleDrive() {
 						
@@ -409,6 +330,124 @@ public class StudyActivity extends Activity {
         }
         
     }
+	
+	/*************************************************************************************
+	* Channel Config Dialog												         		 *
+	*************************************************************************************/
+	// Que hago con el resultado del Dialog	
+	public void channelConfigDialog() {
+		
+		boolean connected = mStudy.bluetooth.getConnected();
+		
+		if(connected == false) {
+			longToast("No se encuentra conectado!");
+			return;
+		}
+			
+		// Genero Dialog
+		mChannelConfigDialog = new Dialog(this, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth);
+		mChannelConfigDialog.setContentView(R.layout.activity_channel_config);
+		mChannelConfigDialog.setCanceledOnTouchOutside(false);
+
+		/* Botón de iniciar estudio
+		mButtonStartNewStudy = (Button) mNewStudyDialog.findViewById(R.id.buttonStartStudy);
+		mButtonStartNewStudy.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				newStudyDialogResult();
+			}
+		});
+		
+		// Botón de cancelar
+		mButtonCancelNewStudy = (Button) mNewStudyDialog.findViewById(R.id.buttonCancel);
+		mButtonCancelNewStudy.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mNewStudyDialog.dismiss();
+			}
+		});
+		*/
+		// Muestro Dialog
+	    mChannelConfigDialog.show();
+
+	}
+	
+	/*************************************************************************************
+	* Stop Study Dialog															         *
+	*************************************************************************************/
+	// Dialog de parar estudio
+	public void stopStudyDialog() {
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(StudyActivity.this);
+		builder.setTitle("¡ATENCIÓN!");
+		builder.setMessage("¿Está seguro que desea dejar de adquirir?");
+		
+		builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int id) {
+		    	stopStudyDialogResult(true);
+		     }
+		});
+		
+		builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int id) {
+		    	stopStudyDialogResult(false);
+		     }
+		});
+			
+		mStopStudyDialog = builder.create();
+	    mStopStudyDialog.show();
+	
+	}
+	
+	// Resultado del dialog de parar estudio
+	private void stopStudyDialogResult(boolean result) {
+		
+		// Parar estudio == true
+		if(result == true) {
+			
+			mStudy.stopRecording();
+			
+			mStudy.saveStudyToGoogleDrive();
+			
+			longToast("Estudio finalizado");
+			
+		}
+		
+		mStopStudyDialog.dismiss();
+	
+	}
+	
+	/*************************************************************************************
+	* Channel Options Dialog													         *
+	*************************************************************************************/
+	// Dialog con las opciones del canal
+	public void channelOptionsDialog(final int channel) {
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(StudyActivity.this);
+		//builder.setTitle("Canal " + (channel + 1));
+	
+		builder.setItems(mOfflineChannelOptions, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				switch(item) {
+				// Configurar
+				case 0:
+					//openStudy();
+					break;
+					
+				// Eliminar canal
+    			case 1: 
+    				removeChannel(channel);
+    				break;
+    				
+    			default:
+    				break;
+				}
+        	}
+        });
+	
+	   AlertDialog alert = builder.create();
+       alert.show();
+	}
 	
 /*****************************************************************************************
 * Manejo de visibilidad de Status Bar y Navigation Bar									 *

@@ -108,6 +108,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	private double mDxAcum = 0;
 	private double mDyAcum = 0;
 
+	BitmapManager mBitmapManager;
 /*****************************************************************************************
 * Inicio de métodos de clase 															 *
 *****************************************************************************************/
@@ -144,6 +145,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		colorSetup();
 		
 		// Inicializo bitmaps
+		mBitmapManager = new BitmapManager(getContext());
 		bitmapSetup();
 		
 		// Inicializo Labels
@@ -172,65 +174,37 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		mLabelAwaitingConnections = new Label();
 		mLabelAwaitingConnections.setText("Esperando conexiones entrantes");
 		int textSize = getBoundedTextSize(mLabelAwaitingConnections
-											, 0.9 * BitmapManager.getBackgroundLogoWidth()
-											, 0.15 * BitmapManager.getBackgroundLogoHeight());
+											, 0.9 * mBitmapManager.getBackgroundLogoWidth()
+											, 0.15 * mBitmapManager.getBackgroundLogoHeight());
 		mLabelAwaitingConnections.setTextSize(textSize);
-		int widthCorrection = BitmapManager.getBackgroundLogoWidth() - mLabelAwaitingConnections.getBoundingBox().width();
+		int widthCorrection = mBitmapManager.getBackgroundLogoWidth() - mLabelAwaitingConnections.getBoundingBox().width();
 		int heightCorrection = mLabelAwaitingConnections.getBoundingBox().height();
-		mLabelAwaitingConnections.setX(BitmapManager.getBackgroundLogoX() + (widthCorrection / 2));
-		mLabelAwaitingConnections.setY(BitmapManager.getBackgroundLogoY() 
-									   + BitmapManager.getBackgroundLogoHeight()
+		mLabelAwaitingConnections.setX(mBitmapManager.getBackgroundLogoX() + (widthCorrection / 2));
+		mLabelAwaitingConnections.setY(mBitmapManager.getBackgroundLogoY() 
+									   + mBitmapManager.getBackgroundLogoHeight()
 									   + heightCorrection);
 
 	}
 	
 	// Método que configura los Bitmaps
 	private void bitmapSetup() {
+		mBitmapManager.setIconsWidth((int) (0.07 * mTotalWidth));
+		mBitmapManager.setIconsHeight((int) (0.11 * mTotalHeight));
+		mBitmapManager.setIconsLeftPadding((int) (0.05 * mTotalHeight));
+		mBitmapManager.setIconsUpperPadding((int) (0.1 * mTotalHeight));
+		mBitmapManager.setup();
 		
-		// Seteo ancho y largo de los íconos
-		BitmapManager.setIconsWidth((int) (0.07 * mTotalWidth));
-		BitmapManager.setIconsHeight((int) (0.11 * mTotalHeight));
-
-		// Ícono de abrir estudio
-		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.open_study);
-		BitmapManager.setOpenStudyIconX((int) (0.05 * mTotalHeight));
-		BitmapManager.setOpenStudyIconY((int) (0.1 * mTotalHeight));
-		BitmapManager.setOpenStudyIcon(Bitmap.createScaledBitmap(bitmap
-																 , BitmapManager.getIconsWidth()
-																 , BitmapManager.getIconsHeight()
-																 , false));
-
-		// Ícono de nuevo estudio
-		bitmap = BitmapFactory.decodeResource(getResources(),
-				R.drawable.new_study);
-		BitmapManager.setNewStudyIconX((int) (0.05 * mTotalHeight));
-		BitmapManager.setNewStudyIconY((int) (0.1 * mTotalHeight) + BitmapManager.getOpenStudyIconY());
-		BitmapManager.setNewStudyIcon(Bitmap.createScaledBitmap(bitmap
-				 												, BitmapManager.getIconsWidth()
-																, BitmapManager.getIconsHeight()
-																, false));
-
-		// Ícono de parar estudio
-		bitmap = BitmapFactory.decodeResource(getResources(),
-				R.drawable.stop_study);
-		BitmapManager.setStopStudyIcon(Bitmap.createScaledBitmap(bitmap
-																 , BitmapManager.getIconsWidth()
-																 , BitmapManager.getIconsHeight()
-																 , false));
-		BitmapManager.setStopStudyIconX(BitmapManager.getNewStudyIconX());
-		BitmapManager.setStopStudyIconY(BitmapManager.getNewStudyIconY());
-
 		// Fondo de pantalla inicial
-		bitmap = BitmapFactory.decodeResource(getResources(),
+		Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
 				R.drawable.background_logo);
-		BitmapManager.setBackgroundLogoWidth((int) (0.5 * mTotalWidth));
-		BitmapManager.setBackgroundLogoHeight((int) (0.3 * mTotalHeight));
-		BitmapManager.setBackgroundLogo(Bitmap.createScaledBitmap(bitmap
-																  , BitmapManager.getBackgroundLogoWidth()
-																  , BitmapManager.getBackgroundLogoHeight()
+		mBitmapManager.setBackgroundLogoWidth((int) (0.5 * mTotalWidth));
+		mBitmapManager.setBackgroundLogoHeight((int) (0.3 * mTotalHeight));
+		mBitmapManager.setBackgroundLogo(Bitmap.createScaledBitmap(bitmap
+																  , mBitmapManager.getBackgroundLogoWidth()
+																  , mBitmapManager.getBackgroundLogoHeight()
 																  , false));
-		BitmapManager.setBackgroundLogoX((int) ((0.5 * mTotalWidth) / 2));
-		BitmapManager.setBackgroundLogoY((int) ((0.7 * mTotalHeight) / 2));
+		mBitmapManager.setBackgroundLogoX((int) ((0.5 * mTotalWidth) / 2));
+		mBitmapManager.setBackgroundLogoY((int) ((0.7 * mTotalHeight) / 2));
 	}
 
 	// Método que recibe y almacena muestras
@@ -281,35 +255,35 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		mPaint.setColorFilter(filter);
 
 		// Dibujo ícono de estudio nuevo
-		if (mUiVisibility == true && mChannelList.size() != 0 && currentlyRecording == false) {
-			canvas.drawBitmap(BitmapManager.getNewStudyIcon()
-							  , BitmapManager.getNewStudyIconX()
-							  , BitmapManager.getNewStudyIconY()
+		if (mUiVisibility == true || mChannelList.size() == 0) {
+			canvas.drawBitmap(mBitmapManager.getNewStudyIcon()
+							  , mBitmapManager.getNewStudyIconX()
+							  , mBitmapManager.getNewStudyIconY()
 							  , mPaint);
 		}
 
+		// Dibujo ícono de configurar canales
+		if (mUiVisibility == true && mChannelList.size() != 0) {
+			canvas.drawBitmap(mBitmapManager.getConfigureChannelsIcon()
+							  , mBitmapManager.getConfigureChannelsIconX()
+							  , mBitmapManager.getConfigureChannelsIconY()
+							  , mPaint);
+		}
+		
 		// Dibujo ícono de parar estudio
 		if (mUiVisibility == true && mChannelList.size() != 0 && currentlyRecording == true) {
-			canvas.drawBitmap(BitmapManager.getStopStudyIcon()
-							  , BitmapManager.getStopStudyIconX()
-							  , BitmapManager.getStopStudyIconY()
-							  , mPaint);
-		}
-
-		// Dibujo ícono de abrir estudio
-		if (mChannelList.size() == 0 || mUiVisibility == true) {
-			canvas.drawBitmap(BitmapManager.getOpenStudyIcon()
-							  , BitmapManager.getOpenStudyIconX()
-							  , BitmapManager.getOpenStudyIconY()
+			canvas.drawBitmap(mBitmapManager.getStopStudyIcon()
+							  , mBitmapManager.getStopStudyIconX()
+							  , mBitmapManager.getStopStudyIconY()
 							  , mPaint);
 		}
 
 		// Dibujo fondo
 		if (mChannelList.size() == 0) {
 			mPaint.setAlpha(130);
-			canvas.drawBitmap(BitmapManager.getBackgroundLogo()
-							  , BitmapManager.getBackgroundLogoX()
-							  , BitmapManager.getBackgroundLogoY()
+			canvas.drawBitmap(mBitmapManager.getBackgroundLogo()
+							  , mBitmapManager.getBackgroundLogoX()
+							  , mBitmapManager.getBackgroundLogoY()
 							  , mPaint);
 			mPaint.setAlpha(255);
 		}
@@ -322,13 +296,13 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	private void drawSignalBoxes(Canvas canvas) {
 
 		// Dibujo señal
-		//drawSignals(canvas);
+		drawSignals(canvas);
 		
 		// Dibujo labels de amplitud
 		drawAmplitudeLabels(canvas);
 		
 		// Dibujo labels de voltage
-		drawVoltageLabels(canvas);
+		//drawVoltageLabels(canvas);
 		
 		// Dibujo labels de tiempo
 		drawTimeLabels(canvas);
@@ -398,8 +372,8 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			Channel channel = mChannelList.getChannelAtIndex(i);
 
 			float padding = (float) (SignalBox.getWidth() * 0.02);
-			setPaint(Color.BLACK, 1);
-			mPaint.setAlpha(150);
+			setPaint(Color.GRAY, 1);
+			mPaint.setAlpha(100);
 
 			Label labelMinAmplitude = channel.getSignalBox().getLabelMinAmplitude();
 			String minAmplitude = labelMinAmplitude.getText();
@@ -432,7 +406,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 						
 			float padding = (float) (SignalBox.getWidth() * 0.02);
 			setPaint(Color.GRAY, 1);
-			mPaint.setAlpha(150);
+			mPaint.setAlpha(100);
 
 			Label labelMinVoltage = signalBox.getLabelMinVoltage();
 			String minVoltage = labelMinVoltage.getText();
@@ -452,8 +426,6 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			canvas.drawLine(0, yMaxVoltage - correction + 3, padding,
 					yMaxVoltage - correction + 3, mPaint);
 			canvas.drawText(maxVoltage, padding, yMaxVoltage + 3, mPaint);
-
-			mPaint.setAlpha(255);
 		}
 	}
 
@@ -480,6 +452,8 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			float xTime = labelTime.getX() - 20;
 
 			// Barra horizontal de tiempo
+			setPaint(Color.GRAY, 1);
+			mPaint.setAlpha(150);
 			mPaint.setTextSize(labelTime.getTextSize());
 			canvas.drawLine(xTime, yTime, xTime + timePixels, yTime, mPaint);
 
@@ -594,15 +568,14 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			for(int i = 0; i < mChannelList.getDeletedChannelsLabels().size(); i++) {
 				int channelKey = mChannelList.getDeletedChannelsLabels().keyAt(i);
 				Label label = mChannelList.getDeletedChannelsLabels().get(channelKey);
-				label.setTextSize(getBoundedTextSize(label, BitmapManager.getIconsWidth(), BitmapManager.getIconsHeight()));
-				label.setX((int) ((0.05 * mTotalHeight) + (i*BitmapManager.getIconsWidth())));
-				label.setY(mTotalHeight - BitmapManager.getIconsHeight());
+				label.setTextSize(getBoundedTextSize(label, mBitmapManager.getIconsWidth(), mBitmapManager.getIconsHeight()));
+				label.setX((int) ((0.05 * mTotalHeight) + (i*mBitmapManager.getIconsWidth())));
+				label.setY(mTotalHeight - mBitmapManager.getIconsHeight());
 				Channel deletedChannel = mChannelList.getDeletedChannels().get(channelKey);
 				
-				if(deletedChannel != null) {
-					int[] rgb = deletedChannel.getColor().getRGB();
-					setPaint(Color.rgb(rgb[0], rgb[1], rgb[2]), 5);
-				}
+				int[] rgb = deletedChannel.getColor().getRGB();
+				setPaint(Color.rgb(rgb[0], rgb[1], rgb[2]), 5);
+				mPaint.setAlpha(100);
 				
 				canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 			}
@@ -680,7 +653,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			onTouch_Pause();
 			onTouch_DialogMenu();
 			onTouch_NewStudyIcon();
-			onTouch_OpenStudyIcon();
+			onTouch_ConfigureChannels();
 			onTouch_StopStudyIcon();
 			mLongPressHandler.postDelayed(longPressed, 1000);
 
@@ -718,47 +691,46 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 	// Botón de nuevo estudio
 	private void onTouch_NewStudyIcon() {
-		if (mUiVisibility == true && mChannelList.size() != 0 && currentlyRecording == false) {
+		if (mUiVisibility == true || mChannelList.size() == 0) {
 
 			TouchPointer tp = mTouchPointer.valueAt(0);
-			int width = BitmapManager.getNewStudyIcon().getWidth();
-			int height = BitmapManager.getNewStudyIcon().getHeight();
+			int width = mBitmapManager.getNewStudyIcon().getWidth();
+			int height = mBitmapManager.getNewStudyIcon().getHeight();
 
-			if (tp.x > BitmapManager.getNewStudyIconX() && tp.x < BitmapManager.getNewStudyIconX() + width) {
-				if (tp.y > BitmapManager.getNewStudyIconY() && tp.y < BitmapManager.getNewStudyIconY() + height) {
-					((StudyActivity) getContext()).newStudyDialog();
+			if (tp.x > mBitmapManager.getNewStudyIconX() && tp.x < mBitmapManager.getNewStudyIconX() + width) {
+				if (tp.y > mBitmapManager.getNewStudyIconY() && tp.y < mBitmapManager.getNewStudyIconY() + height) {
+					((StudyActivity) getContext()).studyDialog();
 				}
 			}
 		}
 	}
 
+	// Botón de configurar canales
+	private void onTouch_ConfigureChannels() {
+		if (mUiVisibility == true && mChannelList.size() != 0) {
+			TouchPointer tp = mTouchPointer.valueAt(0);
+			int width = mBitmapManager.getConfigureChannelsIcon().getWidth();
+			int height = mBitmapManager.getConfigureChannelsIcon().getHeight();
+
+			if (tp.x > mBitmapManager.getConfigureChannelsIconX() && tp.x < mBitmapManager.getConfigureChannelsIconX() + width) {
+				if (tp.y > mBitmapManager.getConfigureChannelsIconY() && tp.y < mBitmapManager.getConfigureChannelsIconY() + height) {
+					((StudyActivity) getContext()).channelConfigDialog();
+				}
+			}
+		}
+	}
+	
 	// Botón de parar estudio
 	private void onTouch_StopStudyIcon() {
 		if (mUiVisibility == true && mChannelList.size() != 0 && currentlyRecording == true) {
 
 			TouchPointer tp = mTouchPointer.valueAt(0);
-			int width = BitmapManager.getNewStudyIcon().getWidth();
-			int height = BitmapManager.getNewStudyIcon().getHeight();
+			int width = mBitmapManager.getStopStudyIcon().getWidth();
+			int height = mBitmapManager.getStopStudyIcon().getHeight();
 
-			if (tp.x > BitmapManager.getNewStudyIconX() && tp.x < BitmapManager.getNewStudyIconX() + width) {
-				if (tp.y > BitmapManager.getNewStudyIconY() && tp.y < BitmapManager.getNewStudyIconY() + height) {
+			if (tp.x > mBitmapManager.getStopStudyIconX() && tp.x < mBitmapManager.getStopStudyIconX() + width) {
+				if (tp.y > mBitmapManager.getStopStudyIconY() && tp.y < mBitmapManager.getStopStudyIconY() + height) {
 					((StudyActivity) getContext()).stopStudyDialog();
-				}
-			}
-		}
-	}
-
-	// Botón de abrir estudio
-	private void onTouch_OpenStudyIcon() {
-		if (mUiVisibility == true || mChannelList.size() == 0) {
-
-			TouchPointer tp = mTouchPointer.valueAt(0);
-			int width = BitmapManager.getOpenStudyIcon().getWidth();
-			int height = BitmapManager.getOpenStudyIcon().getHeight();
-
-			if (tp.x > BitmapManager.getOpenStudyIconX() && tp.x < BitmapManager.getOpenStudyIconX() + width) {
-				if (tp.y > BitmapManager.getOpenStudyIconY() && tp.y < BitmapManager.getOpenStudyIconY() + height) {
-					((StudyActivity) getContext()).actionDialog();
 				}
 			}
 		}

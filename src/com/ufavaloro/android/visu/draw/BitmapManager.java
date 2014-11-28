@@ -1,172 +1,220 @@
 package com.ufavaloro.android.visu.draw;
 
-import android.graphics.Bitmap;
+import com.ufavaloro.android.visu.R;
 
-public class BitmapManager {
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.AttributeSet;
+
+public class BitmapManager{
 	
-	private static int mIconsWidth;
-	private static int mIconsHeight;
+	private int mIconsWidth;
+	private int mIconsHeight;
+	private int mIconsLeftPadding;
+	private int mIconsUpperPadding;
+	private Context mContext;
 	
-	public static int getIconsWidth() {
+	public BitmapManager(Context context) {
+		mContext = context;
+	}
+
+	public int getIconsWidth() {
 		return mIconsWidth;
 	}
 
-	public static void setIconsWidth(int mIconsWidth) {
-		BitmapManager.mIconsWidth = mIconsWidth;
+	
+	public void setIconsWidth(int mIconsWidth) {
+		this.mIconsWidth = mIconsWidth;
 	}
 
-	public static int getIconsHeight() {
+	public int getIconsHeight() {
 		return mIconsHeight;
 	}
 
-	public static void setIconsHeight(int mIconsHeight) {
-		BitmapManager.mIconsHeight = mIconsHeight;
+	public void setIconsHeight(int mIconsHeight) {
+		this.mIconsHeight = mIconsHeight;
 	}
 
-/*****************************************************************************************
-* New Study Icon																     *
-*****************************************************************************************/
-	private static Bitmap mNewStudyIcon;
-	private static int mNewStudyIconX;
-	private static int mNewStudyIconY;
+	public int getIconsLeftPadding() {
+		return mIconsLeftPadding;
+	}
 
-	public static Bitmap getNewStudyIcon() {
+	public void setIconsLeftPadding(int mIconsLeftPadding) {
+		this.mIconsLeftPadding = mIconsLeftPadding;
+	}
+
+	public int getIconsUpperPadding() {
+		return mIconsUpperPadding;
+	}
+
+	public void setIconsUpperPadding(int mIconsUpperPadding) {
+		this.mIconsUpperPadding = mIconsUpperPadding;
+	}
+
+	public void setup() {
+		// Ícono de nuevo estudio
+		Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.new_study);
+		setNewStudyIconX(getIconsLeftPadding());
+		setNewStudyIconY(getIconsUpperPadding());
+		setNewStudyIcon(Bitmap.createScaledBitmap(bitmap, getIconsWidth(), getIconsHeight(), false));
+
+		// Ícono de configurar canales
+		bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.configure_channels);
+		setConfigureChannelsIconX(getIconsLeftPadding());
+		setConfigureChannelsIconY(getIconsUpperPadding() + getNewStudyIconY());
+		setConfigureChannelsIcon(Bitmap.createScaledBitmap(bitmap, getIconsWidth(), getIconsHeight(), false));
+		
+		// Ícono de parar estudio
+		bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.stop_study);
+		setStopStudyIcon(Bitmap.createScaledBitmap(bitmap, getIconsWidth(), getIconsHeight(), false));
+		setStopStudyIconX(getIconsLeftPadding());
+		setStopStudyIconY(getIconsUpperPadding() + getConfigureChannelsIconY());
+	}
+	
+	
+
+/*****************************************************************************************
+* New Study Icon																	     *
+*****************************************************************************************/
+	private Bitmap mNewStudyIcon;
+	private int mNewStudyIconX;
+	private int mNewStudyIconY;
+
+	public Bitmap getNewStudyIcon() {
 		return mNewStudyIcon;
 	}
 	
-	public static void setNewStudyIcon(Bitmap mNewStudyIcon) {
-		BitmapManager.mNewStudyIcon = mNewStudyIcon;
+	public void setNewStudyIcon(Bitmap mNewStudyIcon) {
+		this.mNewStudyIcon = mNewStudyIcon;
 	}
 	
-	public static int getNewStudyIconX() {
+	public int getNewStudyIconX() {
 		return mNewStudyIconX;
 	}
 	
-	public static void setNewStudyIconX(int mNewStudyIconX) {
-		BitmapManager.mNewStudyIconX = mNewStudyIconX;
+	public void setNewStudyIconX(int mNewStudyIconX) {
+		this.mNewStudyIconX = mNewStudyIconX;
 	}
 	
-	public static int getNewStudyIconY() {
+	public int getNewStudyIconY() {
 		return mNewStudyIconY;
 	}
 	
-	public static void setNewStudyIconY(int mNewStudyIconY) {
-		BitmapManager.mNewStudyIconY = mNewStudyIconY;
+	public void setNewStudyIconY(int mNewStudyIconY) {
+		this.mNewStudyIconY = mNewStudyIconY;
+	}
+
+/*****************************************************************************************
+* Configure Channels Icon															     *
+*****************************************************************************************/
+	private Bitmap mConfigureChannelsIcon;
+	private int mConfigureChannelsIconX;
+	private int mConfigureChannelsIconY;
+
+	public Bitmap getConfigureChannelsIcon() {
+		return mConfigureChannelsIcon;
+	}
+	
+	public void setConfigureChannelsIcon(Bitmap mConfigureChannelsIcon) {
+		this.mConfigureChannelsIcon = mConfigureChannelsIcon;
+	}
+	
+	public int getConfigureChannelsIconX() {
+		return mConfigureChannelsIconX;
+	}
+	
+	public void setConfigureChannelsIconX(int mConfigureChannelsIconX) {
+		this.mConfigureChannelsIconX = mConfigureChannelsIconX;
+	}
+	
+	public int getConfigureChannelsIconY() {
+		return mConfigureChannelsIconY;
+	}
+	
+	public void setConfigureChannelsIconY(int mConfigureChannelsIconY) {
+		this.mConfigureChannelsIconY = mConfigureChannelsIconY;
 	}
 
 /*****************************************************************************************
 * Stop Study Icon																     *
 *****************************************************************************************/
-	private static Bitmap mStopStudyIcon;
-	private static int mStopStudyIconX;
-	private static int mStopStudyIconY;
+	private Bitmap mStopStudyIcon;
+	private int mStopStudyIconX;
+	private int mStopStudyIconY;
 
-	public static Bitmap getStopStudyIcon() {
+	public Bitmap getStopStudyIcon() {
 		return mStopStudyIcon;
 	}
 
-	public static void setStopStudyIcon(Bitmap mStopStudyIcon) {
-		BitmapManager.mStopStudyIcon = mStopStudyIcon;
+	public void setStopStudyIcon(Bitmap mStopStudyIcon) {
+		this.mStopStudyIcon = mStopStudyIcon;
 	}
 
-	public static int getStopStudyIconX() {
+	public int getStopStudyIconX() {
 		return mStopStudyIconX;
 	}
 
-	public static void setStopStudyIconX(int mStopStudyIconX) {
-		BitmapManager.mStopStudyIconX = mStopStudyIconX;
+	public void setStopStudyIconX(int mStopStudyIconX) {
+		this.mStopStudyIconX = mStopStudyIconX;
 	}
 
-	public static int getStopStudyIconY() {
+	public int getStopStudyIconY() {
 		return mStopStudyIconY;
 	}
 
-	public static void setStopStudyIconY(int mStopStudyIconY) {
-		BitmapManager.mStopStudyIconY = mStopStudyIconY;
-	}
-
-	
-/*****************************************************************************************
-* Open Study Icon																     *
-*****************************************************************************************/
-	private static Bitmap mOpenStudyIcon;
-	private static int mOpenStudyIconX;
-	private static int mOpenStudyIconY;
-
-	public static Bitmap getOpenStudyIcon() {
-		return mOpenStudyIcon;
-	}
-
-	public static void setOpenStudyIcon(Bitmap mOpenStudyIcon) {
-		BitmapManager.mOpenStudyIcon = mOpenStudyIcon;
-	}
-
-	public static int getOpenStudyIconX() {
-		return mOpenStudyIconX;
-	}
-
-	public static void setOpenStudyIconX(int mOpenStudyIconX) {
-		BitmapManager.mOpenStudyIconX = mOpenStudyIconX;
-	}
-
-	public static int getOpenStudyIconY() {
-		return mOpenStudyIconY;
-	}
-
-	public static void setOpenStudyIconY(int mOpenStudyIconY) {
-		BitmapManager.mOpenStudyIconY = mOpenStudyIconY;
+	public void setStopStudyIconY(int mStopStudyIconY) {
+		this.mStopStudyIconY = mStopStudyIconY;
 	}
 
 /*****************************************************************************************
 * Background Logo																     *
 *****************************************************************************************/
-	private static Bitmap mBackgroundLogo;
-	private static int mBackgroundLogoWidth;
-	private static int mBackgroundLogoHeight;
-	private static int mBackgroundLogoX;
-	private static int mBackgroundLogoY;
+	private Bitmap mBackgroundLogo;
+	private int mBackgroundLogoWidth;
+	private int mBackgroundLogoHeight;
+	private int mBackgroundLogoX;
+	private int mBackgroundLogoY;
 	
-	public static Bitmap getBackgroundLogo() {
+	public Bitmap getBackgroundLogo() {
 		return mBackgroundLogo;
 	}
 
-	public static void setBackgroundLogo(Bitmap mBackgroundLogo) {
-		BitmapManager.mBackgroundLogo = mBackgroundLogo;
+	public void setBackgroundLogo(Bitmap mBackgroundLogo) {
+		this.mBackgroundLogo = mBackgroundLogo;
 	}
 
-	public static int getBackgroundLogoWidth() {
+	public int getBackgroundLogoWidth() {
 		return mBackgroundLogoWidth;
 	}
 
-	public static void setBackgroundLogoWidth(int mBackgroundLogoWidth) {
-		BitmapManager.mBackgroundLogoWidth = mBackgroundLogoWidth;
+	public void setBackgroundLogoWidth(int mBackgroundLogoWidth) {
+		this.mBackgroundLogoWidth = mBackgroundLogoWidth;
 	}
 
-	public static int getBackgroundLogoHeight() {
+	public int getBackgroundLogoHeight() {
 		return mBackgroundLogoHeight;
 	}
 
-	public static void setBackgroundLogoHeight(int mBackgroundLogoHeight) {
-		BitmapManager.mBackgroundLogoHeight = mBackgroundLogoHeight;
+	public void setBackgroundLogoHeight(int mBackgroundLogoHeight) {
+		this.mBackgroundLogoHeight = mBackgroundLogoHeight;
 	}
 
-	public static int getBackgroundLogoX() {
+	public int getBackgroundLogoX() {
 		return mBackgroundLogoX;
 	}
 
-	public static void setBackgroundLogoX(int mBackgroundLogoX) {
-		BitmapManager.mBackgroundLogoX = mBackgroundLogoX;
+	public void setBackgroundLogoX(int mBackgroundLogoX) {
+		this.mBackgroundLogoX = mBackgroundLogoX;
 	}
 
-	public static int getBackgroundLogoY() {
+	public int getBackgroundLogoY() {
 		return mBackgroundLogoY;
 	}
 
-	public static void setBackgroundLogoY(int mBackgroundLogoY) {
-		BitmapManager.mBackgroundLogoY = mBackgroundLogoY;
+	public void setBackgroundLogoY(int mBackgroundLogoY) {
+		this.mBackgroundLogoY = mBackgroundLogoY;
 	}
-
-
 
 
 }

@@ -33,7 +33,7 @@ public class ChannelList {
 	
 	public void removeChannelAtIndex(int channelIndex) {
 		int channelKey = mChannelList.keyAt(channelIndex);
-		mDeletedChannels.append(channelKey, mChannelList.get(channelIndex));
+		mDeletedChannels.append(channelKey, mChannelList.get(channelKey));
 		Label label = new Label(channelKey+1);
 		mDeletedChannelsLabels.append(channelKey, label);
 		mChannelList.remove(channelKey);
