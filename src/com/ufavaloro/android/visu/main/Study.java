@@ -3,25 +3,30 @@
  * Clase que administra todas las otras clases.											 *
  ****************************************************************************************/
 
-package com.ufavaloro.android.visu.study;
+package com.ufavaloro.android.visu.main;
 
 import java.util.ArrayList;
 
 import android.content.IntentSender.SendIntentException;
 import android.os.Handler;
 import android.os.Message;
+import android.util.SparseArray;
 
 import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocol;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocolMessage;
 import com.ufavaloro.android.visu.draw.DrawHelper;
+import com.ufavaloro.android.visu.storage.SamplesBuffer;
 import com.ufavaloro.android.visu.storage.StorageHelper;
 import com.ufavaloro.android.visu.storage.StorageHelperMessage;
 import com.ufavaloro.android.visu.storage.data.AcquisitionData;
 import com.ufavaloro.android.visu.storage.data.AdcData;
+import com.ufavaloro.android.visu.storage.data.PatientData;
+import com.ufavaloro.android.visu.storage.data.StorageData;
 import com.ufavaloro.android.visu.storage.data.StudyData;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.DriveId;
 
 public class Study {
@@ -34,9 +39,10 @@ public class Study {
 	public BluetoothProtocol bluetooth;
 	public DrawHelper draw;
 
-	private StudyData[] mStudyData;
+	public StudyData[] mStudyData;
+	
 	// Context de StudyActivity
-	public StudyActivity studyActivity;
+	private MainActivity mainActivity;
 	
 	// Canal Bluetooth asociado al estudio
 	private int mBluetoothChannel;
@@ -69,16 +75,11 @@ public class Study {
 * Métodos principales																     *
 *****************************************************************************************/
 	// Constructor
-	public Study(StudyActivity mStudyActivity) {
-		
-		this.studyActivity = mStudyActivity;
-		
-		draw = (DrawHelper) mStudyActivity.findViewById(R.id.drawSurface);
-		
+	public Study(MainActivity mainActivity) {
+		this.mainActivity = mainActivity;
+		draw = (DrawHelper) mainActivity.findViewById(R.id.drawSurface);
 		bluetooth = new BluetoothProtocol(mBluetoothProtocolHandler);
-
-		storage = new StorageHelper(mStudyActivity, mStorageHelperHandler);
-						
+		storage = new StorageHelper(mainActivity, mStorageHelperHandler);	
 	}
 
 /*****************************************************************************************
@@ -86,35 +87,32 @@ public class Study {
 *****************************************************************************************/
  	// Método que genera un nuevo estudio Offline y, si estoy conectado al Drive, lo crea
 	// también ahí
-	public void newStudy(String patientName, String patientSurname, String studyName) {
+	public void newStudy(String patientName, String patientSurname, String studyName
+						 , SparseArray<Integer> channelsToStore) {
  		 		
-		// Creo buffers de almacenamiento
-		createStorageBuffers();
+		PatientData patientData = new PatientData(patientName, patientSurname, studyName);
 
-		// Almaceno los datos del paciente en esos buffers
-		storage.createPatientData(patientName, patientSurname, studyName);
+		for(int i = 0; i < channelsToStore.size(); i++) {
+			int index = channelsToStore.valueAt(i);
+			mStudyData[index].setMarkedForStoring(true);
+		}
+		
+		
+		for(int i = 0; i < mStudyData.length; i++) {
+			mStudyData[i].setPatientData(patientData);
+		}
+		
 		
 		// Creo carpetas locales y en google drive
-		storage.createStudyFolders();
+		storage.createStudyFolders(mStudyData);
 		
 		// Creo archivos .vis de los estudios
-		storage.createLocalStudyFiles();
+		storage.createLocalStudyFiles(mStudyData);
  	
  	}
  	
 	public void saveStudyToGoogleDrive() {
-		storage.createGoogleDriveStudyFiles();	
-	}
-
-	// Método para crear buffers de almacenamiento
-	private void createStorageBuffers() {
-
-		for(int i = 0; i < mStudyData.length; i++) {
-			storage.createStorageBuffer(mStudyData[i]);
-		}
-	
-		storage.buffersOk = true;
-
+		storage.createGoogleDriveStudyFiles(mStudyData);	
 	}
 
 	// Método para saber si estoy conectado a Google Drive
@@ -124,7 +122,6 @@ public class Study {
 	
 	}
 
-	
 	// Método para abrir un archivo desde Google Drive
 	public void loadFileFromGoogleDrive(DriveId driveId) {
 		storage.loadFileFromGoogleDrive(driveId);
@@ -160,7 +157,6 @@ public class Study {
 /*****************************************************************************************
 * Métodos de Graficación															     *
 *****************************************************************************************/
-	
 	// Método para crear buffers de graficación online
 	public void addChannel(int channel) {
 		
@@ -205,17 +201,17 @@ public class Study {
  	
  	private void onGoogleDriveFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
- 		createOfflineChannel(studyData, studyData.getDataBuffer());	
+ 		//createOfflineChannel(studyData, studyData.getDataBuffer());	
  	}
  	
  	private void onLocalStorageFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
- 		createOfflineChannel(studyData, studyData.getDataBuffer());	
+ 		//createOfflineChannel(studyData, studyData.getDataBuffer());	
  	}
  	
  	private void onNewSamplesBatch(short[] samples, int channel) {
  		if(draw.onlineDrawBuffersOk == true) draw.draw(samples, channel);
-		if(storage.recording == true) storage.saveSamplesBatch(samples, channel);
+		if(storage.recording == true) storage.saveSamplesBatch(mStudyData[channel], samples);
  	}
  	
  	private void onTotalAdcChannels(int totalAdcChannels) {
@@ -225,20 +221,25 @@ public class Study {
  	private void onAdcData(AdcData[] adcData) {
  		mStudyData = new StudyData[mTotalAdcChannels];
  		AcquisitionData acquisitionData;
+ 		SamplesBuffer samplesBuffer;
  		
  		for(int i = 0; i < mTotalAdcChannels; i++) {
- 			acquisitionData = new AcquisitionData(adcData[i]);
  			mStudyData[i] = new StudyData();
+ 			
+ 			acquisitionData = new AcquisitionData(adcData[i]);
  			mStudyData[i].setAcquisitionData(acquisitionData);
+ 			
+ 			samplesBuffer = new SamplesBuffer(mStudyData[i].getAcquisitionData(), "");
+ 			mStudyData[i].setSamplesBuffer(samplesBuffer);
  		}
  		
  		mAdcDataOk = true;
  		
- 		studyActivity.onConfigurationOk();
+ 		mainActivity.onConfigurationOk();
  	}
  	
  	private void onGoogleDriveConnected() {
- 		studyActivity.shortToast("Conectado a Google Drive");
+ 		mainActivity.shortToast("Conectado a Google Drive");
  	}
  	
  	private void onGoogleDriveSuspended() {

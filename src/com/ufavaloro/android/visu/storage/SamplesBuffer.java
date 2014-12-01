@@ -6,36 +6,24 @@
 package com.ufavaloro.android.visu.storage;
 
 import com.ufavaloro.android.visu.storage.data.AcquisitionData;
-import com.ufavaloro.android.visu.storage.data.PatientData;
-import com.ufavaloro.android.visu.storage.data.StorageData;
 
-public class StorageBuffer {
+public class SamplesBuffer {
 	
 	// Buffer
-	private short[] mBuffer;
-	
-	// Largo total del Buffer
-	private int mSize;
-	
+	private short[] mSamplesBuffer;
+
 	// Puntero de almacenamiento
 	private int mStoringIndex;
 	
 	// Tiempo de guardado en segundos
 	private double mSaveTime = 5;
 	
-	public AcquisitionData acquisitionData;
-	public PatientData patientData;
-	public StorageData storageData;
-		
 	
 /*****************************************************************************************
 * Métodos principales								      						         *
 *****************************************************************************************/	
 	// Constructor
-	public StorageBuffer(AcquisitionData acquisitionData, String units) {
-
-		this.acquisitionData = acquisitionData;
-		
+	public SamplesBuffer(AcquisitionData acquisitionData, String units) {
 		double fs = acquisitionData.getFs();
 		double ts = 1 / fs;
 		int samplesPerPackage = acquisitionData.getSamplesPerPackage();
@@ -43,11 +31,7 @@ public class StorageBuffer {
 		int i = 0;
 		while(i*samplesPerPackage*ts < mSaveTime) i++;
 		
-		mSize = i * samplesPerPackage;
-		mBuffer = new short[mSize];
-		
-		patientData = new PatientData();
-		storageData = new StorageData();
+		mSamplesBuffer = new short[i * samplesPerPackage];
 	}
 	
 	// Método para almacenar muestras
@@ -56,16 +40,26 @@ public class StorageBuffer {
 		// Almaceno
 		for(int i=0; i<x.length; i++) {
 			
-			mBuffer[mStoringIndex] = x[i];
+			mSamplesBuffer[mStoringIndex] = x[i];
 			
 			// Incremento índices
 			mStoringIndex++;
 			
 			// Si llego al máximo, pongo índices en cero
-			if(mStoringIndex == mSize) mStoringIndex = 0;
+			if(mStoringIndex == mSamplesBuffer.length) mStoringIndex = 0;
 		
 		}
 	
+	}
+	
+	// Método para almacenar una única muestra
+	public void storeSample(short sample) {
+		//Almaceno
+		mSamplesBuffer[mStoringIndex] = sample;
+		// Incremento índices
+		mStoringIndex++;
+		// Si llego al máximo, pongo índices en cero
+		if(mStoringIndex == mSamplesBuffer.length) mStoringIndex = 0;
 	}
 
 	
@@ -77,11 +71,11 @@ public class StorageBuffer {
 	}
 	
 	public int getSize() {
-		return mSize;
+		return mSamplesBuffer.length;
 	}
 	
 	public short[] getBuffer() {
-		return mBuffer;
+		return mSamplesBuffer;
 	}
 
 }//StoringBuffer

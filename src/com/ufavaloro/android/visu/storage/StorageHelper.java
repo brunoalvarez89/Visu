@@ -13,6 +13,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -23,6 +24,8 @@ import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocolMessage;
+import com.ufavaloro.android.visu.main.Study;
+import com.ufavaloro.android.visu.main.MainActivity;
 import com.ufavaloro.android.visu.storage.data.AcquisitionData;
 import com.ufavaloro.android.visu.storage.data.AdcData;
 import com.ufavaloro.android.visu.storage.data.DataConversion;
@@ -32,18 +35,12 @@ import com.ufavaloro.android.visu.storage.data.StudyDataParser;
 import com.ufavaloro.android.visu.storage.googledrive.GoogleDriveManager;
 import com.ufavaloro.android.visu.storage.googledrive.GoogleDriveManagerMessage;
 import com.ufavaloro.android.visu.storage.local.LocalStorageManager;
-import com.ufavaloro.android.visu.study.Study;
-import com.ufavaloro.android.visu.study.StudyActivity;
 
 public class StorageHelper {
 	
 /*****************************************************************************************
 * Inicio de atributos de clase		 									   				 *
 *****************************************************************************************/
-	// Lista de los buffers de almacenamiento
-	public ArrayList<StorageBuffer> mStorageBuffers = new ArrayList<StorageBuffer>();
-	private int mTotalStorageBuffers;	
-
 	int mGoogleDriveFolderIterator = 0;
 	
 	// Flag de buffers creados correctamente
@@ -56,6 +53,7 @@ public class StorageHelper {
 
 	public LocalStorageManager local;
 	public GoogleDriveManager googleDrive;
+	//public StudyData[] studyData;
 	
 	public Study study;
 	
@@ -68,66 +66,30 @@ public class StorageHelper {
 * Métodos principales					        									     *
 *****************************************************************************************/
 	// Constructor
-	public StorageHelper(StudyActivity studyActivity, Handler handler) {
+	public StorageHelper(Activity contextActivity, Handler handler) {
 		
 		mHandler = handler;
 		
-		// Creo lista de buffers de almacenamiento
-		mStorageBuffers = new ArrayList<StorageBuffer>();	
-		
 		// Creo managers
 		local = new LocalStorageManager();
-		googleDrive = new GoogleDriveManager(studyActivity, mGoogleDriveManagerHandler);
+		googleDrive = new GoogleDriveManager(contextActivity, mGoogleDriveManagerHandler);
 		
 		// Creo carpetas raíz locales
 		local.createRootFolders();
 	}
 	
-	// Método que crea un buffer de almacenamiento
-	public void createStorageBuffer(StudyData studyData) {
-		
-		StorageBuffer storageBuffer = new StorageBuffer(studyData.getAcquisitionData(), "");
-		
-		mStorageBuffers.add(storageBuffer);
-		
-		mTotalStorageBuffers++;
-		
-	}
-
-	// Método que almacena los datos del paciente en cada buffer
-	public void createPatientData(String patientName, String patientSurname, String studyName) {
-		
-		if(mStorageBuffers.size() == 0) return;
-		
-		// Seteo los parámetros en los buffers
-		for(int i = 0; i < mTotalStorageBuffers; i++) {
-			
-			StorageBuffer buffer = mStorageBuffers.get(i);
-			
-			buffer.patientData.setPatientName(patientName);
-			buffer.patientData.setPatientSurname(patientSurname);
-			buffer.patientData.setStudyName(studyName);
-			
-			buffer.storageData.setNewStudyOk(true);
-			
-		}
-
-		patientDataOk = true;
-		
-	}
-	
 	// Método que crea los archivos correspondientes a los estudios
-	public void createLocalStudyFiles() {		
-		local.createStudyFiles(mStorageBuffers);
+	public void createLocalStudyFiles(StudyData[] studyData) {		
+		local.createStudyFiles(studyData);
 	}
 
-	public void createGoogleDriveStudyFiles() {
-		googleDrive.createStudyFiles(mStorageBuffers);
+	public void createGoogleDriveStudyFiles(StudyData[] studyData) {
+		googleDrive.createStudyFiles(studyData);
 	}
 
-	public void createStudyFolders() {
-		local.createStudyFolders(mStorageBuffers);		
-		googleDrive.createStudyFolders(mStorageBuffers);
+	public void createStudyFolders(StudyData[] studyData) {
+		local.createStudyFolders(studyData);		
+		googleDrive.createStudyFolders(studyData);
 	}
 	
 /*****************************************************************************************
@@ -179,21 +141,21 @@ public class StorageHelper {
 	}
 	
 	// Método que recibe el paquete de muestras, lo procesa y lo manda a almacenar con writeSamples
-	public boolean saveSamplesBatch(short[] toStore, int channel) {
+	public boolean saveSamplesBatch(StudyData studyData, short[] toStore) {
 		
-		if(local.studyFilesOk == false || recording == false) return false;
+		if(local.studyFilesOk == false || recording == false || studyData.isMarkedForStoring() == false) return false;
 		
-		StorageBuffer storageBuffer = mStorageBuffers.get(channel);
-		storageBuffer.storeSamples(toStore);
+		SamplesBuffer samplesBuffer = studyData.getSamplesBuffer();
+		samplesBuffer.storeSamples(toStore);
 		boolean success = false;
 		
 		// Llené el buffer?
-		int indexOverflow = storageBuffer.getStoringIndex();
+		int indexOverflow = samplesBuffer.getStoringIndex();
 
 		if(indexOverflow == 0) {
 			
-			File studyFile = storageBuffer.storageData.getStudyFile();
-			local.saveFile(studyFile, storageBuffer);
+			File studyFile = studyData.getStorageData().getStudyFile();
+			local.saveFile(studyFile, samplesBuffer);
 			
 		}
 		

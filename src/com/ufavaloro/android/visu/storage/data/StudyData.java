@@ -2,12 +2,15 @@ package com.ufavaloro.android.visu.storage.data;
 
 import java.util.ArrayList;
 
+import com.ufavaloro.android.visu.storage.SamplesBuffer;
+
 public class StudyData {
 
 	private AcquisitionData mAcquisitionData;
 	private PatientData mPatientData;
 	private StorageData mStorageData;
-	private ArrayList<Short> mDataBuffer;
+	private SamplesBuffer mSamplesBuffer;
+	private boolean mMarkedForStoring = false;
 	
 	public void setAcquisitionData(AcquisitionData acquisitionData) {
 		mAcquisitionData = acquisitionData;
@@ -21,8 +24,14 @@ public class StudyData {
 		mStorageData = storageData;
 	}
 	
-	public void setDataBuffer(ArrayList<Short> dataBuffer) {
-		mDataBuffer = dataBuffer;
+	public void setSamplesBuffer(ArrayList<Short> samplesBuffer) {
+		for(int i = 0; i < samplesBuffer.size(); i++) {
+			mSamplesBuffer.storeSample(samplesBuffer.get(i));
+		}
+	}
+	
+	public void setSamplesBuffer(SamplesBuffer samplesBuffer) {
+		mSamplesBuffer = samplesBuffer;
 	}
 	
 	public AcquisitionData getAcquisitionData() {
@@ -37,7 +46,18 @@ public class StudyData {
 		return mStorageData;
 	}
 
-	public ArrayList<Short> getDataBuffer() {
-		return mDataBuffer;
+	public SamplesBuffer getSamplesBuffer() {
+		return mSamplesBuffer;
 	}
+
+	
+	public boolean isMarkedForStoring() {
+		return mMarkedForStoring;
+	}
+
+	
+	public void setMarkedForStoring(boolean mMarkedForStoring) {
+		this.mMarkedForStoring = mMarkedForStoring;
+	}
+	
 }//StudyData

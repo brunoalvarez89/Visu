@@ -1,5 +1,7 @@
 package com.ufavaloro.android.visu.storage.data;
 
+import com.ufavaloro.android.visu.main.StudyType;
+
 
 public class AcquisitionData {
 	
@@ -71,14 +73,18 @@ public class AcquisitionData {
 		return mAdcData.aMax;
 	}
 	
-	public void setStudyType(String studyType_string) {
+	public void setAMax(double aMax) {
+		mAdcData.aMax = aMax;
+	}
+	
+	public void setAMin(double aMin) {
+		mAdcData.aMin = aMin;
+	}
+	
+	public void setStudyType(int study) {
 		
-		char[] studyType = studyType_string.toCharArray();
-		int size = studyType_string.length();
-		
-		for(int i = 0; i < size; i++) {
-			mStudyType[i] = studyType[i];
-		}
+		mStudyType = new char[mStudyTypeSize];
+		mStudyType[0] = (char) study;
 	}
 	
 	public void setSensor(String sensor_string) {

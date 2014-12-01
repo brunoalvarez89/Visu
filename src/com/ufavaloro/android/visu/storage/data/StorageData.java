@@ -38,7 +38,6 @@ package com.ufavaloro.android.visu.storage.data;
 import java.io.File;
 
 public class StorageData {
-	
 
 	// Boolean para saber si tengo toda la info necesaria para almacenar
 	private boolean mNewStudyDialogOk;

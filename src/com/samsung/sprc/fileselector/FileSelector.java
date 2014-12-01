@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.study.StudyActivity;
+import com.ufavaloro.android.visu.main.MainActivity;
 
 //import android.app.AlertDialog;
 import android.app.Dialog;
@@ -79,7 +79,7 @@ public class FileSelector {
 		mOnHandleFileListener = onHandleFileListener;
 
 		//final File sdCard = Environment.getExternalStorageDirectory();
-		File studiesFolder = StudyActivity.getStudiesFolder();
+		File studiesFolder = MainActivity.getStudiesFolder();
 				
 		if (studiesFolder.canRead()) {
 			mCurrentLocation = studiesFolder;
@@ -88,7 +88,7 @@ public class FileSelector {
 		}
 
 		mDialog = new Dialog(context, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth);
-		mDialog.setContentView(R.layout.file_selector_dialog);
+		mDialog.setContentView(R.layout.dialog_file_selector);
 		//mDialog.setTitle(mCurrentLocation.getAbsolutePath());
 
 		prepareFilterSpinner(fileFilters);

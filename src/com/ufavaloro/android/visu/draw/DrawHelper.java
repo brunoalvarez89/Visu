@@ -13,8 +13,8 @@ import com.ufavaloro.android.visu.draw.channel.ChannelList;
 import com.ufavaloro.android.visu.draw.channel.InfoBox;
 import com.ufavaloro.android.visu.draw.channel.Label;
 import com.ufavaloro.android.visu.draw.channel.SignalBox;
+import com.ufavaloro.android.visu.main.MainActivity;
 import com.ufavaloro.android.visu.storage.data.StudyData;
-import com.ufavaloro.android.visu.study.StudyActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -229,7 +229,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		canvas.drawColor(Color.LTGRAY);
 		
 		// Dibujo signal boxes
-		drawSignalBoxes(canvas);
+		//drawSignalBoxes(canvas);
 		
 		// Dibujo info boxes
 		drawInfoBoxes(canvas);
@@ -238,7 +238,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		drawBitmaps(canvas);
 		
 		// Dibujo divisiones
-		drawDivisions(canvas);
+		//drawDivisions(canvas);
 	
 		// Dibujo otros labels
 		drawOtherLabels(canvas);
@@ -622,7 +622,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	*************************************************************************************/
 	// Menú con las opciones del canal
 	private void channelMenu(int channel) {
-		((StudyActivity) getContext()).channelOptionsDialog(channel);
+		((MainActivity) getContext()).channelOptionsDialog(channel);
 	}
 
 /*****************************************************************************************
@@ -699,7 +699,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 			if (tp.x > mBitmapManager.getNewStudyIconX() && tp.x < mBitmapManager.getNewStudyIconX() + width) {
 				if (tp.y > mBitmapManager.getNewStudyIconY() && tp.y < mBitmapManager.getNewStudyIconY() + height) {
-					((StudyActivity) getContext()).studyDialog();
+					((MainActivity) getContext()).mainMenuDialog();
 				}
 			}
 		}
@@ -714,7 +714,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 			if (tp.x > mBitmapManager.getConfigureChannelsIconX() && tp.x < mBitmapManager.getConfigureChannelsIconX() + width) {
 				if (tp.y > mBitmapManager.getConfigureChannelsIconY() && tp.y < mBitmapManager.getConfigureChannelsIconY() + height) {
-					((StudyActivity) getContext()).channelConfigDialog();
+					((MainActivity) getContext()).channelConfigDialog(-1);
 				}
 			}
 		}
@@ -730,7 +730,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 			if (tp.x > mBitmapManager.getStopStudyIconX() && tp.x < mBitmapManager.getStopStudyIconX() + width) {
 				if (tp.y > mBitmapManager.getStopStudyIconY() && tp.y < mBitmapManager.getStopStudyIconY() + height) {
-					((StudyActivity) getContext()).stopStudyDialog();
+					((MainActivity) getContext()).stopStudyDialog();
 				}
 			}
 		}
@@ -1126,7 +1126,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		// Inicializo thread de graficación
 		startDrawingThread();
 		// Todo OK. Instancio mSurfaceViewVisualizador en Visualizador.java
-		((StudyActivity) getContext()).setupAfterSurfaceCreated();
+		((MainActivity) getContext()).setupAfterSurfaceCreated();
 	}
 
 	// Método que se llama cuando el SurfaceView sufre algún cambio

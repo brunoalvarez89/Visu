@@ -4,10 +4,10 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
@@ -16,7 +16,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
-import com.ufavaloro.android.visu.storage.StorageBuffer;
+import com.ufavaloro.android.visu.storage.data.StudyData;
 
 public class GoogleDriveManager {
 	
@@ -37,13 +37,11 @@ public class GoogleDriveManager {
 		mGoogleDriveClient.loadFile(driveId);
 	}
 	
-	public void createStudyFolders(ArrayList<StorageBuffer> storageBuffers) {
-		
-		StorageBuffer storageBuffer = storageBuffers.get(0);
+	public void createStudyFolders(StudyData[] studyData) {
 		
 		// Obtengo nombre y apellido del paciente y genero carpeta
-		String patientName = new String(storageBuffer.patientData.getPatientName());
-		String patientSurname = new String(storageBuffer.patientData.getPatientSurname());
+		String patientName = new String(studyData[0].getPatientData().getPatientName());
+		String patientSurname = new String(studyData[0].getPatientData().getPatientSurname());
 		String patient =  patientSurname + "_" + patientName;
 		
 		createPatientFolder(patient);
@@ -60,7 +58,7 @@ public class GoogleDriveManager {
 		
 		
 		// Obtengo el nombre del estudio y creo carpeta
-		String studyName = new String(storageBuffer.patientData.getStudyName());
+		String studyName = new String(studyData[0].getPatientData().getStudyName());
 
 		createStudyNameFolder(studyName);
 		
@@ -132,36 +130,38 @@ public class GoogleDriveManager {
 		
 	}
 	
-	public void createStudyFiles(ArrayList<StorageBuffer> storageBuffers) {
+	public void createStudyFiles(StudyData[] studyData) {
 		
 		while(mGoogleDriveClient.isCreatingFile());
 		
 		// Parent Folder = _Estudios
 		DriveFolder folder = mGoogleDriveClient.getLastFolder();
 					
-		for(int i = 0; i < storageBuffers.size(); i++) {
+		for(int i = 0; i < studyData.length; i++) {
 			
-			while(mGoogleDriveClient.isCreatingFile());
-
-			File file = storageBuffers.get(i).storageData.getStudyFile();
-			String fileName = file.getName();
-			
-			FileInputStream fileInputStream;
-			
-			try {
-			
-				fileInputStream = new FileInputStream(file);
-				DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+			if(studyData[i].isMarkedForStoring() == true) {
 				
-				byte[] fileOutputBuffer = new byte[dataInputStream.available()];
-				dataInputStream.readFully(fileOutputBuffer);
+				while(mGoogleDriveClient.isCreatingFile());
+	
+				File file = studyData[i].getStorageData().getStudyFile();
+				String fileName = file.getName();
 				
-				dataInputStream.close();
+				FileInputStream fileInputStream;
 				
-				mGoogleDriveClient.createFile(fileOutputBuffer, fileName, folder);
-			
-			} catch (IOException e) {}
-						
+				try {
+				
+					fileInputStream = new FileInputStream(file);
+					DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+					
+					byte[] fileOutputBuffer = new byte[dataInputStream.available()];
+					dataInputStream.readFully(fileOutputBuffer);
+					
+					dataInputStream.close();
+					
+					mGoogleDriveClient.createFile(fileOutputBuffer, fileName, folder);
+				
+				} catch (IOException e) {}
+			}
 		}
 	}
 	
@@ -205,6 +205,7 @@ public class GoogleDriveManager {
 	}
 	
 	// Handler para recibir las notificaciones de cuando se cree o abra un archivo/carpeta
+	@SuppressLint("HandlerLeak")
 	private final Handler mGoogleDriveClientHandler = new Handler() {
 		
     	// Método para manejar el mensaje

@@ -1,7 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:descendantFocusability="beforeDescendants"
+	android:focusableInTouchMode="true">
 
     <TextView
         android:id="@+id/textViewChannel"
@@ -44,13 +46,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Resolución" />
+                android:text="Resolución (Bits)" />
 
             <EditText
                 android:id="@+id/editTextBits"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center" >
+                android:layout_gravity="center" 
+                android:inputType="number">
             </EditText>
 
             <TextView
@@ -58,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Voltaje Máximo" />
+                android:text="Voltaje Máximo (V)" />
 
             <EditText
                 android:id="@+id/editTextVMax"
@@ -71,19 +74,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Amplitud Máxima" />
+                android:text="Valor Máximo" />
 
             <EditText
                 android:id="@+id/editTextAMax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
-
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Button" />
         </LinearLayout>
 
         <LinearLayout
@@ -97,12 +94,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Frecuencia de Muestreo" />
+                android:text="Frecuencia de Muestreo (Hz)" />
 
             <EditText
                 android:id="@+id/editTextFs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content" 
+                android:inputType="number">
             </EditText>
 
             <TextView
@@ -110,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Voltaje Mínimo" />
+                android:text="Voltaje Mínimo (V)" />
 
             <EditText
                 android:id="@+id/editTextVMin"
@@ -123,19 +121,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Amplitud Mínima" />
+                android:text="Valor Mínimo" />
 
             <EditText
                 android:id="@+id/editTextAMin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Button" />
         </LinearLayout>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonChannelConfigOk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Aceptar" />
 
 </LinearLayout>

@@ -7,12 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import com.ufavaloro.android.visu.storage.StorageBuffer;
+import com.ufavaloro.android.visu.storage.SamplesBuffer;
 import com.ufavaloro.android.visu.storage.data.StorageData;
+import com.ufavaloro.android.visu.storage.data.StudyData;
 
 import android.os.Environment;
 
@@ -58,21 +58,18 @@ public class LocalStorageManager {
 	}
 
 	// Método que crea las carpetas de los estudio
-	public void createStudyFolders(ArrayList<StorageBuffer> storageBuffers) {
+	public void createStudyFolders(StudyData[] studyData) {
 		
 		if(rootFoldersOk == false || checkExternalStorage() == false) return;
 
-		StorageBuffer storageBuffer = storageBuffers.get(0);
-		int totalStorageBuffers = storageBuffers.size();
-
 		// Obtengo nombre del paciente
-		String patientName = new String(storageBuffer.patientData.getPatientName());
+		String patientName = new String(studyData[0].getPatientData().getPatientName());
 		
 		// Obtego apellido del paciente
-		String patientSurname = new String(storageBuffer.patientData.getPatientSurname());
+		String patientSurname = new String(studyData[0].getPatientData().getPatientSurname());
 		
 		// Obtengo el nombre del estudio
-		String studyName = new String(storageBuffer.patientData.getStudyName());
+		String studyName = new String(studyData[0].getPatientData().getStudyName());
 
 		
 		// Genero carpeta con el nombre y apellido del paciente
@@ -113,17 +110,14 @@ public class LocalStorageManager {
 	    studyFolder.mkdir();
 
 	    // Almaceno todas las carpetas y rutas en los buffers
-	    for(int i = 0; i < totalStorageBuffers; i++) {
-	    	
-	    	storageBuffer = storageBuffers.get(i);
-	    	
-		    storageBuffer.storageData.setStudyFolder(studyFolder);
-			storageBuffer.storageData.setStudyFolderPath(studyFolderPath);
-			storageBuffer.storageData.setDateFolder(dateFolder);
-			storageBuffer.storageData.setDateFolderPath(datePath);
-		    storageBuffer.storageData.setPatientFolder(patientFolder);
-		    storageBuffer.storageData.setPatientFolderPath(patientPath);
-		    
+	    for(int i = 0; i < studyData.length; i++) {
+	    	studyData[i].setStorageData(new StorageData());
+	    	studyData[i].getStorageData().setStudyFolder(studyFolder);
+			studyData[i].getStorageData().setStudyFolderPath(studyFolderPath);
+			studyData[i].getStorageData().setDateFolder(dateFolder);
+			studyData[i].getStorageData().setDateFolderPath(datePath);
+		    studyData[i].getStorageData().setPatientFolder(patientFolder);
+		    studyData[i].getStorageData().setPatientFolderPath(patientPath);
 	    }
 	    
 	    studyFoldersOk = true;
@@ -131,101 +125,100 @@ public class LocalStorageManager {
 	}
 
 	// Método que crea los archivos correspondientes a los estudios
-	public void createStudyFiles(ArrayList<StorageBuffer> storageBuffers) {		
+	public void createStudyFiles(StudyData[] studyData) {		
 			
 		if(studyFoldersOk == false || checkExternalStorage() == false) return;
 		
 		// Creo los archivos de almacenamiento
-		for(int i = 0; i < storageBuffers.size(); i++) {
-			
-			StorageBuffer storageBuffer = storageBuffers.get(i);
-			
-			// Genero archivo de almacenamiento
-	    	String studyFolderPathString = storageBuffer.storageData.getStudyFolderPath();
-	    	String sensorString = new String(storageBuffer.acquisitionData.getSensor());
-	    	String studyPath = studyFolderPathString + "/" + sensorString + "@Canal" + (i+1) + ".vis";
-			
-	    	File studyFile = new File(studyPath);
-	
-			// Escribo Header
-			try {
-				
-				// Creo el archivo
-				studyFile.createNewFile();
-				
-		    	// Obtengo tamaño del header
-			    int headerBytes = storageBuffer.patientData.getPatientDataBytes()
-			    				  + storageBuffer.acquisitionData.getAcquisitionDataBytes();
-			    int paddingBytes = mTotalHeaderBytes - headerBytes;
-			    
-			    // Genero buffer temporal de tamaño headerBytes
-				ByteBuffer byteBuffer = ByteBuffer.allocate(headerBytes + paddingBytes);
-				
-				// Almaceno nombre del paciente
-				char[] patientName = storageBuffer.patientData.getPatientName();
-				int patientNameSize = storageBuffer.patientData.getPatientNameSize();
-				writeCharArray(byteBuffer, patientName, patientNameSize);
-				
-				// Almaceno apellido del paciente
-				char[] patientSurname = storageBuffer.patientData.getPatientSurname();
-				int patientSurnameSize = storageBuffer.patientData.getPatientSurnameSize();
-				writeCharArray(byteBuffer, patientSurname, patientSurnameSize);
-				
-				// Almaceno nombre del estudio
-				char[] studyName = storageBuffer.patientData.getStudyName();
-				int studyNameSize = storageBuffer.patientData.getStudyNameSize();
-				writeCharArray(byteBuffer, studyName, studyNameSize);
-				
-				// Almaceno nombre del sensor que me está enviando las muestras
-				char[] sensor = storageBuffer.acquisitionData.getSensor();
-				int sensorSize = storageBuffer.acquisitionData.getSensorSize();
-				writeCharArray(byteBuffer, sensor, sensorSize);
+		for(int i = 0; i < studyData.length; i++) {
 
-				// Almaceno tipo de estudio
-				char[] studyType = storageBuffer.acquisitionData.getStudyType();
-				int studyTypeSize = storageBuffer.acquisitionData.getStudyTypeSize();
-				writeCharArray(byteBuffer, studyType, studyTypeSize);
-
-		    	// Almaceno Fs
-				double fs = storageBuffer.acquisitionData.getFs();
-				byteBuffer.putDouble(fs);
+			if(studyData[i].isMarkedForStoring() == true) {
+				// Genero archivo de almacenamiento
+		    	String studyFolderPathString = studyData[i].getStorageData().getStudyFolderPath();
+		    	String sensorString = new String(studyData[i].getAcquisitionData().getSensor());
+		    	String studyPath = studyFolderPathString + "/" + sensorString + "@Canal" + (i+1) + ".vis";
 				
-				// Almaceno Resolución
-				int bits = storageBuffer.acquisitionData.getBits();
-				byteBuffer.putInt(bits);
-				
-				// Almaceno VMax
-				double vMax = storageBuffer.acquisitionData.getVMax();
-				byteBuffer.putDouble(vMax);
-				
-				// Almaceno VMin
-				double vMin = storageBuffer.acquisitionData.getVMin();
-				byteBuffer.putDouble(vMin);
-				
-				// Almaceno AMax
-				double aMax = storageBuffer.acquisitionData.getAMax();
-				byteBuffer.putDouble(aMax);
-	
-				// Almaceno AMin
-				double aMin = storageBuffer.acquisitionData.getAMin();
-				byteBuffer.putDouble(aMin);
-				
-				// Almaceno cantidad de muestras
-				double totalSamples = storageBuffer.acquisitionData.getTotalSamples();
-				byteBuffer.putDouble(totalSamples);
-				
-				// Agrego padding de ceros hasta 1kb
-				byte[] padding = new byte[paddingBytes];
-				byteBuffer.put(padding);
-				
-				// Escribo todo en el archivo y guardo la dirección en el buffer
-				writeHeaderToFile(studyFile, byteBuffer);
-				storageBuffer.storageData.setStudyFile(studyFile);
-				storageBuffer.storageData.setStudyFilePath(studyPath);
-				
-			} catch (IOException e) {}
-	    }
+		    	File studyFile = new File(studyPath);
 		
+				// Escribo Header
+				try {
+					
+					// Creo el archivo
+					studyFile.createNewFile();
+					
+			    	// Obtengo tamaño del header
+				    int headerBytes = studyData[i].getPatientData().getPatientDataBytes()
+				    				  + studyData[i].getAcquisitionData().getAcquisitionDataBytes();
+				    int paddingBytes = mTotalHeaderBytes - headerBytes;
+				    
+				    // Genero buffer temporal de tamaño headerBytes
+					ByteBuffer byteBuffer = ByteBuffer.allocate(headerBytes + paddingBytes);
+					
+					// Almaceno nombre del paciente
+					char[] patientName = studyData[i].getPatientData().getPatientName();
+					int patientNameSize = studyData[i].getPatientData().getPatientNameSize();
+					writeCharArray(byteBuffer, patientName, patientNameSize);
+					
+					// Almaceno apellido del paciente
+					char[] patientSurname = studyData[i].getPatientData().getPatientSurname();
+					int patientSurnameSize = studyData[i].getPatientData().getPatientSurnameSize();
+					writeCharArray(byteBuffer, patientSurname, patientSurnameSize);
+					
+					// Almaceno nombre del estudio
+					char[] studyName = studyData[i].getPatientData().getStudyName();
+					int studyNameSize = studyData[i].getPatientData().getStudyNameSize();
+					writeCharArray(byteBuffer, studyName, studyNameSize);
+					
+					// Almaceno nombre del sensor que me está enviando las muestras
+					char[] sensor = studyData[i].getAcquisitionData().getSensor();
+					int sensorSize = studyData[i].getAcquisitionData().getSensorSize();
+					writeCharArray(byteBuffer, sensor, sensorSize);
+	
+					// Almaceno tipo de estudio
+					char[] studyType = studyData[i].getAcquisitionData().getStudyType();
+					int studyTypeSize = studyData[i].getAcquisitionData().getStudyTypeSize();
+					writeCharArray(byteBuffer, studyType, studyTypeSize);
+	
+			    	// Almaceno Fs
+					double fs = studyData[i].getAcquisitionData().getFs();
+					byteBuffer.putDouble(fs);
+					
+					// Almaceno Resolución
+					int bits = studyData[i].getAcquisitionData().getBits();
+					byteBuffer.putInt(bits);
+					
+					// Almaceno VMax
+					double vMax = studyData[i].getAcquisitionData().getVMax();
+					byteBuffer.putDouble(vMax);
+					
+					// Almaceno VMin
+					double vMin = studyData[i].getAcquisitionData().getVMin();
+					byteBuffer.putDouble(vMin);
+					
+					// Almaceno AMax
+					double aMax = studyData[i].getAcquisitionData().getAMax();
+					byteBuffer.putDouble(aMax);
+		
+					// Almaceno AMin
+					double aMin = studyData[i].getAcquisitionData().getAMin();
+					byteBuffer.putDouble(aMin);
+					
+					// Almaceno cantidad de muestras
+					double totalSamples = studyData[i].getAcquisitionData().getTotalSamples();
+					byteBuffer.putDouble(totalSamples);
+					
+					// Agrego padding de ceros hasta 1kb
+					byte[] padding = new byte[paddingBytes];
+					byteBuffer.put(padding);
+					
+					// Escribo todo en el archivo y guardo la dirección en el buffer
+					writeHeaderToFile(studyFile, byteBuffer);
+					studyData[i].getStorageData().setStudyFile(studyFile);
+					studyData[i].getStorageData().setStudyFilePath(studyPath);
+					
+				} catch (IOException e) {}
+		    }
+		}
 		// Archivos OK
 		studyFilesOk = true;
 
@@ -277,17 +270,16 @@ public class LocalStorageManager {
 
 	}
 	
-	public void saveFile(File file, StorageBuffer storageBuffer) {
+	public void saveFile(File file, SamplesBuffer samplesBuffer) {
 		
 		// Si se puede guardar
 		if(checkExternalStorage() == true) {
 					
-			// Obtengo archivo de almacenamiento y su tamaño
-			File studyFile = storageBuffer.storageData.getStudyFile();
-			int size = storageBuffer.getSize();
+			// Obtengo tamaño del buffer
+			int size = samplesBuffer.getSize();
 			
 			// Obtengo buffer a almacenar
-			short[] storingBuffer = storageBuffer.getBuffer();
+			short[] storingBuffer = samplesBuffer.getBuffer();
 			
 			// Genero buffer temporal de tamaño size*sizeof(short)
 			ByteBuffer byteBuffer = ByteBuffer.allocate(size*((Short.SIZE)/8));
@@ -296,7 +288,7 @@ public class LocalStorageManager {
 			for(int i = 0; i < size; i++) byteBuffer.putShort(storingBuffer[i]);
 			
 			// Escribo
-			writeSamples(studyFile, byteBuffer);
+			writeSamples(file, byteBuffer);
 		} 
 
 	}

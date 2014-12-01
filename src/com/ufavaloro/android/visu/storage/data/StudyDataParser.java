@@ -110,7 +110,7 @@ public class StudyDataParser {
 
 		studyData.setAcquisitionData(acquisitionData);
 		studyData.setPatientData(patientData);
-		studyData.setDataBuffer(samples);
+		studyData.setSamplesBuffer(samples);
 	
 		return studyData;
 		

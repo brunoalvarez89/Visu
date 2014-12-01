@@ -26,15 +26,24 @@ public class PatientData {
 		mStudyName = new char[mStudyNameSize];
 		
 		mPatientDataBytes = mPatientNameBytes + mPatientSurnameBytes + mStudyNameBytes;
-		
 	}
 
 	public PatientData(char[] patientName, char[] patientSurname, char[] studyName) {
 		mPatientName = patientName;
 		mPatientSurname = patientSurname;
 		mStudyName = studyName;
+		
+		mPatientDataBytes = mPatientNameBytes + mPatientSurnameBytes + mStudyNameBytes;
 	}
 
+	public PatientData(String patientName, String patientSurname, String studyName) {
+		mPatientName = patientName.toCharArray();
+		mPatientSurname = patientSurname.toCharArray();
+		mStudyName = studyName.toCharArray();
+		
+		mPatientDataBytes = mPatientNameBytes + mPatientSurnameBytes + mStudyNameBytes;
+	}
+	
 	public void setPatientName(String patientName) {
 		mPatientName = patientName.toCharArray();
 	}

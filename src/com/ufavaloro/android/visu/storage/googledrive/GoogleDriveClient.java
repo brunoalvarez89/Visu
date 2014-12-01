@@ -35,7 +35,6 @@ import com.google.android.gms.drive.query.Filter;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.plus.Plus;
 
 
 public class GoogleDriveClient implements 
