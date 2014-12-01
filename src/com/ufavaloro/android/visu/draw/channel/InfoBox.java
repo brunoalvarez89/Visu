@@ -83,7 +83,7 @@ public class InfoBox{
 	}
 		
 	private void createChannelNumberLabel() {
-		String text = "Canal " + String.valueOf(mStudyData.getAcquisitionData().getAdcChannel() + 1);
+		String text = "Canal " + String.valueOf(mAdcChannelNumber + 1);
 		mChannelLabel = new Label(0, 0, 0, text);
 	}
 

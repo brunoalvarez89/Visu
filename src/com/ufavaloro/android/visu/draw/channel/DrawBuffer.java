@@ -3,6 +3,7 @@ package com.ufavaloro.android.visu.draw.channel;
 import java.util.ArrayList;
 
 import com.ufavaloro.android.visu.storage.data.AcquisitionData;
+import com.ufavaloro.android.visu.storage.data.StudyData;
 
 public class DrawBuffer {
 	
@@ -36,15 +37,16 @@ public class DrawBuffer {
 		mTotalPages = totalPages;
 		mBuffer = new short[mSize];
 		mBits = bits;
-		short zero = (short) (Math.pow(2, mBits) / 2);
-		setZero(zero);		
+		setZero();
 	}
-	
+
 	// Constructor para Offline Draw Buffer
-	public DrawBuffer(AcquisitionData acquisitionData, ArrayList<Short> samples) {
-		this.mSize = samples.size();
+	public DrawBuffer(int mAdcChannelNumber, StudyData studyData, int totalPages) {
+		mSize = studyData.getSamplesBuffer().getSize();
+		mTotalPages = totalPages;
 		mBuffer = new short[mSize];
-		for(int i = 0; i < mSize; i++) mBuffer[i] = samples.get(i);
+		mBits = studyData.getAcquisitionData().getBits();
+		mBuffer = studyData.getSamplesBuffer().getBuffer();	
 	}
 
 	// Método para almacenar muestras
@@ -131,8 +133,8 @@ public class DrawBuffer {
 	}
 
 	// Seteo el valor nulo
-	public void setZero(short zero) {
-		
+	public void setZero() {
+		short zero = (short) (Math.pow(2, mBits) / 2);
 		for(int i=0; i<mSize; i++) { 
 			mBuffer[i] = zero;
 		}

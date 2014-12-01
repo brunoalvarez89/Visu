@@ -54,32 +54,6 @@ public class SignalBox{
 /*****************************************************************************************
 * Métodos principales																	 *
 *****************************************************************************************/
-	// Constructor para Offline SignalBox
-	SignalBox(StudyData studyData, String units, ArrayList<Short> samples) {
-
-		mWidth = (int) mWidth;
-
-		mPaused = false;
-				
-		mMaxAmplitudeLabel = new Label(studyData.getAcquisitionData().getAMax());
-		mMaxAmplitudeLabel.setUnits(units);
-		
-		mMinAmplitudeLabel = new Label(studyData.getAcquisitionData().getAMin());
-		mMinAmplitudeLabel.setUnits(units);
-		
-		mMaxVoltageLabel = new Label(studyData.getAcquisitionData().getVMax());
-		mMaxVoltageLabel.setUnits("V");
-		
-		mMinVoltageLabel = new Label(studyData.getAcquisitionData().getVMin());
-		mMinVoltageLabel.setUnits("V");
-		
-		mTimeLabel = new Label();
-		mTimeLabel.setUnits("s");
-		mTimeLabelPixels = (int) (mWidth*0.15);
-		
-		mDrawBuffer = new DrawBuffer(studyData.getAcquisitionData(), samples);
-	}
-		
 	// Constructor para Online SignalBox
 	SignalBox(int adcChannelNumber, int totalPages, StudyData studyData) {
 		
@@ -97,6 +71,21 @@ public class SignalBox{
 					
 	}
 	
+	// Constructor para Ofline SignalBox
+	public SignalBox(int channelNumber, StudyData studyData) {
+		mAdcChannelNumber = channelNumber;				
+		mPaused = false;
+		mStudyData = studyData;
+		int totalPages = (int) (studyData.getSamplesBuffer().getSize() / mWidth);
+		mDrawBuffer = new DrawBuffer(mAdcChannelNumber, studyData, totalPages);
+
+		createMaxAmplitudeLabel("");
+		createMinAmplitudeLabel("");
+		createMaxVoltageLabel();
+		createMinVoltageLabel();
+		createTimeLabel();
+	}
+
 	private void createMaxAmplitudeLabel(String units) {
 		mMaxAmplitudeLabel = new Label(mStudyData.getAcquisitionData().getAMax());
 		mMaxAmplitudeLabel.setUnits(units);

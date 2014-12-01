@@ -597,17 +597,21 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	* Agregar/eliminar canales						 *
 	*************************************************************************************/
 	// Método para agregar un canal online
-	public synchronized void addChannel(StudyData studyData) {
+	public synchronized void addChannel(StudyData studyData, boolean online) {
 		
 		int channelNumber = mChannelList.size();
 		RGB color = mColorArray[channelNumber];
-		Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color
-									  , mTotalPages, studyData);
-		mChannelList.addChannel(channel);
-
-		mReferenceMatrix.addChannel();
 		
-		// Seteo sensibilidad de desplazamiento
+		if(online) {
+			Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, mTotalPages, studyData);
+			mChannelList.addChannel(channel);
+			mReferenceMatrix.addChannel();
+		} else {
+			Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, studyData);
+			mChannelList.addChannel(channel);
+			mReferenceMatrix.addChannel();
+		}
+
 		mPanSensitivity = (int) (SignalBox.getWidth() * 0.012);
 
 	}

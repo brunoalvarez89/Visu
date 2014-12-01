@@ -1,5 +1,5 @@
 /*****************************************************************************************
- * Studyctivity.java																	 *
+ * MainActivity.java																	 *
  * Clase que administra las muestras recibidas a través de Bluetooth y las envía al		 *
  * surfaceview para poder graficarlas.													 *
  ****************************************************************************************/
@@ -52,13 +52,7 @@ public class MainActivity extends Activity {
 		}
 		
 		// Empiezo a dibujar
-		//mStudy.startDrawing();
-		
-	}
-	
-	// Método que elimina un canal del SurfaceView
-	public void removeChannel(int channel) {
-		mStudy.removeChannel(channel);
+		mStudy.startDrawing();		
 	}
 
 /*****************************************************************************************
@@ -115,6 +109,7 @@ public class MainActivity extends Activity {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
 		ChannelOptionsDialog channelOptionsDialog = new ChannelOptionsDialog(this, theme);
 		channelOptionsDialog.setMainActivity(this);
+		channelOptionsDialog.setStudy(mStudy);
 		channelOptionsDialog.setChannel(channel);
 		channelOptionsDialog.setup();
 	}

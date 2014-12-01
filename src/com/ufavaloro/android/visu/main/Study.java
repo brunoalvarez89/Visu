@@ -162,17 +162,12 @@ public class Study {
 		
 		if(channel >= getTotalAdcChannels()) return;
 		
-		draw.addChannel(mStudyData[channel]);
+		draw.addChannel(mStudyData[channel], true);
 
 		draw.onlineDrawBuffersOk = true;
 	
 	}
 	
-	// Método para crear un buffer de graficación offline
-	public void createOfflineChannel(StudyData studyData, ArrayList<Short> samples) {
-		//draw.createOfflineDrawBuffer(studyData, "", samples);
-	}
-
 	public void removeChannel(int channel) {
 		draw.removeChannel(channel);
 	}
@@ -206,7 +201,7 @@ public class Study {
  	
  	private void onLocalStorageFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
- 		//createOfflineChannel(studyData, studyData.getDataBuffer());	
+ 		draw.addChannel(studyData, false);
  	}
  	
  	private void onNewSamplesBatch(short[] samples, int channel) {

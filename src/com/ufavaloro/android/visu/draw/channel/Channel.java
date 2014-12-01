@@ -24,8 +24,25 @@ public class Channel {
 	private StudyData mStudyData;
 	
 	// Offline channel constructor
-	public Channel(StudyData studyData, ArrayList<Short> samples) {
-		mSignalBox = new SignalBox(studyData, null, samples);
+	public Channel(int channelNumber, int totalScreenHeight, int totalScreenWidth
+				   , RGB channelColor, StudyData studyData) {
+		
+		setStudyData(studyData);
+		mAdcChannelNumber = channelNumber;
+		mWidth = (int) (totalScreenWidth);
+		mTotalScreenHeight = totalScreenHeight;
+		mColor = channelColor;
+		mOnline = false;
+				
+		// Creo SignalBox
+		SignalBox.setWidth((float) (totalScreenWidth*mSignalBoxWidthPercent));
+		mSignalBox = new SignalBox(channelNumber, studyData);
+		
+		// Creo InfoBox
+		InfoBox.setWidth((float) (totalScreenWidth*mInfoBoxWidthPercent));
+		InfoBox.setVerticalDivisorXPosition((int) SignalBox.getWidth());
+		mInfoBox = new InfoBox(channelNumber, studyData);
+		
 	}
 	
 	// Online channel constructor

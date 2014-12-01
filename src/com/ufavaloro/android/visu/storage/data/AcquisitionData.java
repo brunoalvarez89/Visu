@@ -33,6 +33,10 @@ public class AcquisitionData {
 	
 	}
 	
+	public AcquisitionData() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void setAdcChannel(int mAdcChannel) {
 		mAdcData.adcChannel = mAdcChannel;
 	}

@@ -1,6 +1,7 @@
 package com.ufavaloro.android.visu.main.dialogs;
 
 import com.ufavaloro.android.visu.main.MainActivity;
+import com.ufavaloro.android.visu.main.Study;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 public class ChannelOptionsDialog extends AlertDialog {
 
 	private MainActivity mMainActivity;
+	private Study mStudy;
 	private int mChannel;
 	private final CharSequence[] mOfflineChannelOptions = {"Configurar", "Ocultar"};
 	//private final CharSequence[] mOnlineChannelOptions = {"Configurar", "Iniciar estudio", "Eliminar canal"};
@@ -31,7 +33,7 @@ public class ChannelOptionsDialog extends AlertDialog {
 					
 				// Eliminar canal
     			case 1: 
-    				mMainActivity.removeChannel(mChannel);
+    				mStudy.removeChannel(mChannel);
     				break;
     				
     			default:
@@ -49,5 +51,9 @@ public class ChannelOptionsDialog extends AlertDialog {
 	
 	public void setMainActivity(MainActivity mainActivity) {
 		mMainActivity = mainActivity;
+	}
+
+	public void setStudy(Study study) {
+		mStudy = study;
 	}
 }

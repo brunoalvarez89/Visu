@@ -10,7 +10,15 @@ public class StudyData {
 	private PatientData mPatientData;
 	private StorageData mStorageData;
 	private SamplesBuffer mSamplesBuffer;
-	private boolean mMarkedForStoring = false;
+	private boolean mMarkedForStoring;
+	
+	public StudyData() {
+		mAcquisitionData = new AcquisitionData();
+		mPatientData = new PatientData();
+		mStorageData = new StorageData();
+		mSamplesBuffer = new SamplesBuffer();
+		mMarkedForStoring = false;
+	}
 	
 	public void setAcquisitionData(AcquisitionData acquisitionData) {
 		mAcquisitionData = acquisitionData;
@@ -25,9 +33,7 @@ public class StudyData {
 	}
 	
 	public void setSamplesBuffer(ArrayList<Short> samplesBuffer) {
-		for(int i = 0; i < samplesBuffer.size(); i++) {
-			mSamplesBuffer.storeSample(samplesBuffer.get(i));
-		}
+		mSamplesBuffer.createSamplesBuffer(samplesBuffer);
 	}
 	
 	public void setSamplesBuffer(SamplesBuffer samplesBuffer) {
@@ -49,12 +55,10 @@ public class StudyData {
 	public SamplesBuffer getSamplesBuffer() {
 		return mSamplesBuffer;
 	}
-
 	
 	public boolean isMarkedForStoring() {
 		return mMarkedForStoring;
 	}
-
 	
 	public void setMarkedForStoring(boolean mMarkedForStoring) {
 		this.mMarkedForStoring = mMarkedForStoring;

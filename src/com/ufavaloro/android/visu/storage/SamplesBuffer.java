@@ -5,6 +5,8 @@
 
 package com.ufavaloro.android.visu.storage;
 
+import java.util.ArrayList;
+
 import com.ufavaloro.android.visu.storage.data.AcquisitionData;
 
 public class SamplesBuffer {
@@ -34,6 +36,10 @@ public class SamplesBuffer {
 		mSamplesBuffer = new short[i * samplesPerPackage];
 	}
 	
+	public SamplesBuffer() {
+	// TODO Auto-generated constructor stub
+	}
+
 	// Método para almacenar muestras
 	public void storeSamples(short[] x) {
 		
@@ -51,16 +57,6 @@ public class SamplesBuffer {
 		}
 	
 	}
-	
-	// Método para almacenar una única muestra
-	public void storeSample(short sample) {
-		//Almaceno
-		mSamplesBuffer[mStoringIndex] = sample;
-		// Incremento índices
-		mStoringIndex++;
-		// Si llego al máximo, pongo índices en cero
-		if(mStoringIndex == mSamplesBuffer.length) mStoringIndex = 0;
-	}
 
 	
 /*****************************************************************************************
@@ -76,6 +72,14 @@ public class SamplesBuffer {
 	
 	public short[] getBuffer() {
 		return mSamplesBuffer;
+	}
+
+	
+	public void createSamplesBuffer(ArrayList<Short> samplesBuffer) {
+		mSamplesBuffer = new short[samplesBuffer.size()];
+		for(int i = 0; i < samplesBuffer.size(); i++) {
+				mSamplesBuffer[i] = samplesBuffer.get(i);
+		}
 	}
 
 }//StoringBuffer
