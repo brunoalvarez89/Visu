@@ -82,7 +82,7 @@ public class InfoBox{
 		createPausedLabel();
 	}
 		
-	private void createChannelNumberLabel() {
+	public void createChannelNumberLabel() {
 		String text = "Canal " + String.valueOf(mAdcChannelNumber + 1);
 		mChannelLabel = new Label(0, 0, 0, text);
 	}
@@ -378,7 +378,6 @@ public class InfoBox{
 
 		return i;
 	}
-
 	
 	public static int getVerticalDivisorXPosition() {
 		return mVerticalDivisorXPosition;
@@ -392,5 +391,8 @@ public class InfoBox{
 		mChannelIndex = channelIndex;
 	}
 	
+	public void setChannelNumber(int channelNumber) {
+		mAdcChannelNumber = channelNumber;
+	}
 }
 

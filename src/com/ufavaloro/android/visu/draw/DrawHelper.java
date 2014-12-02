@@ -87,8 +87,6 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	// Matriz de ubicación
 	private ReferenceMatrix mReferenceMatrix;
 
-	public RGB[] mColorArray = new RGB[10];
-
 	private int mPressedChannel;
 
 	private boolean mFlagUp = false;
@@ -141,30 +139,12 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		mReferenceMatrix = new ReferenceMatrix(mTotalHeight, mTotalWidth);
 		mReferenceMatrix.setVerticalDivisor(Channel.getSignalBoxWidthPercent()*mTotalWidth);
 		
-		// Inicializo colores
-		colorSetup();
-		
 		// Inicializo bitmaps
 		mBitmapManager = new BitmapManager(getContext());
 		bitmapSetup();
 		
 		// Inicializo Labels
 		labelSetup();
-	}
-	
-	// Método que configura los colores de los canales
-	private void colorSetup() {
-		// Genero colores
-		mColorArray[0] = new RGB(150, 0, 150); 			// Violeta
-		mColorArray[1] = new RGB(200, 75, 0); 			// Naranja
-		mColorArray[2] = new RGB(0, 116, 194); 			// Azul
-		mColorArray[3] = new RGB(0, 153, 77); 			// Verde
-		mColorArray[4] = new RGB(255, 51, 102);			// Rojo
-		mColorArray[5] = new RGB(60, 60, 60); 			// Negro
-		mColorArray[6] = new RGB(250, 0, 204); 			// Rosa
-		mColorArray[7] = new RGB(179, 189, 0); 			// Marrón
-		mColorArray[8] = new RGB(204, 204, 0); 			// Amarillo
-
 	}
 	
 	// Método que configura los Labels
@@ -209,13 +189,11 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 	// Método que recibe y almacena muestras
 	public synchronized void draw(short[] samples, int channelNumber) {
-
 		Channel channel = mChannelList.getChannelAtKey(channelNumber);
 		
 		if(mChannelList.size() == 0 || channel == null || mDrawOk == false) return;
 		
 		if (channel.getPaused() == false) channel.storeSamples(samples);
-
 	}
 
 	// Método que se llama cuando se dibuja en el SurfaceView
@@ -229,7 +207,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		canvas.drawColor(Color.LTGRAY);
 		
 		// Dibujo signal boxes
-		//drawSignalBoxes(canvas);
+		drawSignalBoxes(canvas);
 		
 		// Dibujo info boxes
 		drawInfoBoxes(canvas);
@@ -238,7 +216,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		drawBitmaps(canvas);
 		
 		// Dibujo divisiones
-		//drawDivisions(canvas);
+		drawDivisions(canvas);
 	
 		// Dibujo otros labels
 		drawOtherLabels(canvas);
@@ -249,7 +227,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 * Métodos para dibujar en el SurfaceView 												 *
 *****************************************************************************************/
 	// Método que grafica Bitmaps
-	private void drawBitmaps(Canvas canvas) {
+	private synchronized void drawBitmaps(Canvas canvas) {
 
 		ColorFilter filter = new LightingColorFilter(Color.LTGRAY, 1);
 		mPaint.setColorFilter(filter);
@@ -293,7 +271,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	// Método que dibuja el SignalBox
-	private void drawSignalBoxes(Canvas canvas) {
+	private synchronized void drawSignalBoxes(Canvas canvas) {
 
 		// Dibujo señal
 		drawSignals(canvas);
@@ -309,7 +287,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	// Método que grafica la señal
-	private void drawSignals(Canvas canvas) {
+	private synchronized void drawSignals(Canvas canvas) {
 		for (int i = 0; i < mChannelList.size(); i++) {
 
 			Channel channel = mChannelList.getChannelAtIndex(i);
@@ -365,7 +343,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 	
 	// Método para dibujar las amplitudes de la señal
-	private void drawAmplitudeLabels(Canvas canvas) {
+	private synchronized void drawAmplitudeLabels(Canvas canvas) {
 
 		for (int i = 0; i < mChannelList.size(); i++) {
 
@@ -398,7 +376,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	// Método para dibujar los valores de voltaje de la señal
-	private void drawVoltageLabels(Canvas canvas) {
+	private synchronized void drawVoltageLabels(Canvas canvas) {
 
 		for (int i = 0; i < mChannelList.size(); i++) {
 
@@ -430,7 +408,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	// Método para dibujar los valores de tiempo de la señal
-	private void drawTimeLabels(Canvas canvas) {
+	private synchronized void drawTimeLabels(Canvas canvas) {
 
 		for (int i = 0; i < mChannelList.size(); i++) {
 
@@ -474,7 +452,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	// Método que dibuja todas las Figuras en el SurfaceView
-	private void drawInfoBoxes(Canvas canvas) {
+	private synchronized void drawInfoBoxes(Canvas canvas) {
 
 		for (int i = 0; i < mChannelList.size(); i++) {
 			
@@ -535,7 +513,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 	
 	// Método para dibujar las divisiones entre canales
-	private void drawDivisions(Canvas canvas) {
+	private synchronized void drawDivisions(Canvas canvas) {
 		
 		setPaint(Color.GRAY, 3);
 		mPaint.setAlpha(130);
@@ -555,7 +533,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	// Dibujo otros labels
-	private void drawOtherLabels(Canvas canvas) {
+	private synchronized void drawOtherLabels(Canvas canvas) {
 		if(mChannelList.size() == 0) {
 			mPaint.setTextSize(mLabelAwaitingConnections.getTextSize());
 			canvas.drawText(mLabelAwaitingConnections.getText()
@@ -583,7 +561,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	// Método que configura el color y grosor del brush
-	private void setPaint(int color, float strokeWidth) {
+	private synchronized void setPaint(int color, float strokeWidth) {
 		mPaint.setColor(color);
 		mPaint.setAntiAlias(true);
 		mPaint.setStyle(Style.FILL);
@@ -598,17 +576,13 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	*************************************************************************************/
 	// Método para agregar un canal online
 	public synchronized void addChannel(StudyData studyData, boolean online) {
-		
-		int channelNumber = mChannelList.size();
-		RGB color = mColorArray[channelNumber];
-		
+	
 		if(online) {
-			Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, mTotalPages, studyData);
-			mChannelList.addChannel(channel);
+			mChannelList.addChannel(studyData.getAcquisitionData().getAdcChannel(), mTotalHeight
+									, mTotalWidth, mTotalPages, studyData);
 			mReferenceMatrix.addChannel();
 		} else {
-			Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, studyData);
-			mChannelList.addChannel(channel);
+			mChannelList.addChannel(mTotalHeight, mTotalWidth, studyData);
 			mReferenceMatrix.addChannel();
 		}
 
@@ -654,11 +628,11 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			touchPointer.y0 = touchPointer.y;
 			mTouchPointer.put(touchPointerId, touchPointer);
 
-			onTouch_Pause();
-			onTouch_DialogMenu();
+			onTouch_PauseChannel();
 			onTouch_NewStudyIcon();
-			onTouch_ConfigureChannels();
+			onTouch_ConfigureChannelsIcon();
 			onTouch_StopStudyIcon();
+			onTouch_DeletedChannelLabel();
 			mLongPressHandler.postDelayed(longPressed, 1000);
 
 			break;
@@ -692,6 +666,25 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		return true;
 	}
+	
+	// Deleted Channel Labels
+	private void onTouch_DeletedChannelLabel() {
+		if (mUiVisibility == true || mChannelList.size() == 0) {
+
+			TouchPointer tp = mTouchPointer.valueAt(0);
+		
+			for(int i = 0; i < mChannelList.getDeletedChannelsLabels().size(); i++) {
+				Label label = mChannelList.getDeletedChannelsLabels().valueAt(i);
+				int width = label.getBoundingBox().width();
+				int height = label.getBoundingBox().height();
+				if (tp.x > label.getX() && tp.x < label.getX() + width) {
+					if (tp.y < label.getY() && tp.y > label.getY() - height) {
+						mChannelList.restoreChannel(mChannelList.getDeletedChannels().keyAt(i));
+					}
+				}
+			}
+		}
+	}
 
 	// Botón de nuevo estudio
 	private void onTouch_NewStudyIcon() {
@@ -710,7 +703,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	// Botón de configurar canales
-	private void onTouch_ConfigureChannels() {
+	private void onTouch_ConfigureChannelsIcon() {
 		if (mUiVisibility == true && mChannelList.size() != 0) {
 			TouchPointer tp = mTouchPointer.valueAt(0);
 			int width = mBitmapManager.getConfigureChannelsIcon().getWidth();
@@ -738,16 +731,6 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 				}
 			}
 		}
-	}
-
-	// Menú de opciones de InfoBox
-	private void onTouch_DialogMenu() {
-		TouchPointer tp = mTouchPointer.valueAt(0);
-		int totalPointers = mTouchPointer.size();
-		long time = System.currentTimeMillis();
-		mTapTime = time;
-		int channel = mReferenceMatrix.getChannel(tp.y0, tp.x0) + 1;
-		boolean flag = false;
 	}
 
 	// Qué hago cuando el evento es Zoom en X?
@@ -885,7 +868,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	// Qué hago cuando el evento es un Double Tap?
-	private void onTouch_Pause() {
+	private void onTouch_PauseChannel() {
 
 		if (mChannelList.size() == 0) return;
 

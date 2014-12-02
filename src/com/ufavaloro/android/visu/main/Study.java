@@ -196,7 +196,7 @@ public class Study {
  	
  	private void onGoogleDriveFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
- 		//createOfflineChannel(studyData, studyData.getDataBuffer());	
+ 		draw.addChannel(studyData, false); 	
  	}
  	
  	private void onLocalStorageFileOpened(Object object) {

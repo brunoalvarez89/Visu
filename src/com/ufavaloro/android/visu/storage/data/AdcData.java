@@ -32,7 +32,7 @@ public class AdcData {
 	public int sensorBytes = sensorSize*((Character.SIZE)/8);
 	
 	// Número de canal del ADC asociado al buffer
-	public int adcChannel;
+	public int adcChannel = -1;
 	public int adcChannelBytes = (Integer.SIZE)/8;
 	
 	// Número de canal Bluetooth asociado al buffer

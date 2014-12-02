@@ -114,6 +114,9 @@ public class Channel {
 		return mColor;
 	}
 	
+	public void setColor(RGB color) {
+		mColor = color;
+	}
 	public static int getWidth() {
 		return mWidth;
 	}
