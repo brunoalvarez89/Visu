@@ -39,7 +39,8 @@ public class Study {
 	public BluetoothProtocol bluetooth;
 	public DrawHelper draw;
 
-	public StudyData[] mStudyData;
+	public StudyData[] mOnlineStudyData;
+	public ArrayList<StudyData> mOfflineStudyData;
 	
 	// Context de StudyActivity
 	private MainActivity mainActivity;
@@ -80,6 +81,8 @@ public class Study {
 		draw = (DrawHelper) mainActivity.findViewById(R.id.drawSurface);
 		bluetooth = new BluetoothProtocol(mBluetoothProtocolHandler);
 		storage = new StorageHelper(mainActivity, mStorageHelperHandler);	
+		
+		mOfflineStudyData = new ArrayList<StudyData>();
 	}
 
 /*****************************************************************************************
@@ -94,25 +97,25 @@ public class Study {
 
 		for(int i = 0; i < channelsToStore.size(); i++) {
 			int index = channelsToStore.valueAt(i);
-			mStudyData[index].setMarkedForStoring(true);
+			mOnlineStudyData[index].setMarkedForStoring(true);
 		}
 		
 		
-		for(int i = 0; i < mStudyData.length; i++) {
-			mStudyData[i].setPatientData(patientData);
+		for(int i = 0; i < mOnlineStudyData.length; i++) {
+			mOnlineStudyData[i].setPatientData(patientData);
 		}
 		
 		
 		// Creo carpetas locales y en google drive
-		storage.createStudyFolders(mStudyData);
+		storage.createStudyFolders(mOnlineStudyData);
 		
 		// Creo archivos .vis de los estudios
-		storage.createLocalStudyFiles(mStudyData);
+		storage.createLocalStudyFiles(mOnlineStudyData);
  	
  	}
  	
 	public void saveStudyToGoogleDrive() {
-		storage.createGoogleDriveStudyFiles(mStudyData);	
+		storage.createGoogleDriveStudyFiles(mOnlineStudyData);	
 	}
 
 	// Método para saber si estoy conectado a Google Drive
@@ -162,10 +165,14 @@ public class Study {
 		
 		if(channel >= getTotalAdcChannels()) return;
 		
-		draw.addChannel(mStudyData[channel], true);
+		draw.addChannel(mOnlineStudyData[channel], true);
 
 		draw.onlineDrawBuffersOk = true;
 	
+	}
+	
+	public void hideChannel(int channel) {
+		draw.hideChannel(channel);
 	}
 	
 	public void removeChannel(int channel) {
@@ -196,17 +203,19 @@ public class Study {
  	
  	private void onGoogleDriveFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
+ 		mOfflineStudyData.add(studyData);
  		draw.addChannel(studyData, false); 	
  	}
  	
  	private void onLocalStorageFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
+ 		mOfflineStudyData.add(studyData);
  		draw.addChannel(studyData, false);
  	}
  	
  	private void onNewSamplesBatch(short[] samples, int channel) {
  		if(draw.onlineDrawBuffersOk == true) draw.draw(samples, channel);
-		if(storage.recording == true) storage.saveSamplesBatch(mStudyData[channel], samples);
+		if(storage.recording == true) storage.saveSamplesBatch(mOnlineStudyData[channel], samples);
  	}
  	
  	private void onTotalAdcChannels(int totalAdcChannels) {
@@ -214,18 +223,18 @@ public class Study {
  	}
  	
  	private void onAdcData(AdcData[] adcData) {
- 		mStudyData = new StudyData[mTotalAdcChannels];
+ 		mOnlineStudyData = new StudyData[mTotalAdcChannels];
  		AcquisitionData acquisitionData;
  		SamplesBuffer samplesBuffer;
  		
  		for(int i = 0; i < mTotalAdcChannels; i++) {
- 			mStudyData[i] = new StudyData();
+ 			mOnlineStudyData[i] = new StudyData();
  			
  			acquisitionData = new AcquisitionData(adcData[i]);
- 			mStudyData[i].setAcquisitionData(acquisitionData);
+ 			mOnlineStudyData[i].setAcquisitionData(acquisitionData);
  			
- 			samplesBuffer = new SamplesBuffer(mStudyData[i].getAcquisitionData(), "");
- 			mStudyData[i].setSamplesBuffer(samplesBuffer);
+ 			samplesBuffer = new SamplesBuffer(mOnlineStudyData[i].getAcquisitionData(), "");
+ 			mOnlineStudyData[i].setSamplesBuffer(samplesBuffer);
  		}
  		
  		mAdcDataOk = true;

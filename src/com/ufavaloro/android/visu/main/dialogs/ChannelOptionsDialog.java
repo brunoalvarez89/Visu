@@ -12,8 +12,8 @@ public class ChannelOptionsDialog extends AlertDialog {
 	private MainActivity mMainActivity;
 	private Study mStudy;
 	private int mChannel;
-	private final CharSequence[] mOfflineChannelOptions = {"Configurar", "Ocultar"};
-	//private final CharSequence[] mOnlineChannelOptions = {"Configurar", "Iniciar estudio", "Eliminar canal"};
+	private final CharSequence[] mOnlineChannelOptions = {"Configurar", "Ocultar", "Eliminar"};
+	private final CharSequence[] mOfflineChannelOptions = {"Propiedades", "Ocultar", "Eliminar"};
 	
 	public ChannelOptionsDialog(Context context, int theme) {
 		super(context, theme);
@@ -21,26 +21,57 @@ public class ChannelOptionsDialog extends AlertDialog {
 
 	public void setup() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
-		//builder.setTitle("Canal " + (channel + 1));
+		builder.setTitle("Canal " + (mChannel + 1));
 	
-		builder.setItems(mOfflineChannelOptions, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int item) {
-				switch(item) {
-				// Configurar
-				case 0:
-					mMainActivity.channelConfigDialog(mChannel);
-					break;
-					
-				// Eliminar canal
-    			case 1: 
-    				mStudy.removeChannel(mChannel);
-    				break;
-    				
-    			default:
-    				break;
-				}
-        	}
-        });
+		// The channel is an on-line channel (connected to an ADC)
+		if(mStudy.mOnlineStudyData[mChannel] != null) {
+			builder.setItems(mOnlineChannelOptions, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					switch(item) {
+					// Configurar
+					case 0:
+						mMainActivity.onlineChannelConfigDialog(mChannel);
+						break;
+						
+					// Ocultar canal
+	    			case 1: 
+	    				mStudy.hideChannel(mChannel);
+	    				break;
+	    				
+	    			// Remover canal
+	    			case 2:
+	    				mStudy.removeChannel(mChannel);
+	    				
+	    			default:
+	    				break;
+					}
+	        	}
+	        });
+		// The channel is an offline channel (loaded from local storage or google drive)
+		} else {
+			builder.setItems(mOnlineChannelOptions, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					switch(item) {
+					// Properties
+					case 0:
+						mMainActivity.offlineChannelPropertiesDialog(mChannel);
+						break;
+						
+					// Ocultar canal
+	    			case 1: 
+	    				mStudy.hideChannel(mChannel);
+	    				break;
+	    				
+	    			// Remover canal
+	    			case 2:
+	    				mStudy.removeChannel(mChannel);
+	    				
+	    			default:
+	    				break;
+					}
+	        	}
+	        });
+		}
 	
 		builder.create().show();
 	}

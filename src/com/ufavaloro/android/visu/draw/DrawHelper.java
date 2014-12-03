@@ -542,14 +542,14 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 							, mPaint);
 		}
 		
-		if(mChannelList.getDeletedChannelsLabels().size() > 0 && mUiVisibility == true || mChannelList.size() == 0) {
-			for(int i = 0; i < mChannelList.getDeletedChannelsLabels().size(); i++) {
-				int channelKey = mChannelList.getDeletedChannelsLabels().keyAt(i);
-				Label label = mChannelList.getDeletedChannelsLabels().get(channelKey);
+		if(mChannelList.getHiddenChannelsLabels().size() > 0 && mUiVisibility == true || mChannelList.size() == 0) {
+			for(int i = 0; i < mChannelList.getHiddenChannelsLabels().size(); i++) {
+				int channelKey = mChannelList.getHiddenChannelsLabels().keyAt(i);
+				Label label = mChannelList.getHiddenChannelsLabels().get(channelKey);
 				label.setTextSize(getBoundedTextSize(label, mBitmapManager.getIconsWidth(), mBitmapManager.getIconsHeight()));
 				label.setX((int) ((0.05 * mTotalHeight) + (i*mBitmapManager.getIconsWidth())));
 				label.setY(mTotalHeight - mBitmapManager.getIconsHeight());
-				Channel deletedChannel = mChannelList.getDeletedChannels().get(channelKey);
+				Channel deletedChannel = mChannelList.getHiddenChannels().get(channelKey);
 				
 				int[] rgb = deletedChannel.getColor().getRGB();
 				setPaint(Color.rgb(rgb[0], rgb[1], rgb[2]), 5);
@@ -580,18 +580,22 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		if(online) {
 			mChannelList.addChannel(studyData.getAcquisitionData().getAdcChannel(), mTotalHeight
 									, mTotalWidth, mTotalPages, studyData);
-			mReferenceMatrix.addChannel();
 		} else {
 			mChannelList.addChannel(mTotalHeight, mTotalWidth, studyData);
-			mReferenceMatrix.addChannel();
 		}
 
+		mReferenceMatrix.addChannel();
 		mPanSensitivity = (int) (SignalBox.getWidth() * 0.012);
 
 	}
 
+	public synchronized void hideChannel(int channelIndex) {
+		mChannelList.hideChannel(channelIndex);
+		mReferenceMatrix.removeChannel();
+	}
+	
 	public synchronized void removeChannel(int channelIndex) {
-		mChannelList.removeChannelAtIndex(channelIndex);
+		mChannelList.removeChannel(channelIndex);
 		mReferenceMatrix.removeChannel();
 	}
 	
@@ -632,7 +636,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			onTouch_NewStudyIcon();
 			onTouch_ConfigureChannelsIcon();
 			onTouch_StopStudyIcon();
-			onTouch_DeletedChannelLabel();
+			onTouch_HiddenChannelLabel();
 			mLongPressHandler.postDelayed(longPressed, 1000);
 
 			break;
@@ -668,18 +672,19 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	}
 	
 	// Deleted Channel Labels
-	private void onTouch_DeletedChannelLabel() {
+	private void onTouch_HiddenChannelLabel() {
 		if (mUiVisibility == true || mChannelList.size() == 0) {
 
 			TouchPointer tp = mTouchPointer.valueAt(0);
 		
-			for(int i = 0; i < mChannelList.getDeletedChannelsLabels().size(); i++) {
-				Label label = mChannelList.getDeletedChannelsLabels().valueAt(i);
+			for(int i = 0; i < mChannelList.getHiddenChannelsLabels().size(); i++) {
+				Label label = mChannelList.getHiddenChannelsLabels().valueAt(i);
 				int width = label.getBoundingBox().width();
 				int height = label.getBoundingBox().height();
 				if (tp.x > label.getX() && tp.x < label.getX() + width) {
 					if (tp.y < label.getY() && tp.y > label.getY() - height) {
-						mChannelList.restoreChannel(mChannelList.getDeletedChannels().keyAt(i));
+						mChannelList.restoreChannel(mChannelList.getHiddenChannels().keyAt(i));
+						mReferenceMatrix.addChannel();
 					}
 				}
 			}
@@ -711,7 +716,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 			if (tp.x > mBitmapManager.getConfigureChannelsIconX() && tp.x < mBitmapManager.getConfigureChannelsIconX() + width) {
 				if (tp.y > mBitmapManager.getConfigureChannelsIconY() && tp.y < mBitmapManager.getConfigureChannelsIconY() + height) {
-					((MainActivity) getContext()).channelConfigDialog(-1);
+					((MainActivity) getContext()).onlineChannelConfigDialog(-1);
 				}
 			}
 		}

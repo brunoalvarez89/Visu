@@ -21,7 +21,7 @@ import com.ufavaloro.android.visu.main.Study;
 import com.ufavaloro.android.visu.main.StudyType;
 import com.ufavaloro.android.visu.storage.data.AcquisitionData;
 
-public class ChannelConfigDialog extends Dialog {
+public class OfflineChannelPropertiesDialog extends Dialog {
 	
 	private Spinner mSpinnerChannel;
 	private Spinner mSpinnerStudyType;
@@ -40,7 +40,7 @@ public class ChannelConfigDialog extends Dialog {
 	
 	private Study mStudy;
 	
-	public ChannelConfigDialog(Context context, int theme, int channel) {
+	public OfflineChannelPropertiesDialog(Context context, int theme, int channel) {
 		super(context);	
 		mContext = context;
 		if(channel != -1) mSelectedChannel = channel;
@@ -55,7 +55,7 @@ public class ChannelConfigDialog extends Dialog {
 	}
 	
 	private void inflate() {
-		setContentView(R.layout.dialog_channel_config);
+		setContentView(R.layout.dialog_online_channel_config);
 		
 		mSpinnerChannel = (Spinner) findViewById(R.id.spinnerChannel);
 		mSpinnerStudyType = (Spinner) findViewById(R.id.spinnerStudyType);
@@ -91,7 +91,7 @@ public class ChannelConfigDialog extends Dialog {
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				
 				mSelectedChannel = arg2;
-				AcquisitionData acquisitionData = mStudy.mStudyData[mSelectedChannel].getAcquisitionData();
+				AcquisitionData acquisitionData = mStudy.mOnlineStudyData[mSelectedChannel].getAcquisitionData();
 				char[] charStudyType = acquisitionData.getStudyType();
 				int intStudyType = charStudyType[0];
 				mSpinnerStudyType.setSelection(intStudyType);
@@ -128,7 +128,7 @@ public class ChannelConfigDialog extends Dialog {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				int intStudyType = arg2;
-				mStudy.mStudyData[mSelectedChannel].getAcquisitionData().setStudyType(intStudyType);
+				mStudy.mOnlineStudyData[mSelectedChannel].getAcquisitionData().setStudyType(intStudyType);
 				mTextViewAMax.setText("Valor Máximo (" + StudyType.getUnits(StudyType.values(intStudyType)) + ")");
 				mTextViewAMin.setText("Valor Mínimo (" + StudyType.getUnits(StudyType.values(intStudyType)) + ")");
 			}
@@ -203,7 +203,7 @@ public class ChannelConfigDialog extends Dialog {
 				if(String.valueOf(text).isEmpty()) return;
 				if(text.charAt(0) == '-' && text.length() == 1) return;
 
-				AcquisitionData acquisitionData = mStudy.mStudyData[mSelectedChannel].getAcquisitionData();
+				AcquisitionData acquisitionData = mStudy.mOnlineStudyData[mSelectedChannel].getAcquisitionData();
 				double d = 0;
 				
 				try {
@@ -239,7 +239,7 @@ public class ChannelConfigDialog extends Dialog {
 				if(String.valueOf(text).isEmpty()) return;
 				if(text.charAt(0) == '-' && text.length() == 1) return;
 
-				AcquisitionData acquisitionData = mStudy.mStudyData[mSelectedChannel].getAcquisitionData();
+				AcquisitionData acquisitionData = mStudy.mOnlineStudyData[mSelectedChannel].getAcquisitionData();
 				double d = 0;
 				
 				try {

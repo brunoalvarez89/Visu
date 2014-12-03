@@ -1,0 +1,178 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:descendantFocusability="beforeDescendants"
+	android:focusableInTouchMode="true">
+
+    <TextView
+        android:id="@+id/textViewStudyName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Nombre del Estudio" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" 
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/textViewStudyType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Tipo de Estudio" />
+
+            <EditText
+                android:id="@+id/editText4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/textViewPatientName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Nombre del Paciente" />
+
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/textViewBits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Resolución (Bits)" />
+
+            <EditText
+                android:id="@+id/editTextBits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" 
+                android:inputType="number">
+            </EditText>
+
+            <TextView
+                android:id="@+id/textViewVMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Voltaje Máximo (V)" />
+
+            <EditText
+                android:id="@+id/editTextVMax"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/textViewAMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Valor Máximo" />
+
+            <EditText
+                android:id="@+id/editTextAMax"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" 
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/textViewStudyTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Tiempo de adquisición" />
+
+            <EditText
+                android:id="@+id/editText5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/textViewPatientSurname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Apellido del Paciente" />
+
+            <EditText
+                android:id="@+id/editText3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/textViewFs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Frecuencia de Muestreo (Hz)" />
+
+            <EditText
+                android:id="@+id/editTextFs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" 
+                android:inputType="number">
+            </EditText>
+
+            <TextView
+                android:id="@+id/textViewVMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Voltaje Mínimo (V)" />
+
+            <EditText
+                android:id="@+id/editTextVMin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/textViewAMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Valor Mínimo" />
+
+            <EditText
+                android:id="@+id/editTextAMin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonChannelConfigOk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Aceptar" />
+
+</LinearLayout>

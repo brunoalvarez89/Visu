@@ -9,7 +9,8 @@ package com.ufavaloro.android.visu.main;
 import java.io.File;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.main.dialogs.ChannelConfigDialog;
+import com.ufavaloro.android.visu.main.dialogs.OfflineChannelPropertiesDialog;
+import com.ufavaloro.android.visu.main.dialogs.OnlineChannelConfigDialog;
 import com.ufavaloro.android.visu.main.dialogs.ChannelOptionsDialog;
 import com.ufavaloro.android.visu.main.dialogs.LoadFileFromGoogleDrive;
 import com.ufavaloro.android.visu.main.dialogs.LoadFileFromLocalStorage;
@@ -87,15 +88,6 @@ public class MainActivity extends Activity {
 		loadFromGoogleDrive.setup();
 	}
 		
-	// Dialog de configuración de canales
-	public void channelConfigDialog(int channel) {
-		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		ChannelConfigDialog channelConfigDialog = new ChannelConfigDialog(this, theme, channel);
-		channelConfigDialog.setStudy(mStudy);
-		channelConfigDialog.setup();
-		channelConfigDialog.show();
-	}
-		
 	// Dialog de parar estudio
 	public void stopStudyDialog() {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
@@ -114,6 +106,24 @@ public class MainActivity extends Activity {
 		channelOptionsDialog.setup();
 	}
 		
+	// Dialog de configuración de canales ONLINE
+	public void onlineChannelConfigDialog(int channel) {
+		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
+		OnlineChannelConfigDialog onlineChannelConfigDialog = new OnlineChannelConfigDialog(this, theme, channel);
+		onlineChannelConfigDialog.setStudy(mStudy);
+		onlineChannelConfigDialog.setup();
+		onlineChannelConfigDialog.show();
+	}
+	
+	// Dialog con las propiedades del canal OFFLINE
+	public void offlineChannelPropertiesDialog(final int channel) {
+		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
+		OfflineChannelPropertiesDialog offlineChannelPropertiesDialog = new OfflineChannelPropertiesDialog(this, theme, channel);
+		offlineChannelPropertiesDialog.setStudy(mStudy);
+		offlineChannelPropertiesDialog.setup();
+		offlineChannelPropertiesDialog.show();
+	}
+	
 /*****************************************************************************************
 * Visibilidad de Status Bar y Navigation Bar									 *
 *****************************************************************************************/
