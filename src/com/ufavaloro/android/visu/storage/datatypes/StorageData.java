@@ -33,7 +33,7 @@
  * Se agrega padding de ceros al header para que tenga un tamaño de 1024 bytes			 *
  ****************************************************************************************/
 
-package com.ufavaloro.android.visu.storage.data;
+package com.ufavaloro.android.visu.storage.datatypes;
 
 import java.io.File;
 

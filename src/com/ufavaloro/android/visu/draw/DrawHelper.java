@@ -8,13 +8,13 @@ package com.ufavaloro.android.visu.draw;
 import java.text.DecimalFormat;
 
 import com.ufavaloro.android.visu.R;
+import com.ufavaloro.android.visu.UI.MainActivity;
 import com.ufavaloro.android.visu.draw.channel.Channel;
 import com.ufavaloro.android.visu.draw.channel.ChannelList;
 import com.ufavaloro.android.visu.draw.channel.InfoBox;
 import com.ufavaloro.android.visu.draw.channel.Label;
 import com.ufavaloro.android.visu.draw.channel.SignalBox;
-import com.ufavaloro.android.visu.main.MainActivity;
-import com.ufavaloro.android.visu.storage.data.StudyData;
+import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -206,11 +206,8 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		// Fondo gris
 		canvas.drawColor(Color.LTGRAY);
 		
-		// Dibujo signal boxes
-		drawSignalBoxes(canvas);
-		
-		// Dibujo info boxes
-		drawInfoBoxes(canvas);
+		// Dibujo canales
+		drawChannels(canvas);
 		
 		// Dibujo Bitmaps
 		drawBitmaps(canvas);
@@ -226,6 +223,14 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 /*****************************************************************************************
 * Métodos para dibujar en el SurfaceView 												 *
 *****************************************************************************************/
+	// Método que grafica los canales
+	private synchronized void drawChannels(Canvas canvas) {
+		// Dibujo signal boxes
+		drawSignalBoxes(canvas);	
+		// Dibujo info boxes
+		drawInfoBoxes(canvas);
+	}
+	
 	// Método que grafica Bitmaps
 	private synchronized void drawBitmaps(Canvas canvas) {
 
@@ -716,7 +721,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 			if (tp.x > mBitmapManager.getConfigureChannelsIconX() && tp.x < mBitmapManager.getConfigureChannelsIconX() + width) {
 				if (tp.y > mBitmapManager.getConfigureChannelsIconY() && tp.y < mBitmapManager.getConfigureChannelsIconY() + height) {
-					((MainActivity) getContext()).onlineChannelConfigDialog(-1);
+					((MainActivity) getContext()).onlineChannelPropertiesDialog(-1);
 				}
 			}
 		}
@@ -1131,6 +1136,10 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceDestroyed(SurfaceHolder arg0) {
 		mDrawingThread.setRunning(false);
 		stopDrawingThread();
+	}
+
+	public ChannelList getChannelList() {
+		return mChannelList;
 	}
 
 }// DrawingSurface

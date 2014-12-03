@@ -9,7 +9,7 @@ package com.ufavaloro.android.visu.bluetooth;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import com.ufavaloro.android.visu.storage.data.AdcData;
+import com.ufavaloro.android.visu.storage.datatypes.AdcData;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;

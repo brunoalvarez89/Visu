@@ -1,23 +1,15 @@
 /*****************************************************************************************
  * MainActivity.java																	 *
- * Clase que administra las muestras recibidas a través de Bluetooth y las envía al		 *
- * surfaceview para poder graficarlas.													 *
+ * Clase que administra la interfaz de usuario.													 *
  ****************************************************************************************/
 
-package com.ufavaloro.android.visu.main;
+package com.ufavaloro.android.visu.UI;
 
 import java.io.File;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.main.dialogs.OfflineChannelPropertiesDialog;
-import com.ufavaloro.android.visu.main.dialogs.OnlineChannelConfigDialog;
-import com.ufavaloro.android.visu.main.dialogs.ChannelOptionsDialog;
-import com.ufavaloro.android.visu.main.dialogs.LoadFileFromGoogleDrive;
-import com.ufavaloro.android.visu.main.dialogs.LoadFileFromLocalStorage;
-import com.ufavaloro.android.visu.main.dialogs.MainMenuDialog;
-import com.ufavaloro.android.visu.main.dialogs.NewStudyDialog;
-import com.ufavaloro.android.visu.main.dialogs.StopStudyDialog;
-import com.ufavaloro.android.visu.storage.data.StorageData;
+import com.ufavaloro.android.visu.storage.datatypes.StorageData;
+import com.ufavaloro.android.visu.study.Study;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 import android.app.Activity;
@@ -62,66 +54,66 @@ public class MainActivity extends Activity {
 	// Dialog de menú principal
 	public void mainMenuDialog() {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		MainMenuDialog mainMenuDialog = new MainMenuDialog(this, theme);
-		mainMenuDialog.setMainActivity(this);
-		mainMenuDialog.setup();
+		MainMenuDialog dialog = new MainMenuDialog(this, theme);
+		dialog.setMainActivity(this);
+		dialog.setup();
 	}
 		
 	// Dialog de nuevo estudio
 	public void newStudyDialog() {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		NewStudyDialog newStudyDialog = new NewStudyDialog(this, theme);
-		newStudyDialog.setStudy(mStudy);
-		newStudyDialog.setup();
-		newStudyDialog.show();
+		NewStudyDialog dialog = new NewStudyDialog(this, theme);
+		dialog.setStudy(mStudy);
+		dialog.setup();
+		dialog.show();
 	}
 	
 	// Dialog para abrir un archivo desde la memoria interna
 	public void loadFileFromLocalStorageDialog() {
-		LoadFileFromLocalStorage loadFileFromLocalStorage = new LoadFileFromLocalStorage(this, mStudy);
-		loadFileFromLocalStorage.setup();
+		LoadFileFromLocalStorageDialog dialog = new LoadFileFromLocalStorageDialog(this, mStudy);
+		dialog.setup();
 	}
 
 	// Dialog para abrir un archivo desde Google Drive
 	public void loadFileFromGoogleDriveDialog() {
-		LoadFileFromGoogleDrive loadFromGoogleDrive = new LoadFileFromGoogleDrive(this, mStudy);
-		loadFromGoogleDrive.setup();
+		LoadFileFromGoogleDriveDialog dialog = new LoadFileFromGoogleDriveDialog(this, mStudy);
+		dialog.setup();
 	}
 		
 	// Dialog de parar estudio
 	public void stopStudyDialog() {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		StopStudyDialog stopStudyDialog = new StopStudyDialog(this, theme);
-		stopStudyDialog.setStudy(mStudy);
-		stopStudyDialog.setup();
+		StopStudyDialog dialog = new StopStudyDialog(this, theme);
+		dialog.setStudy(mStudy);
+		dialog.setup();
 	}
 	
 	// Dialog con las opciones del canal
 	public void channelOptionsDialog(final int channel) {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		ChannelOptionsDialog channelOptionsDialog = new ChannelOptionsDialog(this, theme);
-		channelOptionsDialog.setMainActivity(this);
-		channelOptionsDialog.setStudy(mStudy);
-		channelOptionsDialog.setChannel(channel);
-		channelOptionsDialog.setup();
+		ChannelOptionsDialog dialog = new ChannelOptionsDialog(this, theme);
+		dialog.setMainActivity(this);
+		dialog.setStudy(mStudy);
+		dialog.setChannel(channel);
+		dialog.setup();
 	}
 		
 	// Dialog de configuración de canales ONLINE
-	public void onlineChannelConfigDialog(int channel) {
+	public void onlineChannelPropertiesDialog(int channel) {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		OnlineChannelConfigDialog onlineChannelConfigDialog = new OnlineChannelConfigDialog(this, theme, channel);
-		onlineChannelConfigDialog.setStudy(mStudy);
-		onlineChannelConfigDialog.setup();
-		onlineChannelConfigDialog.show();
+		OnlineChannelPropertiesDialog dialog = new OnlineChannelPropertiesDialog(this, theme, channel);
+		dialog.setStudy(mStudy);
+		dialog.setup();
+		dialog.show();
 	}
 	
 	// Dialog con las propiedades del canal OFFLINE
 	public void offlineChannelPropertiesDialog(final int channel) {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		OfflineChannelPropertiesDialog offlineChannelPropertiesDialog = new OfflineChannelPropertiesDialog(this, theme, channel);
-		offlineChannelPropertiesDialog.setStudy(mStudy);
-		offlineChannelPropertiesDialog.setup();
-		offlineChannelPropertiesDialog.show();
+		OfflineChannelPropertiesDialog dialog = new OfflineChannelPropertiesDialog(this, theme, channel);
+		dialog.setStudy(mStudy);
+		dialog.setup();
+		dialog.show();
 	}
 	
 /*****************************************************************************************

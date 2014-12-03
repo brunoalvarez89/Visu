@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.main;
+package com.ufavaloro.android.visu.study;
 
 public enum StudyType {
 

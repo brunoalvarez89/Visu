@@ -1,9 +1,9 @@
-package com.ufavaloro.android.visu.main.dialogs;
+package com.ufavaloro.android.visu.UI;
 
 import java.util.ArrayList;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.main.Study;
+import com.ufavaloro.android.visu.study.Study;
 
 import android.app.Dialog;
 import android.content.Context;

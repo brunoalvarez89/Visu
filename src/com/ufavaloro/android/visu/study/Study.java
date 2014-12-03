@@ -3,7 +3,7 @@
  * Clase que administra todas las otras clases.											 *
  ****************************************************************************************/
 
-package com.ufavaloro.android.visu.main;
+package com.ufavaloro.android.visu.study;
 
 import java.util.ArrayList;
 
@@ -13,17 +13,18 @@ import android.os.Message;
 import android.util.SparseArray;
 
 import com.ufavaloro.android.visu.R;
+import com.ufavaloro.android.visu.UI.MainActivity;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocol;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocolMessage;
 import com.ufavaloro.android.visu.draw.DrawHelper;
 import com.ufavaloro.android.visu.storage.SamplesBuffer;
 import com.ufavaloro.android.visu.storage.StorageHelper;
 import com.ufavaloro.android.visu.storage.StorageHelperMessage;
-import com.ufavaloro.android.visu.storage.data.AcquisitionData;
-import com.ufavaloro.android.visu.storage.data.AdcData;
-import com.ufavaloro.android.visu.storage.data.PatientData;
-import com.ufavaloro.android.visu.storage.data.StorageData;
-import com.ufavaloro.android.visu.storage.data.StudyData;
+import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
+import com.ufavaloro.android.visu.storage.datatypes.AdcData;
+import com.ufavaloro.android.visu.storage.datatypes.PatientData;
+import com.ufavaloro.android.visu.storage.datatypes.StorageData;
+import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -39,8 +40,8 @@ public class Study {
 	public BluetoothProtocol bluetooth;
 	public DrawHelper draw;
 
-	public StudyData[] mOnlineStudyData;
-	public ArrayList<StudyData> mOfflineStudyData;
+	public StudyData[] onlineStudyData;
+	public ArrayList<StudyData> offlineStudyData;
 	
 	// Context de StudyActivity
 	private MainActivity mainActivity;
@@ -82,7 +83,7 @@ public class Study {
 		bluetooth = new BluetoothProtocol(mBluetoothProtocolHandler);
 		storage = new StorageHelper(mainActivity, mStorageHelperHandler);	
 		
-		mOfflineStudyData = new ArrayList<StudyData>();
+		offlineStudyData = new ArrayList<StudyData>();
 	}
 
 /*****************************************************************************************
@@ -97,25 +98,25 @@ public class Study {
 
 		for(int i = 0; i < channelsToStore.size(); i++) {
 			int index = channelsToStore.valueAt(i);
-			mOnlineStudyData[index].setMarkedForStoring(true);
+			onlineStudyData[index].setMarkedForStoring(true);
 		}
 		
 		
-		for(int i = 0; i < mOnlineStudyData.length; i++) {
-			mOnlineStudyData[i].setPatientData(patientData);
+		for(int i = 0; i < onlineStudyData.length; i++) {
+			onlineStudyData[i].setPatientData(patientData);
 		}
 		
 		
 		// Creo carpetas locales y en google drive
-		storage.createStudyFolders(mOnlineStudyData);
+		storage.createStudyFolders(onlineStudyData);
 		
 		// Creo archivos .vis de los estudios
-		storage.createLocalStudyFiles(mOnlineStudyData);
+		storage.createLocalStudyFiles(onlineStudyData);
  	
  	}
  	
 	public void saveStudyToGoogleDrive() {
-		storage.createGoogleDriveStudyFiles(mOnlineStudyData);	
+		storage.createGoogleDriveStudyFiles(onlineStudyData);	
 	}
 
 	// Método para saber si estoy conectado a Google Drive
@@ -165,7 +166,7 @@ public class Study {
 		
 		if(channel >= getTotalAdcChannels()) return;
 		
-		draw.addChannel(mOnlineStudyData[channel], true);
+		draw.addChannel(onlineStudyData[channel], true);
 
 		draw.onlineDrawBuffersOk = true;
 	
@@ -203,19 +204,19 @@ public class Study {
  	
  	private void onGoogleDriveFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
- 		mOfflineStudyData.add(studyData);
+ 		offlineStudyData.add(studyData);
  		draw.addChannel(studyData, false); 	
  	}
  	
  	private void onLocalStorageFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
- 		mOfflineStudyData.add(studyData);
+ 		offlineStudyData.add(studyData);
  		draw.addChannel(studyData, false);
  	}
  	
  	private void onNewSamplesBatch(short[] samples, int channel) {
  		if(draw.onlineDrawBuffersOk == true) draw.draw(samples, channel);
-		if(storage.recording == true) storage.saveSamplesBatch(mOnlineStudyData[channel], samples);
+		if(storage.recording == true) storage.saveSamplesBatch(onlineStudyData[channel], samples);
  	}
  	
  	private void onTotalAdcChannels(int totalAdcChannels) {
@@ -223,18 +224,18 @@ public class Study {
  	}
  	
  	private void onAdcData(AdcData[] adcData) {
- 		mOnlineStudyData = new StudyData[mTotalAdcChannels];
+ 		onlineStudyData = new StudyData[mTotalAdcChannels];
  		AcquisitionData acquisitionData;
  		SamplesBuffer samplesBuffer;
  		
  		for(int i = 0; i < mTotalAdcChannels; i++) {
- 			mOnlineStudyData[i] = new StudyData();
+ 			onlineStudyData[i] = new StudyData();
  			
  			acquisitionData = new AcquisitionData(adcData[i]);
- 			mOnlineStudyData[i].setAcquisitionData(acquisitionData);
+ 			onlineStudyData[i].setAcquisitionData(acquisitionData);
  			
- 			samplesBuffer = new SamplesBuffer(mOnlineStudyData[i].getAcquisitionData(), "");
- 			mOnlineStudyData[i].setSamplesBuffer(samplesBuffer);
+ 			samplesBuffer = new SamplesBuffer(onlineStudyData[i].getAcquisitionData(), "");
+ 			onlineStudyData[i].setSamplesBuffer(samplesBuffer);
  		}
  		
  		mAdcDataOk = true;

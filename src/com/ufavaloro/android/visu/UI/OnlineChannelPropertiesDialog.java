@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.main.dialogs;
+package com.ufavaloro.android.visu.UI;
 
 import java.util.ArrayList;
 
@@ -17,11 +17,11 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.main.Study;
-import com.ufavaloro.android.visu.main.StudyType;
-import com.ufavaloro.android.visu.storage.data.AcquisitionData;
+import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
+import com.ufavaloro.android.visu.study.Study;
+import com.ufavaloro.android.visu.study.StudyType;
 
-public class OfflineChannelPropertiesDialog extends Dialog {
+public class OnlineChannelPropertiesDialog extends Dialog {
 	
 	private Spinner mSpinnerChannel;
 	private Spinner mSpinnerStudyType;
@@ -40,7 +40,7 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 	
 	private Study mStudy;
 	
-	public OfflineChannelPropertiesDialog(Context context, int theme, int channel) {
+	public OnlineChannelPropertiesDialog(Context context, int theme, int channel) {
 		super(context);	
 		mContext = context;
 		if(channel != -1) mSelectedChannel = channel;
@@ -55,28 +55,28 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 	}
 	
 	private void inflate() {
-		setContentView(R.layout.dialog_online_channel_config);
+		setContentView(R.layout.dialog_online_channel_properties);
 		
-		mSpinnerChannel = (Spinner) findViewById(R.id.spinnerChannel);
-		mSpinnerStudyType = (Spinner) findViewById(R.id.spinnerStudyType);
+		mSpinnerChannel = (Spinner) findViewById(R.id.spinnerOnlineChannel);
+		mSpinnerStudyType = (Spinner) findViewById(R.id.spinnerOnlineStudyType);
 		
-		mEditTextBits = (EditText) findViewById(R.id.editTextBits);
+		mEditTextBits = (EditText) findViewById(R.id.editTextOnlineBits);
 		mEditTextBits.setEnabled(false);
 		
-		mEditTextFs = (EditText) findViewById(R.id.editTextFs);
+		mEditTextFs = (EditText) findViewById(R.id.editTextOnlineFs);
 		mEditTextFs.setEnabled(false);
 		
-		mEditTextVMax = (EditText) findViewById(R.id.editTextVMax);
+		mEditTextVMax = (EditText) findViewById(R.id.editTextOnlineVMax);
 		mEditTextVMax.setEnabled(false);
 		
-		mEditTextVMin = (EditText) findViewById(R.id.editTextVMin);
+		mEditTextVMin = (EditText) findViewById(R.id.editTextOnlineVMin);
 		mEditTextVMin.setEnabled(false);
 		
-		mEditTextAMax = (EditText) findViewById(R.id.editTextAMax);
-		mTextViewAMax = (TextView) findViewById(R.id.textViewAMax);
+		mEditTextAMax = (EditText) findViewById(R.id.editTextOnlineAMax);
+		mTextViewAMax = (TextView) findViewById(R.id.textViewOnlineAMax);
 		
-		mEditTextAMin = (EditText) findViewById(R.id.editTextAMin);
-		mTextViewAMin = (TextView) findViewById(R.id.textViewAMin);
+		mEditTextAMin = (EditText) findViewById(R.id.editTextOnlineAMin);
+		mTextViewAMin = (TextView) findViewById(R.id.textViewOnlineAMin);
 		
 		mButtonChannelConfigOk = (Button) findViewById(R.id.buttonChannelConfigOk);
 
@@ -91,7 +91,7 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				
 				mSelectedChannel = arg2;
-				AcquisitionData acquisitionData = mStudy.mOnlineStudyData[mSelectedChannel].getAcquisitionData();
+				AcquisitionData acquisitionData = mStudy.onlineStudyData[mSelectedChannel].getAcquisitionData();
 				char[] charStudyType = acquisitionData.getStudyType();
 				int intStudyType = charStudyType[0];
 				mSpinnerStudyType.setSelection(intStudyType);
@@ -128,7 +128,7 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				int intStudyType = arg2;
-				mStudy.mOnlineStudyData[mSelectedChannel].getAcquisitionData().setStudyType(intStudyType);
+				mStudy.onlineStudyData[mSelectedChannel].getAcquisitionData().setStudyType(intStudyType);
 				mTextViewAMax.setText("Valor Máximo (" + StudyType.getUnits(StudyType.values(intStudyType)) + ")");
 				mTextViewAMin.setText("Valor Mínimo (" + StudyType.getUnits(StudyType.values(intStudyType)) + ")");
 			}
@@ -203,7 +203,7 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 				if(String.valueOf(text).isEmpty()) return;
 				if(text.charAt(0) == '-' && text.length() == 1) return;
 
-				AcquisitionData acquisitionData = mStudy.mOnlineStudyData[mSelectedChannel].getAcquisitionData();
+				AcquisitionData acquisitionData = mStudy.onlineStudyData[mSelectedChannel].getAcquisitionData();
 				double d = 0;
 				
 				try {
@@ -239,7 +239,7 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 				if(String.valueOf(text).isEmpty()) return;
 				if(text.charAt(0) == '-' && text.length() == 1) return;
 
-				AcquisitionData acquisitionData = mStudy.mOnlineStudyData[mSelectedChannel].getAcquisitionData();
+				AcquisitionData acquisitionData = mStudy.onlineStudyData[mSelectedChannel].getAcquisitionData();
 				double d = 0;
 				
 				try {

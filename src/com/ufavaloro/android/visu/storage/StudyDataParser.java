@@ -1,9 +1,14 @@
-package com.ufavaloro.android.visu.storage.data;
+package com.ufavaloro.android.visu.storage;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
+import com.ufavaloro.android.visu.storage.datatypes.AdcData;
+import com.ufavaloro.android.visu.storage.datatypes.PatientData;
+import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
 public class StudyDataParser {
 	

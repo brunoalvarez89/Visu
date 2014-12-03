@@ -2,8 +2,8 @@ package com.ufavaloro.android.visu.draw.channel;
 
 import java.util.ArrayList;
 
-import com.ufavaloro.android.visu.storage.data.AcquisitionData;
-import com.ufavaloro.android.visu.storage.data.StudyData;
+import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
+import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
 public class DrawBuffer {
 	

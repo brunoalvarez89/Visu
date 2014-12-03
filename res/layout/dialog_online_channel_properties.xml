@@ -6,26 +6,26 @@
 	android:focusableInTouchMode="true">
 
     <TextView
-        android:id="@+id/textViewChannel"
+        android:id="@+id/textViewOnlineChannel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Canal" />
 
     <Spinner
-        android:id="@+id/spinnerChannel"
+        android:id="@+id/spinnerOnlineChannel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/textViewStudyType"
+        android:id="@+id/textViewOnlineStudyType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Tipo de estudio" />
 
     <Spinner
-        android:id="@+id/spinnerStudyType"
+        android:id="@+id/spinnerOnlineStudyType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
@@ -42,14 +42,14 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/textViewBits"
+                android:id="@+id/textViewOnlineBits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Resolución (Bits)" />
 
             <EditText
-                android:id="@+id/editTextBits"
+                android:id="@+id/editTextOnlineBits"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" 
@@ -57,27 +57,27 @@
             </EditText>
 
             <TextView
-                android:id="@+id/textViewVMax"
+                android:id="@+id/textViewOnlineVMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Voltaje Máximo (V)" />
+                android:text="Voltaje Mínimo (V)" />
 
             <EditText
-                android:id="@+id/editTextVMax"
+                android:id="@+id/editTextOnlineVMin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
 
             <TextView
-                android:id="@+id/textViewAMax"
+                android:id="@+id/textViewOnlineAMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Valor Máximo" />
+                android:text="Valor Mínimo" />
 
             <EditText
-                android:id="@+id/editTextAMax"
+                android:id="@+id/editTextOnlineAMin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
@@ -90,48 +90,48 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/textViewFs"
+                android:id="@+id/textViewOnlineFs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Frecuencia de Muestreo (Hz)" />
 
             <EditText
-                android:id="@+id/editTextFs"
+                android:id="@+id/editTextOnlineFs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" 
                 android:inputType="number">
             </EditText>
 
             <TextView
-                android:id="@+id/textViewVMin"
+                android:id="@+id/textViewOnlineVMax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Voltaje Mínimo (V)" />
+                android:text="Voltaje Máximo (V)" />
 
             <EditText
-                android:id="@+id/editTextVMin"
+                android:id="@+id/editTextOnlineVMax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
 
             <TextView
-                android:id="@+id/textViewAMin"
+                android:id="@+id/textViewOnlineAMax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Valor Mínimo" />
+                android:text="Valor Máximo" />
 
             <EditText
-                android:id="@+id/editTextAMin"
+                android:id="@+id/editTextOnlineAMax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
 
     <Button
-        android:id="@+id/buttonChannelConfigOk"
+        android:id="@+id/buttonOnlineChannelConfigOk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Aceptar" />

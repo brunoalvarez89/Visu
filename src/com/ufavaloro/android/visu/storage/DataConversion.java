@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.storage.data;
+package com.ufavaloro.android.visu.storage;
 
 import java.nio.ByteBuffer;
 

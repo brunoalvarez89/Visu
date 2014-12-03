@@ -1,7 +1,6 @@
-package com.ufavaloro.android.visu.main.dialogs;
+package com.ufavaloro.android.visu.UI;
 
-import com.ufavaloro.android.visu.main.MainActivity;
-import com.ufavaloro.android.visu.main.Study;
+import com.ufavaloro.android.visu.study.Study;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,13 +23,13 @@ public class ChannelOptionsDialog extends AlertDialog {
 		builder.setTitle("Canal " + (mChannel + 1));
 	
 		// The channel is an on-line channel (connected to an ADC)
-		if(mStudy.mOnlineStudyData[mChannel] != null) {
+		if(mStudy.draw.getChannelList().get) {
 			builder.setItems(mOnlineChannelOptions, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 					switch(item) {
 					// Configurar
 					case 0:
-						mMainActivity.onlineChannelConfigDialog(mChannel);
+						mMainActivity.onlineChannelPropertiesDialog(mChannel);
 						break;
 						
 					// Ocultar canal

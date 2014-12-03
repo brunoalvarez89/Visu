@@ -1,20 +1,19 @@
-package com.ufavaloro.android.visu.main.dialogs;
+package com.ufavaloro.android.visu.UI;
 
 import android.widget.Toast;
 
 import com.samsung.sprc.fileselector.FileOperation;
 import com.samsung.sprc.fileselector.FileSelector;
 import com.samsung.sprc.fileselector.OnHandleFileListener;
-import com.ufavaloro.android.visu.main.MainActivity;
-import com.ufavaloro.android.visu.main.Study;
+import com.ufavaloro.android.visu.study.Study;
 
-public class LoadFileFromLocalStorage {
+public class LoadFileFromLocalStorageDialog {
 
 	private final String[] mFileFilter = { "*.*", ".txt"};
 	private MainActivity mMainActivity;
 	private Study mStudy;
 	
-	public LoadFileFromLocalStorage(MainActivity mainActivity, Study study) {
+	public LoadFileFromLocalStorageDialog(MainActivity mainActivity, Study study) {
 		mMainActivity = mainActivity;
 		mStudy = study;
 	}

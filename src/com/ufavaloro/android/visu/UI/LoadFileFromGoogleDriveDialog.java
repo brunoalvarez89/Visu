@@ -1,21 +1,20 @@
-package com.ufavaloro.android.visu.main.dialogs;
+package com.ufavaloro.android.visu.UI;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
-import com.ufavaloro.android.visu.main.MainActivity;
-import com.ufavaloro.android.visu.main.Study;
+import com.ufavaloro.android.visu.study.Study;
 
 import android.content.IntentSender;
 import android.content.IntentSender.SendIntentException;
 import android.widget.Toast;
 
-public class LoadFileFromGoogleDrive{
+public class LoadFileFromGoogleDriveDialog{
 
 	private Study mStudy;
 	private MainActivity mStudyActivity;
 	private static final int REQUEST_CODE_OPENER = 1;
 
-	public LoadFileFromGoogleDrive(MainActivity studyActivity, Study study) {
+	public LoadFileFromGoogleDriveDialog(MainActivity studyActivity, Study study) {
 		mStudyActivity = studyActivity;
 		mStudy = study;
 	}

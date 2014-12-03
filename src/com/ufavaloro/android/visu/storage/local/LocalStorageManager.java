@@ -11,8 +11,8 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import com.ufavaloro.android.visu.storage.SamplesBuffer;
-import com.ufavaloro.android.visu.storage.data.StorageData;
-import com.ufavaloro.android.visu.storage.data.StudyData;
+import com.ufavaloro.android.visu.storage.datatypes.StorageData;
+import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
 import android.os.Environment;
 

@@ -6,17 +6,18 @@
 	android:focusableInTouchMode="true">
 
     <TextView
-        android:id="@+id/textViewStudyName"
+        android:id="@+id/textViewOfflineStudyName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Nombre del Estudio" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/editTextOfflineStudyName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10" />
+        android:ems="10"
+        android:inputType="textPersonName" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,41 +31,43 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/textViewStudyType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Tipo de Estudio" />
-
-            <EditText
-                android:id="@+id/editText4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/textViewPatientName"
+                android:id="@+id/textViewOfflinePatientName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Nombre del Paciente" />
 
             <EditText
-                android:id="@+id/editText1"
+                android:id="@+id/editTextOfflinePatientName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/textViewOfflineStudyType	"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Tipo de Estudio" />
+
+            <EditText
+                android:id="@+id/editTextOfflineStudyType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" >
 
                 <requestFocus />
             </EditText>
 
             <TextView
-                android:id="@+id/textViewBits"
+                android:id="@+id/textViewOfflineBits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Resolución (Bits)" />
 
             <EditText
-                android:id="@+id/editTextBits"
+                android:id="@+id/editTextOfflineBits"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" 
@@ -72,27 +75,27 @@
             </EditText>
 
             <TextView
-                android:id="@+id/textViewVMax"
+                android:id="@+id/textViewOfflineVMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Voltaje Máximo (V)" />
+                android:text="Voltaje Mínimo (V)" />
 
             <EditText
-                android:id="@+id/editTextVMax"
+                android:id="@+id/editTextOfflineVMin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
 
             <TextView
-                android:id="@+id/textViewAMax"
+                android:id="@+id/textViewOfflineAMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Valor Máximo" />
+                android:text="Valor Mínimo" />
 
             <EditText
-                android:id="@+id/editTextAMax"
+                android:id="@+id/editTextOfflineAMin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
@@ -105,65 +108,66 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/textViewStudyTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Tiempo de adquisición" />
-
-            <EditText
-                android:id="@+id/editText5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/textViewPatientSurname"
+                android:id="@+id/textViewOfflinePatientSurname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Apellido del Paciente" />
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/editTextOfflinePatientSurname"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" />
 
             <TextView
-                android:id="@+id/textViewFs"
+                android:id="@+id/textViewOfflineAcquisitionTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiempo de adquisición" />
+
+            <EditText
+                android:id="@+id/editTextOfflineAcquisitionTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/textViewOfflineFs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Frecuencia de Muestreo (Hz)" />
 
             <EditText
-                android:id="@+id/editTextFs"
+                android:id="@+id/editTextOfflineFs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" 
                 android:inputType="number">
             </EditText>
 
             <TextView
-                android:id="@+id/textViewVMin"
+                android:id="@+id/textViewOfflineVMax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Voltaje Mínimo (V)" />
+                android:text="Voltaje Máximo (V)" />
 
             <EditText
-                android:id="@+id/editTextVMin"
+                android:id="@+id/editTextOfflineVMax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </EditText>
 
             <TextView
-                android:id="@+id/textViewAMin"
+                android:id="@+id/textViewOfflineAMax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Valor Mínimo" />
+                android:text="Valor Máximo" />
 
             <EditText
-                android:id="@+id/editTextAMin"
+                android:id="@+id/editTextOfflineAMax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>

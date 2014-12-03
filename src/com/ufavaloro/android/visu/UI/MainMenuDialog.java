@@ -1,6 +1,5 @@
-package com.ufavaloro.android.visu.main.dialogs;
+package com.ufavaloro.android.visu.UI;
 
-import com.ufavaloro.android.visu.main.MainActivity;
 
 import android.app.AlertDialog;
 

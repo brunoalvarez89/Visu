@@ -23,18 +23,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
+import com.ufavaloro.android.visu.UI.MainActivity;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocolMessage;
-import com.ufavaloro.android.visu.main.Study;
-import com.ufavaloro.android.visu.main.MainActivity;
-import com.ufavaloro.android.visu.storage.data.AcquisitionData;
-import com.ufavaloro.android.visu.storage.data.AdcData;
-import com.ufavaloro.android.visu.storage.data.DataConversion;
-import com.ufavaloro.android.visu.storage.data.PatientData;
-import com.ufavaloro.android.visu.storage.data.StudyData;
-import com.ufavaloro.android.visu.storage.data.StudyDataParser;
+import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
+import com.ufavaloro.android.visu.storage.datatypes.AdcData;
+import com.ufavaloro.android.visu.storage.datatypes.PatientData;
+import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 import com.ufavaloro.android.visu.storage.googledrive.GoogleDriveManager;
 import com.ufavaloro.android.visu.storage.googledrive.GoogleDriveManagerMessage;
 import com.ufavaloro.android.visu.storage.local.LocalStorageManager;
+import com.ufavaloro.android.visu.study.Study;
 
 public class StorageHelper {
 	

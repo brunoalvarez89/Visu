@@ -7,7 +7,7 @@ package com.ufavaloro.android.visu.storage;
 
 import java.util.ArrayList;
 
-import com.ufavaloro.android.visu.storage.data.AcquisitionData;
+import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
 
 public class SamplesBuffer {
 	
