@@ -87,7 +87,8 @@ public class ChannelList {
 	}
 
 	// Add online channel
-	public void addChannel(int channelNumber, int mTotalHeight, int mTotalWidth, int mTotalPages, StudyData studyData) {
+	public void addChannel(int mTotalHeight, int mTotalWidth, int mTotalPages, StudyData studyData) {
+		int channelNumber = studyData.getAcquisitionData().getAdcChannel();
 		// Genero canal
 		RGB color = mColorArray[channelNumber];
 		Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, mTotalPages, studyData);

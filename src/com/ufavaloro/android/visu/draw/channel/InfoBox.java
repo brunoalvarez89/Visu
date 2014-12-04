@@ -41,8 +41,8 @@ public class InfoBox{
 	private final double mElapsedTimeLabelHeightPercent = 0.1;
 	
 	// Label de Fs
-	private Label mFsLabel;
-	private final double mFsLabelHeightPercent = 0.1;
+	private Label mPatientLabel;
+	private final double mPatientLabelHeightPercent = 0.1;
 	
 	// Label de Resolución
 	private Label mBitsLabel;
@@ -75,11 +75,11 @@ public class InfoBox{
 		
 		createChannelNumberLabel();
 		createElapsedTimeLabel();
-		createFsLabel();
-		createBitsLabel();
-		createHorizontalZoomLabel();
-		createVerticalZoomLabel();
-		createPausedLabel();
+		//createPatientLabel();
+		//createBitsLabel();
+		//createHorizontalZoomLabel();
+		//createVerticalZoomLabel();
+		//createPausedLabel();
 	}
 		
 	public void createChannelNumberLabel() {
@@ -92,10 +92,10 @@ public class InfoBox{
 		mElapsedTimeLabel = new Label(0, 0, 0, text);
 	}
 	
-	private void createFsLabel() {
+	private void createPatientLabel() {
 		double fs = mStudyData.getAcquisitionData().getFs();
 		String text = "Fs: " + (int) fs + " Hz";
-		mFsLabel = new Label(0, 0, 0, text);
+		mPatientLabel = new Label(0, 0, 0, text);
 	}
 	
 	private void createBitsLabel() {
@@ -135,12 +135,12 @@ public class InfoBox{
 		mLabelList.add(mElapsedTimeLabel);
 	}
 
-	private void updateFsLabelSize() {
-		int textSize = getBoundedTextSize(mFsLabel, mLabelWidthPercent * mWidth
-										  , mFsLabelHeightPercent * mHeight);
-		mFsLabel.setTextSize(textSize);
+	private void updatePatientLabelSize() {
+		int textSize = getBoundedTextSize(mPatientLabel, mLabelWidthPercent * mWidth
+										  , mPatientLabelHeightPercent * mHeight);
+		mPatientLabel.setTextSize(textSize);
 
-		mLabelList.add(mFsLabel);
+		mLabelList.add(mPatientLabel);
 	}
 	
 	private void updateBitsLabelSize() {
@@ -213,11 +213,11 @@ public class InfoBox{
 	
 	}
 
-	// Acualizo el Label de Fs
-	private void updateFsLabelPosition() {
+	// Update Patient Label
+	private void updatePatientLabelPosition() {
 		
-		mFsLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
-		mFsLabel.setY((int) (mFsLabel.getBoundingBox().height()
+		mPatientLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
+		mPatientLabel.setY((int) (mPatientLabel.getBoundingBox().height()
 					         + mElapsedTimeLabel.getY()
 					         + mInterLabelPadding));
 	
@@ -228,7 +228,7 @@ public class InfoBox{
 		
 		mBitsLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
 		mBitsLabel.setY((int) (mBitsLabel.getBoundingBox().height()
-					    	   + mFsLabel.getY()
+					    	   + mPatientLabel.getY()
 						       + mInterLabelPadding));
 	
 	}
@@ -274,11 +274,11 @@ public class InfoBox{
 		// Actualizo tamaños
 		updateChannelNumberLabelSize();
 		updateElapsedTimeLabelSize();
-		updateFsLabelSize();
-		updateBitsLabelSize();
-		updateHorizontalZoomLabelSize(1);
-		updateVerticalZoomLabelSize(1);
-		updatePausedLabelSize();
+		//updatePatientLabelSize();
+		//updateBitsLabelSize();
+		//updateHorizontalZoomLabelSize(1);
+		//updateVerticalZoomLabelSize(1);
+		//updatePausedLabelSize();
 		
 		// Seteo tamaño mínimo global de texto
 		setMinimumSize();
@@ -286,11 +286,11 @@ public class InfoBox{
 		// Actualizo posiciones
 		updateChannelNumberLabelPosition();
 		updateElapsedTimeLabelPosition();
-		updateFsLabelPosition();
-		updateBitsLabelPosition();
-		updateHorizontalZoomLabelPosition(1);
-		updateVerticalZoomLabelPosition(1);
-		UpdatePausedLabelPosition();
+		//updatePatientLabelPosition();
+		//updateBitsLabelPosition();
+		//updateHorizontalZoomLabelPosition(1);
+		//updateVerticalZoomLabelPosition(1);
+		//UpdatePausedLabelPosition();
 
 	}
 
@@ -307,7 +307,7 @@ public class InfoBox{
 	}
 	
 	public Label getLabelFs() {
-		return mFsLabel;
+		return mPatientLabel;
 	}
 	
 	public Label getLabelBits() {

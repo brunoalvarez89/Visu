@@ -8,6 +8,7 @@ package com.ufavaloro.android.visu.UI;
 import java.io.File;
 
 import com.ufavaloro.android.visu.R;
+import com.ufavaloro.android.visu.draw.channel.Channel;
 import com.ufavaloro.android.visu.storage.datatypes.StorageData;
 import com.ufavaloro.android.visu.study.Study;
 import com.google.android.gms.drive.DriveId;
@@ -89,7 +90,7 @@ public class MainActivity extends Activity {
 	}
 	
 	// Dialog con las opciones del canal
-	public void channelOptionsDialog(final int channel) {
+	public void channelOptionsDialog(Channel channel) {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
 		ChannelOptionsDialog dialog = new ChannelOptionsDialog(this, theme);
 		dialog.setMainActivity(this);
@@ -108,7 +109,7 @@ public class MainActivity extends Activity {
 	}
 	
 	// Dialog con las propiedades del canal OFFLINE
-	public void offlineChannelPropertiesDialog(final int channel) {
+	public void offlineChannelPropertiesDialog(Channel channel) {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
 		OfflineChannelPropertiesDialog dialog = new OfflineChannelPropertiesDialog(this, theme, channel);
 		dialog.setStudy(mStudy);

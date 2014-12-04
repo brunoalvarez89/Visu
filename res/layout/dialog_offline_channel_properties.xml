@@ -133,14 +133,14 @@
                 android:inputType="textPersonName" />
 
             <TextView
-                android:id="@+id/textViewOfflineFs"
+                android:id="@+id/textViewSensor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Frecuencia de Muestreo (Hz)" />
+                android:text="Sensor Adquisidor" />
 
             <EditText
-                android:id="@+id/editTextOfflineFs"
+                android:id="@+id/editTextSensor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" 
                 android:inputType="number">
@@ -172,11 +172,5 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
-
-    <Button
-        android:id="@+id/buttonChannelConfigOk"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Aceptar" />
 
 </LinearLayout>

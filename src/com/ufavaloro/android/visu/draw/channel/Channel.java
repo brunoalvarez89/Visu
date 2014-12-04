@@ -32,7 +32,7 @@ public class Channel {
 		mWidth = (int) (totalScreenWidth);
 		mTotalScreenHeight = totalScreenHeight;
 		mColor = channelColor;
-		mOnline = false;
+		setOnline(false);
 				
 		// Creo SignalBox
 		SignalBox.setWidth((float) (totalScreenWidth*mSignalBoxWidthPercent));
@@ -54,7 +54,7 @@ public class Channel {
 		mWidth = (int) (totalScreenWidth);
 		mTotalScreenHeight = totalScreenHeight;
 		mColor = channelColor;
-		mOnline = true;
+		setOnline(true);
 		
 		// Creo SignalBox
 		SignalBox.setWidth((float) (totalScreenWidth*mSignalBoxWidthPercent));
@@ -117,6 +117,7 @@ public class Channel {
 	public void setColor(RGB color) {
 		mColor = color;
 	}
+	
 	public static int getWidth() {
 		return mWidth;
 	}
@@ -159,5 +160,13 @@ public class Channel {
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(1);
 
+	}
+
+	public boolean isOnline() {
+		return mOnline;
+	}
+
+	public void setOnline(boolean mOnline) {
+		this.mOnline = mOnline;
 	}
 }

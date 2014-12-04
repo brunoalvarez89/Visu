@@ -583,8 +583,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	public synchronized void addChannel(StudyData studyData, boolean online) {
 	
 		if(online) {
-			mChannelList.addChannel(studyData.getAcquisitionData().getAdcChannel(), mTotalHeight
-									, mTotalWidth, mTotalPages, studyData);
+			mChannelList.addChannel(mTotalHeight, mTotalWidth, mTotalPages, studyData);
 		} else {
 			mChannelList.addChannel(mTotalHeight, mTotalWidth, studyData);
 		}
@@ -608,7 +607,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	* Menú de usuario 																	 *
 	*************************************************************************************/
 	// Menú con las opciones del canal
-	private void channelMenu(int channel) {
+	private void channelMenu(Channel channel) {
 		((MainActivity) getContext()).channelOptionsDialog(channel);
 	}
 
@@ -929,7 +928,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 
-	// Qué hago cuando el evento es un Long Press?
+	// Qué hago cuando el evento es un Long Press sobre un InfoBox?
 	final Handler mLongPressHandler = new Handler();
 	Runnable longPressed = new Runnable() {
 
@@ -938,11 +937,11 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			if (mChannelList.size() < 0) return;
 
 			final TouchPointer tp = mTouchPointer.valueAt(0);
-			final int channel = -mReferenceMatrix.getChannel(tp.y0, tp.x0) - 1;
+			final int channelNumber = -mReferenceMatrix.getChannel(tp.y0, tp.x0) - 1;
 			int isInfoBox = mReferenceMatrix.getChannel(tp.y0, tp.x0);
 
 			if (isInfoBox < 0) {
-				SignalBox signalBox = mChannelList.getChannelAtIndex(channel).getSignalBox();
+				Channel channel = mChannelList.getChannelAtIndex(channelNumber);
 				channelMenu(channel);
 			}
 		}

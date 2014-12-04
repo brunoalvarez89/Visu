@@ -78,7 +78,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 		mEditTextAMin = (EditText) findViewById(R.id.editTextOnlineAMin);
 		mTextViewAMin = (TextView) findViewById(R.id.textViewOnlineAMin);
 		
-		mButtonChannelConfigOk = (Button) findViewById(R.id.buttonChannelConfigOk);
+		mButtonChannelConfigOk = (Button) findViewById(R.id.buttonOnlineChannelConfigOk);
 
 	}
 	
