@@ -100,7 +100,7 @@ public class ChannelList {
 			mOnlineChannelList.append(newChannelNumber, mOnlineChannelList.get(channelNumber));
 			mOnlineChannelList.get(channelNumber).setColor(mColorArray[newChannelNumber]);
 			mOnlineChannelList.get(channelNumber).getInfoBox().setChannelNumber(newChannelNumber);
-			mOnlineChannelList.get(channelNumber).getInfoBox().createChannelNumberLabel();
+			mOnlineChannelList.get(channelNumber).getInfoBox().createChannelLabel("Canal " + (newChannelNumber + 1));
 		} 
 		
 		// Reemplazo el canal actual con el nuevo canal

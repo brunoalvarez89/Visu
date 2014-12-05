@@ -20,11 +20,9 @@ public class PatientData {
 	private int mPatientDataBytes;
 	
 	public PatientData() {
-		
-		mPatientName = new char[mPatientNameSize];
-		mPatientSurname = new char[mPatientSurnameSize];
-		mStudyName = new char[mStudyNameSize];
-		
+		mPatientName = null;		
+		mPatientSurname = null;
+		mStudyName = null;
 		mPatientDataBytes = mPatientNameBytes + mPatientSurnameBytes + mStudyNameBytes;
 	}
 

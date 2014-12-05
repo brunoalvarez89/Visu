@@ -207,7 +207,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		canvas.drawColor(Color.LTGRAY);
 		
 		// Dibujo canales
-		drawChannels(canvas);
+		//drawChannels(canvas);
 		
 		// Dibujo Bitmaps
 		drawBitmaps(canvas);
@@ -476,29 +476,8 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			mPaint.setTextSize(label.getTextSize());
 			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 
-			// Dibujo Label de tiempo de adquisición
-			label = channel.getInfoBox().getLabelTimer();
-			mPaint.setTextSize(label.getTextSize());
-			// canvas.drawText(label.getText(), label.getX(), label.getY(),
-			// mPaint);
-
 			// Dibujo label de Fs
-			label = channel.getInfoBox().getLabelFs();
-			mPaint.setTextSize(label.getTextSize());
-			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
-
-			// Dibujo label de Bits
-			label = channel.getInfoBox().getLabelBits();
-			mPaint.setTextSize(label.getTextSize());
-			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
-
-			// Dibujo Label de Zoom X
-			label = channel.getInfoBox().getHorizontalZoomLabel();
-			mPaint.setTextSize(label.getTextSize());
-			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
-
-			// Dibujo Label de Zoom Y
-			label = channel.getInfoBox().getLabelZoomY();
+			label = channel.getInfoBox().getPatientLabel();
 			mPaint.setTextSize(label.getTextSize());
 			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 
@@ -581,7 +560,6 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	*************************************************************************************/
 	// Método para agregar un canal online
 	public synchronized void addChannel(StudyData studyData, boolean online) {
-	
 		if(online) {
 			mChannelList.addChannel(mTotalHeight, mTotalWidth, mTotalPages, studyData);
 		} else {
@@ -590,7 +568,6 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 		mReferenceMatrix.addChannel();
 		mPanSensitivity = (int) (SignalBox.getWidth() * 0.012);
-
 	}
 
 	public synchronized void hideChannel(int channelIndex) {
@@ -761,8 +738,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			
 			float oldZoomValue = 1;
 			float newZoomValue = 1;
-			channel.getInfoBox().getLabelBits().setText(String.valueOf(mDyAcum));
-
+			
 			// Si la distancia aumenta => Zoom In
 			if (newDx > mOldDx) {
 				mDxAcum = (newDx-mOldDx) + mDxAcum;

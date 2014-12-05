@@ -13,10 +13,10 @@ public class StudyData {
 	private boolean mMarkedForStoring;
 	
 	public StudyData() {
-		mAcquisitionData = new AcquisitionData();
-		mPatientData = new PatientData();
-		mStorageData = new StorageData();
-		mSamplesBuffer = new SamplesBuffer();
+		mAcquisitionData = null;
+		mPatientData = null;
+		mStorageData = null;
+		mSamplesBuffer = null;
 		mMarkedForStoring = false;
 	}
 	
@@ -33,6 +33,7 @@ public class StudyData {
 	}
 	
 	public void setSamplesBuffer(ArrayList<Short> samplesBuffer) {
+		mSamplesBuffer = new SamplesBuffer();
 		mSamplesBuffer.createSamplesBuffer(samplesBuffer);
 	}
 	

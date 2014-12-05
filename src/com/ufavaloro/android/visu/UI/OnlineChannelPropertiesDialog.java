@@ -123,16 +123,14 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 		});
 		
 		// StudyType Spinner
-		mSpinnerStudyType.setOnItemSelectedListener(new OnItemSelectedListener() {
-			
+		mSpinnerStudyType.setOnItemSelectedListener(new OnItemSelectedListener() {	
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				int intStudyType = arg2;
-				mStudy.onlineStudyData[mSelectedChannel].getAcquisitionData().setStudyType(intStudyType);
+				mStudy.setStudyType(intStudyType, mSelectedChannel);
 				mTextViewAMax.setText("Valor Máximo (" + StudyType.getUnits(StudyType.values(intStudyType)) + ")");
 				mTextViewAMin.setText("Valor Mínimo (" + StudyType.getUnits(StudyType.values(intStudyType)) + ")");
 			}
-
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {}
 			

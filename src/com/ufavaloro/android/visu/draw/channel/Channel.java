@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.ufavaloro.android.visu.draw.RGB;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
+import com.ufavaloro.android.visu.study.StudyType;
 
 public class Channel {
 
@@ -26,8 +27,7 @@ public class Channel {
 	// Offline channel constructor
 	public Channel(int channelNumber, int totalScreenHeight, int totalScreenWidth
 				   , RGB channelColor, StudyData studyData) {
-		
-		setStudyData(studyData);
+		mStudyData = studyData;
 		mAdcChannelNumber = channelNumber;
 		mWidth = (int) (totalScreenWidth);
 		mTotalScreenHeight = totalScreenHeight;
@@ -42,13 +42,11 @@ public class Channel {
 		InfoBox.setWidth((float) (totalScreenWidth*mInfoBoxWidthPercent));
 		InfoBox.setVerticalDivisorXPosition((int) SignalBox.getWidth());
 		mInfoBox = new InfoBox(channelNumber, studyData);
-		
 	}
 	
 	// Online channel constructor
 	public Channel(int channelNumber, int totalScreenHeight, int totalScreenWidth
 				   , RGB channelColor, int totalPages, StudyData studyData) {
-		
 		setStudyData(studyData);
 		mAdcChannelNumber = channelNumber;
 		mWidth = (int) (totalScreenWidth);
@@ -64,7 +62,6 @@ public class Channel {
 		InfoBox.setWidth((float) (totalScreenWidth*mInfoBoxWidthPercent));
 		InfoBox.setVerticalDivisorXPosition((int) SignalBox.getWidth());
 		mInfoBox = new InfoBox(channelNumber, studyData);
-	
 	}
 	
 	public void update(int totalChannels, int channelIndex) {
@@ -140,13 +137,6 @@ public class Channel {
 	
 	public void setHorizontalZoom(float newZoomValue) {
 		mSignalBox.getDrawBuffer().setHorizontalZoom(newZoomValue);
-		
-		// Actualizo Label de Zoom X
-		DecimalFormat df = new DecimalFormat();
-		df.setMaximumFractionDigits(1);
-
-		Label l = mInfoBox.getHorizontalZoomLabel();
-		l.setText("Zoom X: " + df.format(newZoomValue) + "x");
 	}
 	
 	public float getVerticalZoom() {

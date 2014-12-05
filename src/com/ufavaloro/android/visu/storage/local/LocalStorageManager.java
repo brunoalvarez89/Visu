@@ -176,6 +176,7 @@ public class LocalStorageManager {
 	
 					// Almaceno tipo de estudio
 					char[] studyType = studyData[i].getAcquisitionData().getStudyType();
+					int study = studyType[0];
 					int studyTypeSize = studyData[i].getAcquisitionData().getStudyTypeSize();
 					writeCharArray(byteBuffer, studyType, studyTypeSize);
 	

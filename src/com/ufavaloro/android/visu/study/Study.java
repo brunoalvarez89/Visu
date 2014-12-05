@@ -11,6 +11,7 @@ import android.content.IntentSender.SendIntentException;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.UI.MainActivity;
@@ -101,9 +102,9 @@ public class Study {
 			onlineStudyData[index].setMarkedForStoring(true);
 		}
 		
-		
 		for(int i = 0; i < onlineStudyData.length; i++) {
 			onlineStudyData[i].setPatientData(patientData);
+			draw.getChannelList().getChannelAtIndex(i).getStudyData().setPatientData(patientData);
 		}
 		
 		
@@ -119,6 +120,10 @@ public class Study {
 		storage.createGoogleDriveStudyFiles(onlineStudyData);	
 	}
 
+	public void setStudyType(int studyType, int channel) {
+		onlineStudyData[channel].getAcquisitionData().setStudyType(studyType);
+	}
+	
 	// Método para saber si estoy conectado a Google Drive
 	public boolean googleDriveConnectionOk() {
 		
@@ -210,8 +215,13 @@ public class Study {
  	
  	private void onLocalStorageFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
- 		offlineStudyData.add(studyData);
- 		draw.addChannel(studyData, false);
+ 		if(studyData.getSamplesBuffer().getSize() == 0) {
+ 			Toast.makeText(mainActivity, "El archivo no posee muestras", Toast.LENGTH_LONG).show();
+ 			return;
+ 		} else {
+	 		offlineStudyData.add(studyData);
+	 		draw.addChannel(studyData, false);
+	 	}
  	}
  	
  	private void onNewSamplesBatch(short[] samples, int channel) {
