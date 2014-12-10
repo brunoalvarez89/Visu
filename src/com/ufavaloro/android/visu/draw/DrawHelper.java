@@ -247,7 +247,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		}
 
 		// Dibujo ícono de configurar canales
-		if (mUiVisibility == true && mChannelList.size() != 0) {
+		if (mUiVisibility == true && mChannelList.getOnlineChannelsQty() > 0) {
 			canvas.drawBitmap(mBitmapManager.getConfigureChannelsIcon()
 							  , mBitmapManager.getConfigureChannelsIconX()
 							  , mBitmapManager.getConfigureChannelsIconY()
@@ -519,6 +519,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 	// Dibujo otros labels
 	private synchronized void drawOtherLabels(Canvas canvas) {
+		// Label de "Esperando conexiones entrantes"
 		if(mChannelList.size() == 0) {
 			mPaint.setTextSize(mLabelAwaitingConnections.getTextSize());
 			canvas.drawText(mLabelAwaitingConnections.getText()
@@ -527,6 +528,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 							, mPaint);
 		}
 		
+		// Label de los canales ocultados
 		if(mChannelList.getHiddenChannelsLabels().size() > 0 && mUiVisibility == true || mChannelList.size() == 0) {
 			for(int i = 0; i < mChannelList.getHiddenChannelsLabels().size(); i++) {
 				int channelKey = mChannelList.getHiddenChannelsLabels().keyAt(i);
@@ -691,7 +693,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 	// Botón de configurar canales
 	private void onTouch_ConfigureChannelsIcon() {
-		if (mUiVisibility == true && mChannelList.size() != 0) {
+		if (mUiVisibility == true && mChannelList.getOnlineChannelsQty() > 0) {
 			TouchPointer tp = mTouchPointer.valueAt(0);
 			int width = mBitmapManager.getConfigureChannelsIcon().getWidth();
 			int height = mBitmapManager.getConfigureChannelsIcon().getHeight();
@@ -823,28 +825,25 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	private void onTouch_Pan() {
 
 		if (mChannelList.size() == 0) return;
-
 		if (mTouchPointer.size() == 1) {
 
-			SignalBox signalBox;
-
+			Channel channel;
 			TouchPointer tp = mTouchPointer.valueAt(0);
+			int channelNumber = mReferenceMatrix.getChannel(tp.y0, tp.x0) - 1;
 
-			int channel = mReferenceMatrix.getChannel(tp.y0, tp.x0) - 1;
+			if (channelNumber >= 0) {
 
-			if (channel >= 0) {
+				channel = mChannelList.getChannelAtIndex(channelNumber);
 
-				signalBox = mChannelList.getChannelAtIndex(channel).getSignalBox();
-
-				if (signalBox.getPaused() == true) {
+				if (channel.isPaused() == true || !channel.isOnline()) {
 					// Si muevo el dedo hacia la derecha...
 					if (tp.x > mOldX) {
-						signalBox.panRight(mPanSensitivity);
+						channel.getSignalBox().panRight(mPanSensitivity);
 					}
 
 					// Si muevo el dedo hacia la izquierda...
 					if (tp.x < mOldX) {
-						signalBox.panLeft(mPanSensitivity);
+						channel.getSignalBox().panLeft(mPanSensitivity);
 					}
 
 					mOldX = (float) tp.x;
@@ -861,47 +860,37 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		TouchPointer tp = mTouchPointer.valueAt(0);
 		int totalPointers = mTouchPointer.size();
 		long time = System.currentTimeMillis();
-		int channel = mReferenceMatrix.getChannel(tp.y0, tp.x0) - 1;
+		int channelNumber = mReferenceMatrix.getChannel(tp.y0, tp.x0) - 1;
 
 		// Si no es el primer tap, el tiempo entre este tap y el anterior es < a
 		// 300 mS, hay un solo dedo apoyado y este fue apoyado en la zona de
 		// visualizacion
 		if (mFirstTap == true && (time - mTapTime) <= 300 && tp.x < SignalBox.getWidth()) {
-			if (totalPointers == 1 && channel == mPressedChannel
-					&& channel >= 0 && mFlagUp == true) {
+			if (totalPointers == 1 && channelNumber == mPressedChannel && channelNumber >= 0 && mFlagUp == true) {
 				// Flipeo el bool de pausa
-				SignalBox signalBox = mChannelList.getChannelAtIndex(channel).getSignalBox();
-				if (true) {
-					boolean oldPausedValue = signalBox.getPaused();
-					boolean newPausedValue = !oldPausedValue;
-					signalBox.setPaused(newPausedValue);
-					// Si es el caso que estoy des-pauseando, igualo los índices
-					// del Buffer.
-					// Esto hace que se resuma la graficación desde la posición
-					// de la última
-					// muestra registrada.
-					if (signalBox.getPaused() == false)
-						signalBox.resetGraphingIndex();
-					// Vuelvo a poner en false el bool de Primer Tap
-					mFirstTap = false;
-					mFlagUp = false;
-					mTapTime = 0;
-				}
+				Channel channel = mChannelList.getChannelAtIndex(channelNumber);
+				boolean oldPausedValue = channel.getPaused();
+				boolean newPausedValue = !oldPausedValue;
+				channel.setPaused(newPausedValue);
+				// Si es el caso que estoy des-pauseando, igualo los índices del Buffer.
+				// Esto hace que se resuma la graficación desde la posición de la última
+				// muestra registrada.
+				if (channel.getPaused() == false) channel.getSignalBox().resetGraphingIndex();
+				// Vuelvo a poner en false el bool de Primer Tap
+				mFirstTap = false;
+				mFlagUp = false;
+				mTapTime = 0;
 			}
 			// Si es el primer tap
 		} else if (tp.x < SignalBox.getWidth()) {
-			if (channel >= 0) {
-				SignalBox signalBox = mChannelList.getChannelAtIndex(channel).getSignalBox();
-				mPressedChannel = channel;
-				if (true) {
+			if (channelNumber >= 0) {
+				mPressedChannel = channelNumber;
 					// Pongo en true el bool de Primer Tap
 					mFirstTap = true;
-					// Obtengo el tiempo actual para restarle al tiempo del
-					// segundo tap y chequear
-					// que no haya más de 300 mS entre Taps
+					// Obtengo el tiempo actual para restarle al tiempo del segundo tap y 
+					// chequear que no haya más de 300 mS entre Taps
 					mTapTime = time;
 				}
-			}
 		}
 	}
 

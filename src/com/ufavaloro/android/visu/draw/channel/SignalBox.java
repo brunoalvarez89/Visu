@@ -4,13 +4,10 @@
  ****************************************************************************************/
 package com.ufavaloro.android.visu.draw.channel;
 
-import java.util.ArrayList;
-
 import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.ufavaloro.android.visu.draw.RGB;
-import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
 public class SignalBox{
@@ -142,7 +139,6 @@ public class SignalBox{
 		
 		int xTime = (int) (mWidth*0.85);
 		mTimeLabel.setX(xTime);
-		
 	}
 
 	private void updateVoltageLabelsPosition() {
@@ -158,15 +154,12 @@ public class SignalBox{
 	}
 
 	private void updateAmplitudeLabelsPosition() {
-		
 		float yMaxAmplitude = mMidLine - mDrawBuffer.getVerticalZoom();	
 		mMaxAmplitudeLabel.setY((int) yMaxAmplitude);
 		
-		
 		float yMinAmplitude = mMidLine + mDrawBuffer.getVerticalZoom();
 		mAmplitudeCorrection = mMinAmplitudeLabel.getBoundingBox().height();
-		mMinAmplitudeLabel.setY((int) (yMinAmplitude + mAmplitudeCorrection));
-		
+		mMinAmplitudeLabel.setY((int) (yMinAmplitude + mAmplitudeCorrection));	
 	}
 
 	private void updateDrawBuffer() {
@@ -187,12 +180,15 @@ public class SignalBox{
 		mMinVoltageLabel.setTextSize(getBoundedTextSize(mMinVoltageLabel));
 
 	}
+	public void updateVerticalZoom(float newZoomValue) {
+		getDrawBuffer().setVerticalZoom(newZoomValue);
+		updateAmplitudeLabelsPosition();
+	}
 	
 	protected void updateTimeLabelSize() {
-		
 		mTimeLabel.setTextSize(getBoundedTextSize(mTimeLabel));
-
 	}
+	
 	
 	private int getBoundedTextSize(Label label) {
 		Rect rect = new Rect();
@@ -232,32 +228,22 @@ public class SignalBox{
 		return (int) mWidth;
 	}
 	
+	
 	public static void setWidth(float width) {
 		mWidth = width;
 	}
+	
 	
 	public static int getHeight() {
 		return (int) mHeight;
 	}
 	
+	
 	public static void setHeight(float height) {
 		mHeight = height;
 	}
 	
-/*****************************************************************************************
-* Setters																				 *
-*****************************************************************************************/
-	public void setPaused(boolean mPaused) {
-		this.mPaused = mPaused;
-	}
-	
-	public void setColor(RGB mColor) {
-		this.mColor = mColor;
-	}
 
-/*****************************************************************************************
-* Getters																				 *
-*****************************************************************************************/
 	public boolean getPaused() {
 		return mPaused;
 	}
@@ -273,7 +259,7 @@ public class SignalBox{
 	public RGB getColor() {
 		return mColor;
 	}
-		
+	
 	public Label getLabelMaxAmplitude() {
 		return mMaxAmplitudeLabel;
 	}

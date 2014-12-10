@@ -1,5 +1,6 @@
 package com.ufavaloro.android.visu.draw.channel;
 
+import com.google.android.gms.internal.mn;
 import com.ufavaloro.android.visu.draw.RGB;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
@@ -23,6 +24,8 @@ public class ChannelList {
 		mOnlineChannelList = new SparseArray<Channel>();
 		mHiddenChannelList = new SparseArray<Channel>();
 		mHiddenChannelsLabels = new SparseArray<Label>();
+		mOfflineChannelsQty = 0;
+		mOnlineChannelsQty = 0;
 		colorSetup();
 	}
 	
@@ -107,6 +110,7 @@ public class ChannelList {
 		// Reemplazo el canal actual con el nuevo canal
 		mOnlineChannelList.remove(channelNumber);
 		mOnlineChannelList.append(channelNumber, channel);
+		mOnlineChannelsQty++;
 		
 		// Actualizo todos los canales
 		updateChannels();
@@ -120,6 +124,7 @@ public class ChannelList {
 		Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, studyData);
 		// Agrego canal
 		mOnlineChannelList.append(channel.getChannelNumber(), channel);
+		mOfflineChannelsQty++;
 		// Actualizo todos los canales
 		updateChannels();
 	}
@@ -138,4 +143,5 @@ public class ChannelList {
 	public int getOfflineChannelsQty() {
 		return mOfflineChannelsQty;
 	}
+
 }

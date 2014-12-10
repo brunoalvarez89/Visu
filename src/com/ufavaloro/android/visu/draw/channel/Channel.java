@@ -14,6 +14,7 @@ public class Channel {
 	private int mAdcChannelNumber;
 	private int mChannelIndex;
 	private boolean mOnline;
+	private boolean mPaused;
 	private static int mWidth;
 	private double mWidthMarginPercent = 0.95;
 	private static int mHeight;
@@ -144,12 +145,7 @@ public class Channel {
 	}
 	
 	public void setVerticalZoom(float newZoomValue) {
-		mSignalBox.getDrawBuffer().setVerticalZoom(newZoomValue);
-		
-		// Actualizo el Label de Zoom Y
-		DecimalFormat df = new DecimalFormat();
-		df.setMaximumFractionDigits(1);
-
+		mSignalBox.updateVerticalZoom(newZoomValue);
 	}
 
 	public boolean isOnline() {
@@ -158,5 +154,14 @@ public class Channel {
 
 	public void setOnline(boolean mOnline) {
 		this.mOnline = mOnline;
+	}
+
+	
+	public boolean isPaused() {
+		return mPaused;
+	}
+
+	public void setPaused(boolean mPaused) {
+		this.mPaused = mPaused;
 	}
 }
