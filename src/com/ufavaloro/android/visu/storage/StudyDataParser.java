@@ -89,8 +89,8 @@ public class StudyDataParser {
 		
 		AdcData adcData = new AdcData(fs, bits, vMax, vMin, aMax, aMin, sensor, -1, -1);
 		acquisitionData = new AcquisitionData(adcData);
+		acquisitionData.setStudyType(studyType[0]);
 	
-		
 		// Salteo padding
 		int i = 0;
 		while(dataInputStream.read() == 0) i++; dataInputStream.read();

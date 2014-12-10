@@ -13,36 +13,38 @@ public class ChannelOptionsDialog extends AlertDialog {
 
 	private MainActivity mMainActivity;
 	private Study mStudy;
-	private Channel mChannel;
-	private final CharSequence[] mOnlineChannelOptions = {"Configurar", "Ocultar", "Eliminar"};
-	private final CharSequence[] mOfflineChannelOptions = {"Propiedades", "Ocultar", "Eliminar"};
+	private int mChannelNumber;
+	private final CharSequence[] mOnlineChannelOptions = {"Configurar", "Ocultar"};
+	private final CharSequence[] mOfflineChannelOptions = {"Propiedades", "Ocultar"};
 	
-	public ChannelOptionsDialog(Context context, int theme) {
+	public ChannelOptionsDialog(Context context, int theme, int channelNumber) {
 		super(context, theme);
+		mChannelNumber = channelNumber;
 	}
 
 	public void setup() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
-		builder.setTitle("Canal " + (mChannel.getChannelNumber() + 1));
+		Channel channel = mStudy.draw.getChannelList().getChannelAtIndex(mChannelNumber);
+		//builder.setTitle("Canal " + (mChannel.getChannelNumber() + 1));
 	
 		// The channel is an on-line channel (connected to an ADC)
-		if(mChannel.isOnline()) {
+		if(channel.isOnline()) {
 			builder.setItems(mOnlineChannelOptions, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 					switch(item) {
 					// Configurar
 					case 0:
-						mMainActivity.onlineChannelPropertiesDialog(mChannel.getChannelNumber());
+						mMainActivity.onlineChannelPropertiesDialog(mChannelNumber);
 						break;
 						
 					// Ocultar canal
 	    			case 1: 
-	    				mStudy.hideChannel(mChannel.getChannelNumber());
+	    				mStudy.hideChannel(mChannelNumber);
 	    				break;
 	    				
 	    			// Remover canal
 	    			case 2:
-	    				mStudy.removeChannel(mChannel.getChannelNumber());
+	    				mStudy.removeChannel(mChannelNumber);
 	    				
 	    			default:
 	    				break;
@@ -56,17 +58,17 @@ public class ChannelOptionsDialog extends AlertDialog {
 					switch(item) {
 					// Properties
 					case 0:
-						mMainActivity.offlineChannelPropertiesDialog(mChannel);
+						mMainActivity.offlineChannelPropertiesDialog(mChannelNumber);
 						break;
 						
 					// Ocultar canal
 	    			case 1: 
-	    				mStudy.hideChannel(mChannel.getChannelNumber());
+	    				mStudy.hideChannel(mChannelNumber);
 	    				break;
 	    				
 	    			// Remover canal
 	    			case 2:
-	    				mStudy.removeChannel(mChannel.getChannelNumber());
+	    				mStudy.removeChannel(mChannelNumber);
 	    				
 	    			default:
 	    				break;
@@ -77,11 +79,7 @@ public class ChannelOptionsDialog extends AlertDialog {
 	
 		builder.create().show();
 	}
-	
-	public void setChannel(Channel channel) {
-		mChannel = channel;
-	}
-	
+		
 	public void setMainActivity(MainActivity mainActivity) {
 		mMainActivity = mainActivity;
 	}

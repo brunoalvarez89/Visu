@@ -42,12 +42,12 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 	
 	private Study mStudy;
 	
-	private Channel mChannel;
+	private int mChannelNumber;
 	
-	public OfflineChannelPropertiesDialog(Context context, int theme, Channel channel) {
+	public OfflineChannelPropertiesDialog(Context context, int theme, int channelNumber) {
 		super(context);	
 		mContext = context;
-		mChannel = channel;
+		mChannelNumber = channelNumber;
 	}
 	
 	public void setup() {
@@ -99,33 +99,35 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 	}
 
 	private void setEditTexts() {
+		Channel channel = mStudy.draw.getChannelList().getChannelAtIndex(mChannelNumber);
+		
 		// Write Study Name
-		mEditTextStudyName.setText(String.valueOf(mChannel.getStudyData().getPatientData().getStudyName()));
+		mEditTextStudyName.setText(String.valueOf(channel.getStudyData().getPatientData().getStudyName()));
 		// Write Patient Name
-		mEditTextPatientName.setText(String.valueOf(mChannel.getStudyData().getPatientData().getPatientName()));
+		mEditTextPatientName.setText(String.valueOf(channel.getStudyData().getPatientData().getPatientName()));
 		// Write Patient Surname
-		mEditTextPatientSurname.setText(String.valueOf(mChannel.getStudyData().getPatientData().getPatientSurname()));
+		mEditTextPatientSurname.setText(String.valueOf(channel.getStudyData().getPatientData().getPatientSurname()));
 		// Write Study Type
-		char[] studyType = mChannel.getStudyData().getAcquisitionData().getStudyType();
+		char[] studyType = mStudy.draw.getChannelList().getChannelAtIndex(mChannelNumber).getStudyData().getAcquisitionData().getStudyType();
 		int studyNumber = studyType[0];
 		mEditTextStudyType.setText(String.valueOf(StudyType.values(studyNumber)));
 		// Write Acquisition Time
-		int totalSamples = mChannel.getStudyData().getSamplesBuffer().getSize();
-		double fs = mChannel.getStudyData().getAcquisitionData().getFs();
+		int totalSamples = channel.getStudyData().getSamplesBuffer().getSize();
+		double fs = channel.getStudyData().getAcquisitionData().getFs();
 		double totalTime = totalSamples * fs / 1000;
 		mEditTextAcquisitionTime.setText(String.valueOf(totalTime));
 		// Write Resolution
-		mEditTextBits.setText(String.valueOf(mChannel.getStudyData().getAcquisitionData().getBits()));
+		mEditTextBits.setText(String.valueOf(channel.getStudyData().getAcquisitionData().getBits()));
 		// Write Sensor Name
-		mEditTextSensor.setText(String.valueOf(mChannel.getStudyData().getAcquisitionData().getSensor()));
+		mEditTextSensor.setText(String.valueOf(channel.getStudyData().getAcquisitionData().getSensor()));
 		// Write Max Voltage
-		mEditTextVMax.setText(String.valueOf(mChannel.getStudyData().getAcquisitionData().getVMax()));
+		mEditTextVMax.setText(String.valueOf(channel.getStudyData().getAcquisitionData().getVMax()));
 		// Write Min Voltage
-		mEditTextVMin.setText(String.valueOf(mChannel.getStudyData().getAcquisitionData().getVMin()));
+		mEditTextVMin.setText(String.valueOf(channel.getStudyData().getAcquisitionData().getVMin()));
 		// Write Max Amplitude Value
-		mEditTextAMax.setText(String.valueOf(mChannel.getStudyData().getAcquisitionData().getAMax()));
+		mEditTextAMax.setText(String.valueOf(channel.getStudyData().getAcquisitionData().getAMax()));
 		// Write Min Amplitude
-		mEditTextAMin.setText(String.valueOf(mChannel.getStudyData().getAcquisitionData().getAMin()));
+		mEditTextAMin.setText(String.valueOf(channel.getStudyData().getAcquisitionData().getAMin()));
 	}
 	
 	public void setStudy(Study study) {

@@ -207,7 +207,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		canvas.drawColor(Color.LTGRAY);
 		
 		// Dibujo canales
-		//drawChannels(canvas);
+		drawChannels(canvas);
 		
 		// Dibujo Bitmaps
 		drawBitmaps(canvas);
@@ -236,6 +236,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 		ColorFilter filter = new LightingColorFilter(Color.LTGRAY, 1);
 		mPaint.setColorFilter(filter);
+		mPaint.setAlpha(200);
 
 		// Dibujo ícono de estudio nuevo
 		if (mUiVisibility == true || mChannelList.size() == 0) {
@@ -537,8 +538,8 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 				
 				int[] rgb = deletedChannel.getColor().getRGB();
 				setPaint(Color.rgb(rgb[0], rgb[1], rgb[2]), 5);
-				mPaint.setAlpha(100);
 				
+				mPaint.setAlpha(100);
 				canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 			}
 		}
@@ -584,8 +585,8 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 	* Menú de usuario 																	 *
 	*************************************************************************************/
 	// Menú con las opciones del canal
-	private void channelMenu(Channel channel) {
-		((MainActivity) getContext()).channelOptionsDialog(channel);
+	private void channelMenu(int channelNumber) {
+		((MainActivity) getContext()).channelOptionsDialog(channelNumber);
 	}
 
 /*****************************************************************************************
@@ -917,8 +918,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			int isInfoBox = mReferenceMatrix.getChannel(tp.y0, tp.x0);
 
 			if (isInfoBox < 0) {
-				Channel channel = mChannelList.getChannelAtIndex(channelNumber);
-				channelMenu(channel);
+				channelMenu(channelNumber);
 			}
 		}
 	};

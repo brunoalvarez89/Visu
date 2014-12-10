@@ -46,7 +46,10 @@ public class MainActivity extends Activity {
 		}
 		
 		// Empiezo a dibujar
-		mStudy.startDrawing();		
+		mStudy.startDrawing();	
+		//mStudy.draw.hideChannel(2);
+		//mStudy.draw.hideChannel(0);
+		//mStudy.draw.hideChannel(0);
 	}
 
 /*****************************************************************************************
@@ -90,12 +93,11 @@ public class MainActivity extends Activity {
 	}
 	
 	// Dialog con las opciones del canal
-	public void channelOptionsDialog(Channel channel) {
+	public void channelOptionsDialog(int channelNumber) {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		ChannelOptionsDialog dialog = new ChannelOptionsDialog(this, theme);
+		ChannelOptionsDialog dialog = new ChannelOptionsDialog(this, theme, channelNumber);
 		dialog.setMainActivity(this);
 		dialog.setStudy(mStudy);
-		dialog.setChannel(channel);
 		dialog.setup();
 	}
 		
@@ -109,9 +111,9 @@ public class MainActivity extends Activity {
 	}
 	
 	// Dialog con las propiedades del canal OFFLINE
-	public void offlineChannelPropertiesDialog(Channel channel) {
+	public void offlineChannelPropertiesDialog(int channelNumber) {
 		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		OfflineChannelPropertiesDialog dialog = new OfflineChannelPropertiesDialog(this, theme, channel);
+		OfflineChannelPropertiesDialog dialog = new OfflineChannelPropertiesDialog(this, theme, channelNumber);
 		dialog.setStudy(mStudy);
 		dialog.setup();
 		dialog.show();

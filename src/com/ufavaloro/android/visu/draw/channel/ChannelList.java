@@ -9,17 +9,18 @@ public class ChannelList {
 
 	// Visible Channel List. These channels will be drawn.
 	private SparseArray<Channel> mOnlineChannelList;
-	private SparseArray<Channel> mOfflineChannelList;
 	// Hidden Channel List and their respective Labels. These channels will not be drawn.
 	private SparseArray<Channel> mHiddenChannelList;
 	private SparseArray<Label> mHiddenChannelsLabels;
 	// Channel colors
 	public RGB[] mColorArray = new RGB[10];
+	// Cantidad de canales
+	private int mOfflineChannelsQty;
+	private int mOnlineChannelsQty;
 	
 	// Constructor
 	public ChannelList() {
 		mOnlineChannelList = new SparseArray<Channel>();
-		mOfflineChannelList = new SparseArray<Channel>();
 		mHiddenChannelList = new SparseArray<Channel>();
 		mHiddenChannelsLabels = new SparseArray<Label>();
 		colorSetup();
@@ -63,7 +64,7 @@ public class ChannelList {
 	}
 	
 	public int size() {
-		return (mOnlineChannelList.size() + mOfflineChannelList.size());
+		return mOnlineChannelList.size();
 	}
 	
 	public Channel getChannelAtKey(int channelKey) {
@@ -128,5 +129,13 @@ public class ChannelList {
 		mHiddenChannelList.remove(channelKey);
 		mHiddenChannelsLabels.remove(channelKey);
 		updateChannels();
+	}
+	
+	public int getOnlineChannelsQty() {
+		return mOnlineChannelsQty;
+	}
+	
+	public int getOfflineChannelsQty() {
+		return mOfflineChannelsQty;
 	}
 }
