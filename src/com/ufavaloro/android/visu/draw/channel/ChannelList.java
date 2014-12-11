@@ -50,17 +50,17 @@ public class ChannelList {
 		mHiddenChannelsLabels.append(channelKey, label);
 		mOnlineChannelList.remove(channelKey);
 		// Actualizo todos los canales
-		updateChannels();
+		update();
 	}
 	
 	public void removeChannel(int channelIndex) {
 		int channelKey = mHiddenChannelList.keyAt(channelIndex);
 		mHiddenChannelList.remove(channelKey);
 		mHiddenChannelsLabels.remove(channelKey);
-		updateChannels();
+		update();
 	}
 	
-	private void updateChannels() {
+	public void update() {
 		for(int i = 0; i < mOnlineChannelList.size(); i++) {
 			mOnlineChannelList.valueAt(i).update(mOnlineChannelList.size(), i);
 		}
@@ -104,7 +104,7 @@ public class ChannelList {
 			mOnlineChannelList.append(newChannelNumber, mOnlineChannelList.get(channelNumber));
 			mOnlineChannelList.get(channelNumber).setColor(mColorArray[newChannelNumber]);
 			mOnlineChannelList.get(channelNumber).getInfoBox().setChannelNumber(newChannelNumber);
-			mOnlineChannelList.get(channelNumber).getInfoBox().createChannelLabel("Canal " + (newChannelNumber + 1));
+			mOnlineChannelList.get(channelNumber).getInfoBox().createChannelLabel();
 		} 
 		
 		// Reemplazo el canal actual con el nuevo canal
@@ -113,7 +113,7 @@ public class ChannelList {
 		mOnlineChannelsQty++;
 		
 		// Actualizo todos los canales
-		updateChannels();
+		update();
 	}
 
 	// Add offline channel
@@ -126,14 +126,14 @@ public class ChannelList {
 		mOnlineChannelList.append(channel.getChannelNumber(), channel);
 		mOfflineChannelsQty++;
 		// Actualizo todos los canales
-		updateChannels();
+		update();
 	}
 
 	public void restoreChannel(int channelKey) {
 		mOnlineChannelList.append(channelKey, mHiddenChannelList.get(channelKey));
 		mHiddenChannelList.remove(channelKey);
 		mHiddenChannelsLabels.remove(channelKey);
-		updateChannels();
+		update();
 	}
 	
 	public int getOnlineChannelsQty() {

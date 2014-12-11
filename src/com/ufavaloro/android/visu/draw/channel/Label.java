@@ -33,7 +33,7 @@ public class Label extends ScreenElement {
 	}
 
 	public void setUnits(String units) {
-		mText = mText + units;
+		mText = mText + " " + units;
 	}
 	
 	public void setText(String mTexto) {
@@ -53,7 +53,6 @@ public class Label extends ScreenElement {
 		mBoundingBox = rect;
 
 	}
-	
 	
 	public float getTextSize() {
 		return mTextSize;

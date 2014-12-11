@@ -193,7 +193,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		
 		if(mChannelList.size() == 0 || channel == null || mDrawOk == false) return;
 		
-		if (channel.getPaused() == false) channel.storeSamples(samples);
+		if (channel.isPaused() == false) channel.storeSamples(samples);
 	}
 
 	// Método que se llama cuando se dibuja en el SurfaceView
@@ -236,7 +236,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 		ColorFilter filter = new LightingColorFilter(Color.LTGRAY, 1);
 		mPaint.setColorFilter(filter);
-		mPaint.setAlpha(200);
+		mPaint.setAlpha(250);
 
 		// Dibujo ícono de estudio nuevo
 		if (mUiVisibility == true || mChannelList.size() == 0) {
@@ -421,15 +421,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			Channel channel = mChannelList.getChannelAtIndex(i);
 
 			float timePixels = channel.getSignalBox().getLabelTimePixels();
-			double ts = 1 / channel.getStudyData().getAcquisitionData().getFs();
-
 			Label labelTime = channel.getSignalBox().getTimeLabel();
-
-			DecimalFormat df = new DecimalFormat();
-			df.setMaximumFractionDigits(1);
-			String result = df.format(ts * timePixels);
-
-			labelTime.setText(result + " s");
 
 			String time = labelTime.getText();
 			float yTime = labelTime.getY();
@@ -444,17 +436,15 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 			// Label que muestra el tiempo
 			float labelTimeWidth = labelTime.getBoundingBox().width();
 			float labelTimeHeigth = labelTime.getBoundingBox().height();
-			canvas.drawText(
-					time,
-					(float) (xTime - (labelTimeWidth * 0.5) + (timePixels * 0.5)),
-					(float) (yTime - (labelTimeHeigth * 0.25)), mPaint);
+			canvas.drawText(time,
+						   (float) (xTime - (labelTimeWidth * 0.5) + (timePixels * 0.5)),
+					       (float) (yTime - (labelTimeHeigth * 0.25)), mPaint);
 
 			// Barritas verticales de los costados
 			canvas.drawLine(xTime, yTime - 5, xTime, yTime + 5, mPaint);
 			canvas.drawLine(xTime + timePixels, yTime - 5, xTime + timePixels,
 					yTime + 5, mPaint);
 		}
-
 	}
 
 	// Método que dibuja todas las Figuras en el SurfaceView
@@ -861,21 +851,22 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		int totalPointers = mTouchPointer.size();
 		long time = System.currentTimeMillis();
 		int channelNumber = mReferenceMatrix.getChannel(tp.y0, tp.x0) - 1;
-
+		long deltaTime = time - mTapTime;
+		
 		// Si no es el primer tap, el tiempo entre este tap y el anterior es < a
 		// 300 mS, hay un solo dedo apoyado y este fue apoyado en la zona de
 		// visualizacion
-		if (mFirstTap == true && (time - mTapTime) <= 300 && tp.x < SignalBox.getWidth()) {
+		if (mFirstTap == true && deltaTime <= 300 && tp.x < SignalBox.getWidth()) {
 			if (totalPointers == 1 && channelNumber == mPressedChannel && channelNumber >= 0 && mFlagUp == true) {
 				// Flipeo el bool de pausa
 				Channel channel = mChannelList.getChannelAtIndex(channelNumber);
-				boolean oldPausedValue = channel.getPaused();
+				boolean oldPausedValue = channel.isPaused();
 				boolean newPausedValue = !oldPausedValue;
 				channel.setPaused(newPausedValue);
 				// Si es el caso que estoy des-pauseando, igualo los índices del Buffer.
 				// Esto hace que se resuma la graficación desde la posición de la última
 				// muestra registrada.
-				if (channel.getPaused() == false) channel.getSignalBox().resetGraphingIndex();
+				if (channel.isPaused() == false) channel.getSignalBox().resetGraphingIndex();
 				// Vuelvo a poner en false el bool de Primer Tap
 				mFirstTap = false;
 				mFlagUp = false;
@@ -1102,7 +1093,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 		stopDrawingThread();
 	}
 
-	public ChannelList getChannelList() {
+	public ChannelList getChannels() {
 		return mChannelList;
 	}
 

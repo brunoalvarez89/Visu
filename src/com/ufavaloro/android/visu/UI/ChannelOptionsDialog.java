@@ -24,7 +24,7 @@ public class ChannelOptionsDialog extends AlertDialog {
 
 	public void setup() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
-		Channel channel = mStudy.draw.getChannelList().getChannelAtIndex(mChannelNumber);
+		Channel channel = mStudy.draw.getChannels().getChannelAtIndex(mChannelNumber);
 		//builder.setTitle("Canal " + (mChannel.getChannelNumber() + 1));
 	
 		// The channel is an on-line channel (connected to an ADC)

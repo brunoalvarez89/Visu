@@ -49,14 +49,6 @@
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:orientation="horizontal" >
-	           
-	            <Button
-	                android:id="@+id/fileSaveLoad"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_weight="1"
-	                android:padding="10dp"
-	                android:text="Save" />
 	            
 	            <Button
 	                android:id="@+id/fileCancel"
@@ -64,7 +56,16 @@
 	                android:layout_height="wrap_content"
 	                android:layout_weight="1"
 	                android:padding="10dp"
-	                android:text="Cancel" />            
+	                android:text="Cancelar" />
+
+	            <Button
+	                android:id="@+id/fileSaveLoad"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1"
+	                android:padding="10dp"
+	                android:text="Cargar" />
+            
 	        </LinearLayout>
 
 	    </LinearLayout>

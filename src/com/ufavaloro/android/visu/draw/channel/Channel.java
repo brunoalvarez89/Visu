@@ -34,7 +34,8 @@ public class Channel {
 		mTotalScreenHeight = totalScreenHeight;
 		mColor = channelColor;
 		setOnline(false);
-				
+		mPaused = false;
+		
 		// Creo SignalBox
 		SignalBox.setWidth((float) (totalScreenWidth*mSignalBoxWidthPercent));
 		mSignalBox = new SignalBox(channelNumber, studyData);
@@ -54,6 +55,7 @@ public class Channel {
 		mTotalScreenHeight = totalScreenHeight;
 		mColor = channelColor;
 		setOnline(true);
+		mPaused = false;
 		
 		// Creo SignalBox
 		SignalBox.setWidth((float) (totalScreenWidth*mSignalBoxWidthPercent));
@@ -103,10 +105,6 @@ public class Channel {
 	public void storeSamples(short[] samples) {
 		mSignalBox.getDrawBuffer().storeSamples(samples);
 	}
-
-	public boolean getPaused() {
-		return mSignalBox.getPaused();
-	}
 	
 	public RGB getColor() {
 		return mColor;
@@ -137,7 +135,7 @@ public class Channel {
 	}
 	
 	public void setHorizontalZoom(float newZoomValue) {
-		mSignalBox.getDrawBuffer().setHorizontalZoom(newZoomValue);
+		mSignalBox.updateHorizontalZoom(newZoomValue);
 	}
 	
 	public float getVerticalZoom() {
@@ -164,4 +162,25 @@ public class Channel {
 	public void setPaused(boolean mPaused) {
 		this.mPaused = mPaused;
 	}
+	
+	public void setStudyType(int studyType) {
+		mInfoBox.studyData.getAcquisitionData().setStudyType(studyType);
+	}
+	
+	public void setPatientNameSurname(String patientName, String patientSurname) {
+		
+	}
+	
+	public void setStudyName(String studyName) {
+		
+	}
+
+	public void setAMax(double aMax) {
+		mSignalBox.studyData.getAcquisitionData().setAMax(aMax);
+	}
+	
+	public void setAMin(double aMin) {
+		mSignalBox.studyData.getAcquisitionData().setAMin(aMin);
+	}
+	
 }

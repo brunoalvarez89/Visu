@@ -104,9 +104,10 @@ public class Study {
 		
 		for(int i = 0; i < onlineStudyData.length; i++) {
 			onlineStudyData[i].setPatientData(patientData);
-			draw.getChannelList().getChannelAtIndex(i).getStudyData().setPatientData(patientData);
+			draw.getChannels().getChannelAtIndex(i).getStudyData().setPatientData(patientData);
 		}
 		
+		draw.getChannels().update();
 		
 		// Creo carpetas locales y en google drive
 		storage.createStudyFolders(onlineStudyData);
@@ -121,14 +122,32 @@ public class Study {
 	}
 
 	public void setStudyType(int studyType, int channel) {
+		// Guardo valor en los buffers de almacenamiento
 		onlineStudyData[channel].getAcquisitionData().setStudyType(studyType);
+		// Guardo valor en los buffers de dibujo
+		draw.getChannels().getChannelAtIndex(channel).setStudyType(studyType);
+		draw.getChannels().update();
+	}
+	
+	public void setAMax(double aMax, int channel) {
+		// Guardo valor en los buffers de almacenamiento
+		onlineStudyData[channel].getAcquisitionData().setAMax(aMax);
+		// Guardo valor en los buffers de dibujo
+		draw.getChannels().getChannelAtIndex(channel).setAMax(aMax);
+		draw.getChannels().update();
+	}
+	
+	public void setAMin(double aMin, int channel) {
+		// Guardo valor en los buffers de almacenamiento
+		onlineStudyData[channel].getAcquisitionData().setAMin(aMin);
+		// Guardo valor en los buffers de dibujo
+		draw.getChannels().getChannelAtIndex(channel).setAMin(aMin);
+		draw.getChannels().update();
 	}
 	
 	// Método para saber si estoy conectado a Google Drive
 	public boolean googleDriveConnectionOk() {
-		
 		return storage.googleDrive.isConnected();
-	
 	}
 
 	// Método para abrir un archivo desde Google Drive
@@ -345,5 +364,7 @@ public class Study {
 		}
 		
 	};
+
+
 
 }

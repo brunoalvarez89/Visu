@@ -47,7 +47,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 	}
 	
 	public void setup() {
-		setCanceledOnTouchOutside(false);
+		setCanceledOnTouchOutside(true);
 		setTitle("Configuración de los canales");
 		inflate();
 		setListeners();
@@ -77,9 +77,6 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 		
 		mEditTextAMin = (EditText) findViewById(R.id.editTextOnlineAMin);
 		mTextViewAMin = (TextView) findViewById(R.id.textViewOnlineAMin);
-		
-		mButtonChannelConfigOk = (Button) findViewById(R.id.buttonOnlineChannelConfigOk);
-
 	}
 	
 	private void setListeners() {
@@ -133,7 +130,6 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 			}
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {}
-			
 		});
 		
 		// EditText Bits
@@ -217,7 +213,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 					return;
 				}
 				
-				acquisitionData.setAMax(d);
+				mStudy.setAMax(d, mSelectedChannel);
 			}
 
 			@Override
@@ -253,7 +249,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 					return;
 				}
 				
-				acquisitionData.setAMin(d);
+				mStudy.setAMin(d, mSelectedChannel);
 			}
 
 			@Override

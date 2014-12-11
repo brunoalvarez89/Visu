@@ -130,10 +130,4 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/buttonOnlineChannelConfigOk"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Aceptar" />
-
 </LinearLayout>

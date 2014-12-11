@@ -38,6 +38,8 @@ public class DrawBuffer {
 		mBuffer = new short[mSize];
 		mBits = bits;
 		setZero();
+		mHorizontalZoom = 1;
+		mVerticalZoom = 1;
 	}
 
 	// Constructor para Offline Draw Buffer
@@ -47,6 +49,8 @@ public class DrawBuffer {
 		mBuffer = new short[mSize];
 		mBits = studyData.getAcquisitionData().getBits();
 		mBuffer = studyData.getSamplesBuffer().getBuffer();	
+		mHorizontalZoom = 1;
+		mVerticalZoom = 1;
 	}
 
 	// Método para almacenar muestras

@@ -4,11 +4,14 @@
  ****************************************************************************************/
 package com.ufavaloro.android.visu.draw.channel;
 
+import java.text.DecimalFormat;
+
 import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.ufavaloro.android.visu.draw.RGB;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
+import com.ufavaloro.android.visu.study.StudyType;
 
 public class SignalBox{
 
@@ -25,9 +28,7 @@ public class SignalBox{
 	private float mMidLine;
 
 	private RGB mColor;
-	
-	private boolean mPaused;
-			
+				
 	private int mAdcChannelNumber;
 	private int mChannelIndex;
 	
@@ -43,7 +44,7 @@ public class SignalBox{
 	private float mAmplitudeCorrection;
 	private float mVoltageCorrection;
 	
-	private StudyData mStudyData;
+	protected StudyData studyData;
 	
 /*****************************************************************************************
 * Inicio de métodos de clase														   	 *
@@ -53,15 +54,13 @@ public class SignalBox{
 *****************************************************************************************/
 	// Constructor para Online SignalBox
 	SignalBox(int adcChannelNumber, int totalPages, StudyData studyData) {
-		
 		mAdcChannelNumber = adcChannelNumber;				
-		mPaused = false;
-		mStudyData = studyData;
+		this.studyData = studyData;
 		mDrawBuffer = new DrawBuffer(mAdcChannelNumber, (int) mWidth, totalPages 
-									 , mStudyData.getAcquisitionData().getBits());
+									 , studyData.getAcquisitionData().getBits());
 
-		createMaxAmplitudeLabel("");
-		createMinAmplitudeLabel("");
+		createMaxAmplitudeLabel();
+		createMinAmplitudeLabel();
 		createMaxVoltageLabel();
 		createMinVoltageLabel();
 		createTimeLabel();
@@ -71,42 +70,51 @@ public class SignalBox{
 	// Constructor para Ofline SignalBox
 	public SignalBox(int channelNumber, StudyData studyData) {
 		mAdcChannelNumber = channelNumber;				
-		mPaused = false;
-		mStudyData = studyData;
+		this.studyData = studyData;
 		int totalPages = (int) (studyData.getSamplesBuffer().getSize() / mWidth);
 		mDrawBuffer = new DrawBuffer(mAdcChannelNumber, studyData, totalPages);
 
-		createMaxAmplitudeLabel("");
-		createMinAmplitudeLabel("");
+		createMaxAmplitudeLabel();
+		createMinAmplitudeLabel();
 		createMaxVoltageLabel();
 		createMinVoltageLabel();
 		createTimeLabel();
 	}
 
-	private void createMaxAmplitudeLabel(String units) {
-		mMaxAmplitudeLabel = new Label(mStudyData.getAcquisitionData().getAMax());
-		mMaxAmplitudeLabel.setUnits(units);
+	private void createMaxAmplitudeLabel() {
+		mMaxAmplitudeLabel = new Label(studyData.getAcquisitionData().getAMax());
+		char[] aux = studyData.getAcquisitionData().getStudyType();
+		int studyType = aux[0];
+		mMaxAmplitudeLabel.setUnits(StudyType.getUnits(StudyType.values(studyType)));
 	}
 	
-	private void createMinAmplitudeLabel(String units) {
-		mMinAmplitudeLabel = new Label(mStudyData.getAcquisitionData().getAMin());
-		mMinAmplitudeLabel.setUnits(units);
+	private void createMinAmplitudeLabel() {
+		mMinAmplitudeLabel = new Label(studyData.getAcquisitionData().getAMin());
+		char[] aux = studyData.getAcquisitionData().getStudyType();
+		int studyType = aux[0];
+		mMinAmplitudeLabel.setUnits(StudyType.getUnits(StudyType.values(studyType)));
 	}
 	
 	private void createMaxVoltageLabel() {
-		mMaxVoltageLabel = new Label(mStudyData.getAcquisitionData().getVMax());
+		mMaxVoltageLabel = new Label(studyData.getAcquisitionData().getVMax());
 		mMaxVoltageLabel.setUnits("V");
 	}
 	
 	private void createMinVoltageLabel() {
-		mMinVoltageLabel = new Label(mStudyData.getAcquisitionData().getVMin());
+		mMinVoltageLabel = new Label(studyData.getAcquisitionData().getVMin());
 		mMinVoltageLabel.setUnits("V");
 	}
 	
 	private void createTimeLabel() {
 		mTimeLabel = new Label();
-		mTimeLabel.setUnits("s");
 		mTimeLabelPixels = (int) (mWidth*0.15);
+		double ts = 1 / studyData.getAcquisitionData().getFs();
+		
+		DecimalFormat df = new DecimalFormat();
+		df.setMaximumFractionDigits(1);
+		String result = df.format(ts * mTimeLabelPixels * mDrawBuffer.getHorizontalZoom());
+
+		mTimeLabel.setText(result + " s");
 	}
 
 	public void update(int height, int channelIndex) {
@@ -119,7 +127,12 @@ public class SignalBox{
 		setLowerBound((mChannelIndex+1)*mHeight);
 		setMidLine(getUpperBound() + getHeight()/2);
 		
-		// Acutalizo labels de Amax y Amin
+		createMaxAmplitudeLabel();
+		createMinAmplitudeLabel();
+		createMaxVoltageLabel();
+		createMinVoltageLabel();
+		
+		// Actualizo labels de Amax y Amin
 		updateAmplitudeLabelsSize();
 		updateAmplitudeLabelsPosition();
 		
@@ -130,7 +143,6 @@ public class SignalBox{
 		// Actualizo label de Tiempo
 		updateTimeLabelSize();
 		updateTimeLabelPosition();
-	
 	}
 
 	private void updateTimeLabelPosition() {
@@ -180,15 +192,27 @@ public class SignalBox{
 		mMinVoltageLabel.setTextSize(getBoundedTextSize(mMinVoltageLabel));
 
 	}
+	
 	public void updateVerticalZoom(float newZoomValue) {
 		getDrawBuffer().setVerticalZoom(newZoomValue);
 		updateAmplitudeLabelsPosition();
 	}
 	
+	public void updateHorizontalZoom(float newZoomValue) {
+		getDrawBuffer().setHorizontalZoom(newZoomValue);
+		mTimeLabelPixels = (int) (mWidth*0.15);
+		double ts = 1 / studyData.getAcquisitionData().getFs();
+		
+		DecimalFormat df = new DecimalFormat();
+		df.setMaximumFractionDigits(1);
+		String result = df.format(ts * mTimeLabelPixels * 1/mDrawBuffer.getHorizontalZoom());
+
+		mTimeLabel.setText(result + " s");
+	}
+	
 	protected void updateTimeLabelSize() {
 		mTimeLabel.setTextSize(getBoundedTextSize(mTimeLabel));
 	}
-	
 	
 	private int getBoundedTextSize(Label label) {
 		Rect rect = new Rect();
@@ -228,24 +252,16 @@ public class SignalBox{
 		return (int) mWidth;
 	}
 	
-	
 	public static void setWidth(float width) {
 		mWidth = width;
 	}
-	
 	
 	public static int getHeight() {
 		return (int) mHeight;
 	}
 	
-	
 	public static void setHeight(float height) {
 		mHeight = height;
-	}
-	
-
-	public boolean getPaused() {
-		return mPaused;
 	}
 	
 	public int getGraphingIndex() {

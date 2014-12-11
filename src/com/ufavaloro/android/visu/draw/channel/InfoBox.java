@@ -12,7 +12,7 @@ import android.graphics.Rect;
 
 public class InfoBox{
 	
-	private StudyData mStudyData;
+	protected StudyData studyData;
 	
 	// Ancho y Alto
 	private static float mWidth;
@@ -53,31 +53,12 @@ public class InfoBox{
 	private RGB mColor;
 
 	InfoBox(int channelNumber, StudyData studyData) {
-		mStudyData = studyData;
+		this.studyData = studyData;
 		mAdcChannelNumber = channelNumber;
 		
-		String patientLabel;
-		String channelLabel;
-		if(mStudyData.getPatientData() != null) {
-			String patientName = String.valueOf(studyData.getPatientData().getPatientName());
-			patientName = patientName.trim().replace('_', ' ');
-			
-			String patientSurname = String.valueOf(studyData.getPatientData().getPatientSurname());
-			patientSurname = patientSurname.trim().replace('_', ' ');
-			
-			patientLabel = String.valueOf(patientSurname) + ", " + String.valueOf(patientName);
-			
-			char[] aux = mStudyData.getAcquisitionData().getStudyType();
-			int studyType = aux[0];
-			channelLabel = String.valueOf(StudyType.values(studyType));
-		} else {
-			patientLabel = "Sin Paciente";
-			channelLabel = "Canal " + String.valueOf(mAdcChannelNumber + 1);
-		}
-		
-		createChannelLabel(channelLabel);
+		createChannelLabel();
 		//createElapsedTimeLabel();
-		createPatientLabel(patientLabel);
+		createPatientLabel();
 		//createBitsLabel();
 		//createHorizontalZoomLabel();
 		//createVerticalZoomLabel();
@@ -90,7 +71,12 @@ public class InfoBox{
 		setHeight(height);
 		setChannelIndex(channelIndex);
 		
+		
 		mLabelList.clear();
+		
+		createChannelLabel();
+		//createElapsedTimeLabel();
+		createPatientLabel();
 		
 		// Actualizo tamaños
 		updateChannelLabelSize();
@@ -107,12 +93,32 @@ public class InfoBox{
 
 	}
 
-	protected void createChannelLabel(String text) {
-		mChannelLabel = new Label(0, 0, 0, text);
+	protected void createChannelLabel() {
+		String channelLabel;
+		if(studyData.getAcquisitionData().getStudyType() != null) {
+			char[] aux = studyData.getAcquisitionData().getStudyType();
+			int studyType = aux[0];
+			channelLabel = String.valueOf(StudyType.values(studyType));
+		} else {
+			channelLabel = "Canal " + String.valueOf(mAdcChannelNumber + 1);
+		}
+		mChannelLabel = new Label(0, 0, 0, channelLabel);
 	}
 
-	protected void createPatientLabel(String text) {
-		mPatientLabel = new Label(0, 0, 0, text);
+	protected void createPatientLabel() {
+		String patientLabel;
+		if(studyData.getPatientData() != null) {
+			String patientName = String.valueOf(studyData.getPatientData().getPatientName());
+			patientName = patientName.trim().replace('_', ' ');
+			
+			String patientSurname = String.valueOf(studyData.getPatientData().getPatientSurname());
+			patientSurname = patientSurname.trim().replace('_', ' ');
+			
+			patientLabel = String.valueOf(patientSurname) + ", " + String.valueOf(patientName);
+		} else {
+			patientLabel = "Sin Paciente";
+		}
+		mPatientLabel = new Label(0, 0, 0, patientLabel);
 	}
 
 	private void createPausedLabel() {
