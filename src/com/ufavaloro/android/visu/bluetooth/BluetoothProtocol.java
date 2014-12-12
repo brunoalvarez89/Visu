@@ -14,6 +14,7 @@ import com.ufavaloro.android.visu.storage.datatypes.AdcData;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.util.SparseArray;
 
 
@@ -22,8 +23,14 @@ public class BluetoothProtocol extends Thread{
 /*****************************************************************************************
 * Inicio de atributos de clase											   				 *
 *****************************************************************************************/
-	private AdcData[] adcData;
+	// Handler que se comunica con las capas superiores
 	private Handler mHandler;
+	
+	private boolean mDebugMode = false;
+	private int mPackageNumberByteCount = 0;
+	private double mPackageCount;
+	private double mReceivedPackages;
+	private byte[] mPackageNumberByteBuffer = new byte[Double.SIZE/8];
 	
 /*****************************************************************************************
 * Variables de control													   				 *
@@ -88,6 +95,9 @@ public class BluetoothProtocol extends Thread{
 	// Buffers en bytes de la cantidad de canales
 	private byte[] mChannelByteBuffer = new byte[mChannelBytes];
 	
+	// Array de información del adc. Su tamaño es igual a la cantidad de canales de dicho ADC.
+	private AdcData[] adcData;
+	
 	/*************************************************************************************
 	* Mensaje de información del ADC								 				 	 *
 	*************************************************************************************/
@@ -99,7 +109,7 @@ public class BluetoothProtocol extends Thread{
 	private byte[] mAdcMessage;
 
 /*****************************************************************************************
-* Variables de graficación 											   				 	 *
+* Atributos del paquete de muestras del ADC											   				 	 *
 *****************************************************************************************/
 	// Cantidad de canales por conexión
 	private int mTotalAdcChannels = 0;
@@ -109,6 +119,7 @@ public class BluetoothProtocol extends Thread{
 
 	// Buffer de bytes para almacenar temporalmente las muestras recibidas por canal
 	private byte[] mByteBufferedInput;
+	
 
 /*****************************************************************************************
 * Inicio de métodos de clase														   	 *
@@ -459,16 +470,39 @@ public class BluetoothProtocol extends Thread{
 			mByteBufferedInput[mSampleByteCount] = sample;
 			mSampleByteCount++;
 				if(mSampleByteCount == mSamplesPerPackage*mBytesPerSample) {
-					short[] shortBufferedInput = byteArrayToShortArray(mByteBufferedInput.clone());
-					mStatus = WAITING_FOR_CONTROL;
-					mSampleByteCount = 0;
-					mChannelByteCount = 0;
-					
+					short[] shortBufferedInput = byteArrayToShortArray(mByteBufferedInput.clone());	
 					newBatch(shortBufferedInput, mActualChannel);
 					
+					if(!mDebugMode) {
+						mStatus = WAITING_FOR_CONTROL;
+						mSampleByteCount = 0;
+						mChannelByteCount = 0;
+					}
 					return;
 				}
 			return;
+			}
+			
+			if(mDebugMode) {
+				if(mPackageNumberByteCount < Double.SIZE/8) {
+					mPackageNumberByteBuffer[mPackageNumberByteCount] = sample;
+					mPackageNumberByteCount++;
+					if(mPackageNumberByteCount == mSamplesPerPackage*mBytesPerSample) {
+						ByteBuffer auxBuffer = ByteBuffer.wrap(mPackageNumberByteBuffer);
+						mPackageCount = auxBuffer.getDouble();
+						Log.d("Bluetooth Reception", "Paquete: " + mPackageCount);
+						
+						mReceivedPackages++;
+						Log.d("Bluetooth Reception", "Contador: " + mReceivedPackages);
+						
+						mStatus = WAITING_FOR_CONTROL;
+						mSampleByteCount = 0;
+						mChannelByteCount = 0;
+						mPackageNumberByteCount = 0;						
+						return;
+					}
+				}
+				
 			}
 		}
 	}

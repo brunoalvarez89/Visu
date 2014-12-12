@@ -33,7 +33,6 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 	private TextView mTextViewAMax;
 	private EditText mEditTextAMin;
 	private TextView mTextViewAMin;
-	private Button mButtonChannelConfigOk;
 	
 	private int mSelectedChannel;
 	private Context mContext;
@@ -259,18 +258,6 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
 			
 		});
-
-		// Config Ok Button
-		mButtonChannelConfigOk.setOnClickListener(new android.view.View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				dismiss();
-			}
-			
-		});
-
-		
 	}
 
 	private void populateSpinners() {
