@@ -26,7 +26,7 @@ public class BluetoothProtocol extends Thread{
 	// Handler que se comunica con las capas superiores
 	private Handler mHandler;
 	
-	private boolean mDebugMode = false;
+	private boolean mDebugMode = true;
 	private int mPackageNumberByteCount = 0;
 	private double mPackageCount;
 	private double mReceivedPackages;
