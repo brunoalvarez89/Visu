@@ -155,19 +155,15 @@ public class BluetoothProtocol extends Thread{
 					// Si el visualizador está configurado
 					if(mConfigurationOk == true) {
 						enqueueSample(sample);
-					}
-					
-					// Si el visualizador no está configurado
-					if(mConfigurationOk == false) {
+					} else {
 						// Si recibí la cantidad de canales
 						if(mChannelsOk == false) {
 							parseChannelMesssage(sample, bluetoothChannel);
-						}
-						// Si no recibí la cantidad de canales
-						if(mChannelsOk == true) {
+						} else {
 							parseAdcMessage(sample, bluetoothChannel);
 						}
 					}
+					
 					break;
 					
 				// Escuchando conexiones entrantes
@@ -211,32 +207,20 @@ public class BluetoothProtocol extends Thread{
 
 	// Método que agrega una Conexión Bluetooth a la lista de conexiones
 	public void addBluetoothConnection() {
-		
 		BluetoothService btConnection= new BluetoothService(mBluetoothServiceHandler, mTotalBluetoothConnections);
-		
 		mBtConnections.put(mTotalBluetoothConnections, btConnection);
-		
 		mBtConnections.get(mTotalBluetoothConnections).serverSide();
-		
 		mTotalBluetoothConnections++;
-	
 	}
 	
 	// Método que frena todas las conexiones
 	public void stopConnections() {
-		
-		if (mBtConnections != null) {
-			
-			for(int i=0; i < mTotalBluetoothConnections; i++) {
-				mBtConnections.get(i).stop();
-			}
-			
-		}
+		if (mBtConnections == null) return;	
+		for(int i=0; i < mTotalBluetoothConnections; i++) mBtConnections.get(i).stop();
 	}
 
 	// Método que transmite las muestras recibidas
 	private void newBatch(short[] batch, int channel) {
-		
 		// Informo
 		mHandler.obtainMessage(BluetoothProtocolMessage.NEW_SAMPLES_BATCH.getValue()
 							   ,-1, channel, batch).sendToTarget();
@@ -467,27 +451,27 @@ public class BluetoothProtocol extends Thread{
 			}
 			
 			if(mSampleByteCount < mSamplesPerPackage*mBytesPerSample) {
-			mByteBufferedInput[mSampleByteCount] = sample;
-			mSampleByteCount++;
-				if(mSampleByteCount == mSamplesPerPackage*mBytesPerSample) {
-					short[] shortBufferedInput = byteArrayToShortArray(mByteBufferedInput.clone());	
-					newBatch(shortBufferedInput, mActualChannel);
-					
-					if(!mDebugMode) {
-						mStatus = WAITING_FOR_CONTROL;
-						mSampleByteCount = 0;
-						mChannelByteCount = 0;
+				mByteBufferedInput[mSampleByteCount] = sample;
+				mSampleByteCount++;
+					if(mSampleByteCount == mSamplesPerPackage*mBytesPerSample) {
+						short[] shortBufferedInput = byteArrayToShortArray(mByteBufferedInput.clone());	
+						newBatch(shortBufferedInput, mActualChannel);
+						
+						if(!mDebugMode) {
+							mStatus = WAITING_FOR_CONTROL;
+							mSampleByteCount = 0;
+							mChannelByteCount = 0;
+						}
+						return;
 					}
-					return;
-				}
-			return;
+				return;
 			}
-			
+
 			if(mDebugMode) {
 				if(mPackageNumberByteCount < Double.SIZE/8) {
 					mPackageNumberByteBuffer[mPackageNumberByteCount] = sample;
 					mPackageNumberByteCount++;
-					if(mPackageNumberByteCount == mSamplesPerPackage*mBytesPerSample) {
+					if(mPackageNumberByteCount == Double.SIZE/8) {
 						ByteBuffer auxBuffer = ByteBuffer.wrap(mPackageNumberByteBuffer);
 						mPackageCount = auxBuffer.getDouble();
 						Log.d("Bluetooth Reception", "Paquete: " + mPackageCount);
