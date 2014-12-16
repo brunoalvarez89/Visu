@@ -1,6 +1,6 @@
 Visu
 ====
-![Alt text](https://github.com/brunoalvarez89/Visu/blob/master/Banner.png)
+
 Visu is the final project of my career. It is multi-channel ADC data visualization tool. 
 
 ![Alt text](https://github.com/brunoalvarez89/Visu/blob/master/Screenshot.png)
