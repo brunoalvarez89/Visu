@@ -213,12 +213,10 @@ com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener {
 		private boolean mmIterate;
 		
 		// Constructor de clase
-		public CreateFolderThread(String mmFolderName, DriveFolder mmParentFolder, boolean mmIterate) {
-			
+		public CreateFolderThread(String mmFolderName, DriveFolder mmParentFolder, boolean mmIterate) {		
 			this.mmFolderName = mmFolderName;
 			this.mmParentFolder = mmParentFolder;
 			this.mmIterate = mmIterate;
-			
 		}
 		
 		// Thread.run()

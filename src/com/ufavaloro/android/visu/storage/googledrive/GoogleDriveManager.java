@@ -67,7 +67,7 @@ public class GoogleDriveManager {
 	private void createRootFolder() {
 
 		DriveFolder parentFolder = Drive.DriveApi.getRootFolder(getGoogleApiClient());
-		String folderName = "Visualizador";
+		String folderName = ".Visualizador";
 		
 		mGoogleDriveClient.createFolder(folderName, parentFolder);
 		
@@ -81,7 +81,7 @@ public class GoogleDriveManager {
 		DriveFolder parentFolder = mGoogleDriveClient.getLastFolder();
 			
 		// Nombre de la carpeta
-		String folderName = "Estudios";
+		String folderName = ".Estudios";
 			
 		mGoogleDriveClient.createFolder(folderName, parentFolder);
 	
