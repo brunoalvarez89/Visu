@@ -99,7 +99,7 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 	}
 
 	private void setEditTexts() {
-		Channel channel = mStudy.draw.getChannels().getChannelAtIndex(mChannelNumber);
+		Channel channel = mStudy.getDrawInterface().getChannels().getChannelAtIndex(mChannelNumber);
 		
 		// Write Study Name
 		mEditTextStudyName.setText(String.valueOf(channel.getStudyData().getPatientData().getStudyName()));
@@ -108,7 +108,7 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 		// Write Patient Surname
 		mEditTextPatientSurname.setText(String.valueOf(channel.getStudyData().getPatientData().getPatientSurname()));
 		// Write Study Type
-		char[] studyType = mStudy.draw.getChannels().getChannelAtIndex(mChannelNumber).getStudyData().getAcquisitionData().getStudyType();
+		char[] studyType = mStudy.getDrawInterface().getChannels().getChannelAtIndex(mChannelNumber).getStudyData().getAcquisitionData().getStudyType();
 		int studyNumber = studyType[0];
 		mEditTextStudyType.setText(String.valueOf(StudyType.values(studyNumber)));
 		// Write Acquisition Time

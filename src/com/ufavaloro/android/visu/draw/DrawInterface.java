@@ -34,7 +34,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
+public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback {
 
 /*****************************************************************************************
 * Inicio de atributos de clase 															 *
@@ -114,7 +114,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 * Métodos principales 																	 *
 *****************************************************************************************/
 	// Constructor
-	public DrawHelper(Context context, AttributeSet attrs) {
+	public DrawInterface(Context context, AttributeSet attrs) {
 		// Método de superclase
 		super(context, attrs);
 		// Le informamos al Holder que va a recibir llamados de este SurfaceView
@@ -929,7 +929,7 @@ public class DrawHelper extends SurfaceView implements SurfaceHolder.Callback {
 
 		// Constructor
 		public DrawingThread(SurfaceHolder mSurfaceHolder,
-				DrawHelper mPlotSurfaceView) {
+				DrawInterface mPlotSurfaceView) {
 			this.mSurfaceHolder = mSurfaceHolder;
 			mRun = false;
 			mPauseLock = new Object();

@@ -3,7 +3,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <com.ufavaloro.android.visu.draw.DrawHelper
+    <com.ufavaloro.android.visu.draw.DrawInterface
         android:id="@+id/drawSurface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

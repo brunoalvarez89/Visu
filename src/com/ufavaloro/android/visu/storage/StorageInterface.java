@@ -34,7 +34,7 @@ import com.ufavaloro.android.visu.storage.googledrive.GoogleDriveManagerMessage;
 import com.ufavaloro.android.visu.storage.local.LocalStorageManager;
 import com.ufavaloro.android.visu.study.Study;
 
-public class StorageHelper {
+public class StorageInterface {
 	
 /*****************************************************************************************
 * Inicio de atributos de clase		 									   				 *
@@ -64,7 +64,7 @@ public class StorageHelper {
 * Métodos principales					        									     *
 *****************************************************************************************/
 	// Constructor
-	public StorageHelper(Activity contextActivity, Handler handler) {
+	public StorageInterface(Activity contextActivity, Handler handler) {
 		
 		mHandler = handler;
 		

@@ -21,12 +21,12 @@ public class LoadFileFromGoogleDriveDialog{
 	
 	public void setup() {
 		
-		if(!mStudy.googleDriveConnectionOk()) {
+		if(!mStudy.isGoogleDriveConnected()) {
 			Toast.makeText(mStudyActivity, "No se encuentra conectado a Google Drive", Toast.LENGTH_SHORT).show();
 			return;
 		}
 		
-		GoogleApiClient googleApiClient = mStudy.storage.googleDrive.getGoogleApiClient();
+		GoogleApiClient googleApiClient = mStudy.getStorageInterface().googleDrive.getGoogleApiClient();
 		
 		IntentSender intentSender = Drive.DriveApi
                 						 .newOpenFileActivityBuilder()

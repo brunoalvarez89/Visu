@@ -1,13 +1,9 @@
-/*****************************************************************************************
- * Study.java																			 *
- * Clase que administra todas las otras clases.											 *
- ****************************************************************************************/
-
 package com.ufavaloro.android.visu.study;
 
 import java.util.ArrayList;
 
-import android.content.IntentSender.SendIntentException;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
 import android.util.SparseArray;
@@ -17,81 +13,54 @@ import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.UI.MainActivity;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocol;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocolMessage;
-import com.ufavaloro.android.visu.draw.DrawHelper;
+import com.ufavaloro.android.visu.draw.DrawInterface;
 import com.ufavaloro.android.visu.storage.SamplesBuffer;
-import com.ufavaloro.android.visu.storage.StorageHelper;
+import com.ufavaloro.android.visu.storage.StorageInterface;
 import com.ufavaloro.android.visu.storage.StorageHelperMessage;
 import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
 import com.ufavaloro.android.visu.storage.datatypes.AdcData;
 import com.ufavaloro.android.visu.storage.datatypes.PatientData;
-import com.ufavaloro.android.visu.storage.datatypes.StorageData;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.DriveId;
 
 public class Study {
 
-/*****************************************************************************************
-* Inicio de atributos de clase														     *
-*****************************************************************************************/
-	// Helpers
-	public StorageHelper storage;
-	public BluetoothProtocol bluetooth;
-	public DrawHelper draw;
-
+	// Storage System Interface (Local and Google Drive)
+	private StorageInterface storageInterface;
+	
+	// Bluetooth Protocol (needed for decoding incoming packages)
+	private BluetoothProtocol bluetoothProtocol;
+	
+	// Drawing System Interface
+	private DrawInterface drawInterface;
+	
+	// On-Line StudyData (data acquired in real-time from a sensor)
 	public StudyData[] onlineStudyData;
-	public ArrayList<StudyData> offlineStudyData;
 	
-	// Context de StudyActivity
-	private MainActivity mainActivity;
+	// Off-Line StudyData (data acquired from a file)
+	public ArrayList<StudyData> offlineStudyData = new ArrayList<StudyData>();
 	
-	// Canal Bluetooth asociado al estudio
-	private int mBluetoothChannel;
-	
-	// Cantidad total de canales del estudio
+	// Activity Context (needed for Google Drive API)
+	private Activity mainActivity;
+
+	// Online ADC Channels
 	private int mTotalAdcChannels;
-	
-	private boolean mAdcDataOk = true;
-	
-	// Flags principales
-	//
-	// bluetoothHelper.connected
-	// bluetoothHelper.totalAdcChannels
-	//
-	// drawHelper.onlineDrawBuffersOk
-	//
-	// storageHelper.driveManager.connected
-	// storageHelper.sdManager.rootFoldersOk
-	// storageHelper.sdManager.studyFoldersOk
-	// storageHelper.sdManager.studyFilesOk
-	// storageHelper.buffersOk
-	// storageHelper.patientDataOk
-	// storageHelper.recordingStarted
-
-/*****************************************************************************************
-* Inicio de métodos de clase														     *
-*****************************************************************************************/
-
-/*****************************************************************************************
-* Métodos principales																     *
-*****************************************************************************************/
-	// Constructor
-	public Study(MainActivity mainActivity) {
-		this.mainActivity = mainActivity;
-		draw = (DrawHelper) mainActivity.findViewById(R.id.drawSurface);
-		bluetooth = new BluetoothProtocol(mBluetoothProtocolHandler);
-		storage = new StorageHelper(mainActivity, mStorageHelperHandler);	
 		
-		offlineStudyData = new ArrayList<StudyData>();
+	
+	/**
+	 * Constructor.
+	 * @param mainActivity - Main Activity of the program (needed for Google Drive API).
+	 */
+	public Study(Activity mainActivity) {
+		this.mainActivity = mainActivity;
+		drawInterface = (DrawInterface) mainActivity.findViewById(R.id.drawSurface);
+		bluetoothProtocol = new BluetoothProtocol(mBluetoothProtocolHandler);
+		storageInterface = new StorageInterface(mainActivity, mStorageHelperHandler);	
 	}
 
-/*****************************************************************************************
-* Métodos de almacenamiento															     *
-*****************************************************************************************/
- 	// Método que genera un nuevo estudio Offline y, si estoy conectado al Drive, lo crea
-	// también ahí
+	/**
+	 * Creates a StudyData array of channelsToStore.size() elements.
+	 */
 	public void newStudy(String patientName, String patientSurname, String studyName
 						 , SparseArray<Integer> channelsToStore) {
  		 		
@@ -104,132 +73,157 @@ public class Study {
 		
 		for(int i = 0; i < onlineStudyData.length; i++) {
 			onlineStudyData[i].setPatientData(patientData);
-			draw.getChannels().getChannelAtIndex(i).getStudyData().setPatientData(patientData);
+			drawInterface.getChannels().getChannelAtIndex(i).getStudyData().setPatientData(patientData);
 		}
 		
-		draw.getChannels().update();
+		drawInterface.getChannels().update();
 		
 		// Creo carpetas locales y en google drive
-		storage.createStudyFolders(onlineStudyData);
+		storageInterface.createStudyFolders(onlineStudyData);
 		
 		// Creo archivos .vis de los estudios
-		storage.createLocalStudyFiles(onlineStudyData);
+		storageInterface.createLocalStudyFiles(onlineStudyData);
  	
  	}
  	
+	/**
+	 * Saves the current onlineStudyData array to Google Drive.
+	 */
 	public void saveStudyToGoogleDrive() {
-		storage.createGoogleDriveStudyFiles(onlineStudyData);	
+		storageInterface.createGoogleDriveStudyFiles(onlineStudyData);	
 	}
 
+	/**
+	 * Sets the Study Type of a given channel.
+	 */
 	public void setStudyType(int studyType, int channel) {
 		// Guardo valor en los buffers de almacenamiento
 		onlineStudyData[channel].getAcquisitionData().setStudyType(studyType);
 		// Guardo valor en los buffers de dibujo
-		draw.getChannels().getChannelAtIndex(channel).setStudyType(studyType);
-		draw.getChannels().update();
+		drawInterface.getChannels().getChannelAtIndex(channel).setStudyType(studyType);
+		drawInterface.getChannels().update();
 	}
 	
+	/**
+	 * Sets the Maximum Amplitude of a given channel.
+	 */
 	public void setAMax(double aMax, int channel) {
 		// Guardo valor en los buffers de almacenamiento
 		onlineStudyData[channel].getAcquisitionData().setAMax(aMax);
 		// Guardo valor en los buffers de dibujo
-		draw.getChannels().getChannelAtIndex(channel).setAMax(aMax);
-		draw.getChannels().update();
+		drawInterface.getChannels().getChannelAtIndex(channel).setAMax(aMax);
+		drawInterface.getChannels().update();
 	}
 	
+	/**
+	 * Sets the Minimum Amplitude of a given channel.
+	 */
 	public void setAMin(double aMin, int channel) {
 		// Guardo valor en los buffers de almacenamiento
 		onlineStudyData[channel].getAcquisitionData().setAMin(aMin);
 		// Guardo valor en los buffers de dibujo
-		draw.getChannels().getChannelAtIndex(channel).setAMin(aMin);
-		draw.getChannels().update();
+		drawInterface.getChannels().getChannelAtIndex(channel).setAMin(aMin);
+		drawInterface.getChannels().update();
 	}
 	
-	// Método para saber si estoy conectado a Google Drive
-	public boolean googleDriveConnectionOk() {
-		return storage.googleDrive.isConnected();
+	/**
+	 * Checks the Google Drive connection.
+	 * @return True if connected, false otherwise.
+	 */
+	public boolean isGoogleDriveConnected() {
+		return storageInterface.googleDrive.isConnected();
 	}
 
-	// Método para abrir un archivo desde Google Drive
+	/**
+	 * Opens a file from Google Drive.
+	 * @param driveId - Google Drive ID of the given file.
+	 */
 	public void loadFileFromGoogleDrive(DriveId driveId) {
-		storage.loadFileFromGoogleDrive(driveId);
+		storageInterface.loadFileFromGoogleDrive(driveId);
 	}
 
+	/**
+	 * Opens a file from the Local External Storage.
+	 * @param filePath - path of the given File.
+	 */
 	public void loadFileFromLocalStorage(String filePath) {
-		storage.loadFileFromLocalStorage(filePath);
+		storageInterface.loadFileFromLocalStorage(filePath);
 	}
 	
-/*****************************************************************************************
-* Métodos de Conexión Bluetooth														     *
-*****************************************************************************************/
-	// Método que agrega una conexión Bluetooth 
-	public void newBluetoothConnection() {
-		bluetooth.addBluetoothConnection();
+	/**
+	 * Adds a Slave connection to the Bluetooth Connections array.
+	 */
+	public void addSlaveBluetoothConnection() {
+		bluetoothProtocol.addSlaveBluetoothConnection();
 	}
 	
-	// Método que informa el estado de la conexión
-	public boolean connectedToRemoteDevice() {
-		return bluetooth.getConnected();
+	/**
+	 * Checks the last added Bluetooth connection.
+	 * @return True if connected, false otherwise.
+	 */
+	public boolean isConnectedToRemoteDevice() {
+		return bluetoothProtocol.isConnected();
 	}
 	
-	// Getter de la cantidad de canales del adc
+	/**
+	 * Returns the amount of ADC channels of the last added Bluetooth connection.
+	 */
 	public int getTotalAdcChannels() {	
-		return bluetooth.getTotalAdcChannels();
+		return bluetoothProtocol.getTotalAdcChannels();
 	}
 	
-	// Método para obtener el dispositivo con el cual me conecté
+	/**
+	 * Returns the remote device name of the last added Bluetooth connection.
+	 */
 	public String getRemoteDevice() {
-		return bluetooth.getActualRemoteDevice();
+		return bluetoothProtocol.getActualRemoteDevice();
 	}
 
-/*****************************************************************************************
-* Métodos de Graficación															     *
-*****************************************************************************************/
 	// Método para crear buffers de graficación online
 	public void addChannel(int channel) {
-		
 		if(channel >= getTotalAdcChannels()) return;
-		
-		draw.addChannel(onlineStudyData[channel], true);
-
-		draw.onlineDrawBuffersOk = true;
-	
+		drawInterface.addChannel(onlineStudyData[channel], true);
+		drawInterface.onlineDrawBuffersOk = true;
 	}
 	
 	public void hideChannel(int channel) {
-		draw.hideChannel(channel);
+		drawInterface.hideChannel(channel);
 	}
 	
 	public void removeChannel(int channel) {
-		draw.removeChannel(channel);
-	}
-	
-	public boolean buffersOk() {
-		return draw.onlineDrawBuffersOk;
-	}
-	
-	public boolean adcDataOk() {
-		return mAdcDataOk;
+		drawInterface.removeChannel(channel);
 	}
 	
  	public void startDrawing() {
-		draw.startDrawing();
+		drawInterface.startDrawing();
 	}
 
  	public void startRecording() { 		
- 		draw.currentlyRecording = true;
- 		storage.recording = true;
+ 		drawInterface.currentlyRecording = true;
+ 		storageInterface.recording = true;
  	}
 
  	public void stopRecording() {		
- 		draw.currentlyRecording = false;
-		storage.recording = false;
+ 		drawInterface.currentlyRecording = false;
+		storageInterface.recording = false;
  	}
  	
+ 	public DrawInterface getDrawInterface() {
+ 		return drawInterface;
+ 	}
+ 	
+ 	public StorageInterface getStorageInterface() {
+ 		return storageInterface;
+ 	}
+ 	
+ 	public BluetoothProtocol getBluetoothProtocol() {
+ 		return bluetoothProtocol;
+ 	}
+
  	private void onGoogleDriveFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
  		offlineStudyData.add(studyData);
- 		draw.addChannel(studyData, false); 	
+ 		drawInterface.addChannel(studyData, false); 	
  	}
  	
  	private void onLocalStorageFileOpened(Object object) {
@@ -239,13 +233,13 @@ public class Study {
  			return;
  		} else {
 	 		offlineStudyData.add(studyData);
-	 		draw.addChannel(studyData, false);
+	 		drawInterface.addChannel(studyData, false);
 	 	}
  	}
  	
  	private void onNewSamplesBatch(short[] samples, int channel) {
- 		if(draw.onlineDrawBuffersOk == true) draw.draw(samples, channel);
-		if(storage.recording == true) storage.saveSamplesBatch(onlineStudyData[channel], samples);
+ 		if(drawInterface.onlineDrawBuffersOk == true) drawInterface.draw(samples, channel);
+		if(storageInterface.recording == true) storageInterface.saveSamplesBatch(onlineStudyData[channel], samples);
  	}
  	
  	private void onTotalAdcChannels(int totalAdcChannels) {
@@ -266,14 +260,17 @@ public class Study {
  			samplesBuffer = new SamplesBuffer(onlineStudyData[i].getAcquisitionData(), "");
  			onlineStudyData[i].setSamplesBuffer(samplesBuffer);
  		}
- 		
- 		mAdcDataOk = true;
- 		
- 		mainActivity.onConfigurationOk();
+
+ 		for(int i = 0; i < getTotalAdcChannels(); i++) {
+			addChannel(i);
+		}
+		
+		// Empiezo a dibujar
+		startDrawing();
+ 		//mainActivity.onConfigurationOk();
  	}
  	
  	private void onGoogleDriveConnected() {
- 		mainActivity.shortToast("Conectado a Google Drive");
  	}
  	
  	private void onGoogleDriveSuspended() {
@@ -285,13 +282,14 @@ public class Study {
  	}
  	
  	private void onGoogleDriveConnectionFailed(Message msg) {
- 
  		
  	}
  	
+	@SuppressLint("HandlerLeak")
 	private final Handler mBluetoothProtocolHandler = new Handler() {
 		
 		// Método para manejar el mensaje
+		@SuppressLint("HandlerLeak")
 		@Override
 		public void handleMessage(Message msg) {
 		
@@ -324,6 +322,8 @@ public class Study {
 		}
 	};
 	
+	
+	@SuppressLint("HandlerLeak")
 	private final Handler mStorageHelperHandler = new Handler() {
 		
 		// Método para manejar el mensaje
@@ -365,6 +365,4 @@ public class Study {
 		
 	};
 
-
-
-}
+}//Study.java

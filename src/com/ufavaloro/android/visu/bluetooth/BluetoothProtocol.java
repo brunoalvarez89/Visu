@@ -172,7 +172,7 @@ public class BluetoothProtocol extends Thread{
 				
 				// Me conecté
 				case CONNECTED: 
-					addBluetoothConnection();
+					addSlaveBluetoothConnection();
 					mConnected = true;
 					break;
 			
@@ -206,7 +206,7 @@ public class BluetoothProtocol extends Thread{
 	};//mHandlerConexion
 
 	// Método que agrega una Conexión Bluetooth a la lista de conexiones
-	public void addBluetoothConnection() {
+	public void addSlaveBluetoothConnection() {
 		BluetoothService btConnection= new BluetoothService(mBluetoothServiceHandler, mTotalBluetoothConnections);
 		mBtConnections.put(mTotalBluetoothConnections, btConnection);
 		mBtConnections.get(mTotalBluetoothConnections).serverSide();
@@ -527,7 +527,7 @@ public class BluetoothProtocol extends Thread{
 * Envío de información															         *
 *****************************************************************************************/	
 	// Getter de estado de conexión
-	public boolean getConnected() {
+	public boolean isConnected() {
 		return mConnected;
 	}
 

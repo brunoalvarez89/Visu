@@ -39,7 +39,7 @@ public class NewStudyDialog extends Dialog {
 	}
 	
 	public void setup() {
-		if(mStudy.bluetooth.getConnected() == false) {
+		if(mStudy.getBluetoothProtocol().isConnected() == false) {
 			Toast.makeText(mContext, "No se encuentra conectado", Toast.LENGTH_SHORT).show();
 			return;
 		}
