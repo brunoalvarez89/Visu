@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.UI;
+package com.ufavaloro.android.visu.userinterface;
 
 import java.util.ArrayList;
 
@@ -17,9 +17,9 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView;
 
 import com.ufavaloro.android.visu.R;
+import com.ufavaloro.android.visu.maininterface.MainInterface;
+import com.ufavaloro.android.visu.maininterface.StudyType;
 import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
-import com.ufavaloro.android.visu.study.Study;
-import com.ufavaloro.android.visu.study.StudyType;
 
 public class OnlineChannelPropertiesDialog extends Dialog {
 	
@@ -37,7 +37,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 	private int mSelectedChannel;
 	private Context mContext;
 	
-	private Study mStudy;
+	private MainInterface mStudy;
 	
 	public OnlineChannelPropertiesDialog(Context context, int theme, int channel) {
 		super(context);	
@@ -281,7 +281,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 	    
 	}
 	
-	public void setStudy(Study study) {
+	public void setStudy(MainInterface study) {
 		mStudy = study;
 	}
 

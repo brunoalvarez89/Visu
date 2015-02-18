@@ -23,16 +23,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
-import com.ufavaloro.android.visu.UI.MainActivity;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocolMessage;
+import com.ufavaloro.android.visu.maininterface.MainInterface;
 import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
 import com.ufavaloro.android.visu.storage.datatypes.AdcData;
 import com.ufavaloro.android.visu.storage.datatypes.PatientData;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
-import com.ufavaloro.android.visu.storage.googledrive.GoogleDriveManager;
-import com.ufavaloro.android.visu.storage.googledrive.GoogleDriveManagerMessage;
-import com.ufavaloro.android.visu.storage.local.LocalStorageManager;
-import com.ufavaloro.android.visu.study.Study;
+import com.ufavaloro.android.visu.storage.googledrive.GoogleDriveInterface;
+import com.ufavaloro.android.visu.storage.googledrive.GoogleDriveInterfaceMessage;
+import com.ufavaloro.android.visu.storage.local.LocalStorageInterface;
+import com.ufavaloro.android.visu.userinterface.MainActivity;
 
 public class StorageInterface {
 	
@@ -49,11 +49,11 @@ public class StorageInterface {
 	// Flag de información del paciente almacenada
 	public boolean patientDataOk = false;
 
-	public LocalStorageManager local;
-	public GoogleDriveManager googleDrive;
+	public LocalStorageInterface local;
+	public GoogleDriveInterface googleDrive;
 	//public StudyData[] studyData;
 	
-	public Study study;
+	public MainInterface study;
 	
 	private Handler mHandler;
 
@@ -69,8 +69,8 @@ public class StorageInterface {
 		mHandler = handler;
 		
 		// Creo managers
-		local = new LocalStorageManager();
-		googleDrive = new GoogleDriveManager(contextActivity, mGoogleDriveManagerHandler);
+		local = new LocalStorageInterface();
+		googleDrive = new GoogleDriveInterface(contextActivity, mGoogleDriveInterfaceHandler);
 		
 		// Creo carpetas raíz locales
 		local.createRootFolders();
@@ -102,7 +102,7 @@ public class StorageInterface {
 		StudyData studyData = StudyDataParser.getStudyData(fileInputBuffer);
 		
 		// Informo
-		mHandler.obtainMessage(StorageHelperMessage.LOCAL_STORAGE_FILE_OPENED.getValue() 
+		mHandler.obtainMessage(StorageInterfaceMessage.LOCAL_STORAGE_FILE_OPENED.getValue() 
 							   ,-1, -1, studyData).sendToTarget();
 		
 	}
@@ -116,7 +116,7 @@ public class StorageInterface {
 		StudyData studyData = StudyDataParser.getStudyData((byte[]) obj);
 
 		// Informo
-		mHandler.obtainMessage(StorageHelperMessage.GOOGLE_DRIVE_FILE_OPENED.getValue() 
+		mHandler.obtainMessage(StorageInterfaceMessage.GOOGLE_DRIVE_FILE_OPENED.getValue() 
 							   ,-1, -1, studyData).sendToTarget();
 		
 	}
@@ -134,7 +134,7 @@ public class StorageInterface {
 	}
 	
 	private void onGoogleDriveConnectionFailed(Message msg) {
-		mHandler.obtainMessage(StorageHelperMessage.GOOGLE_DRIVE_CONNECTION_FAILED.getValue()
+		mHandler.obtainMessage(StorageInterfaceMessage.GOOGLE_DRIVE_CONNECTION_FAILED.getValue()
 							   , -1, -1, msg).sendToTarget();
 	}
 	
@@ -163,16 +163,16 @@ public class StorageInterface {
 /*****************************************************************************************
 * Métodos auxiliares																     *
 *****************************************************************************************/
-	private final Handler mGoogleDriveManagerHandler = new Handler() {
+	private final Handler mGoogleDriveInterfaceHandler = new Handler() {
 		
     	// Método para manejar el mensaje
 		@Override
 		public void handleMessage(Message msg) {
 			
 			// Tipo de mensaje recibido
-			GoogleDriveManagerMessage googleDriveManagerMessage = GoogleDriveManagerMessage.values(msg.what);
+			GoogleDriveInterfaceMessage googleDrivInterfaceMessage = GoogleDriveInterfaceMessage.values(msg.what);
 			
-			switch (googleDriveManagerMessage) {
+			switch (googleDrivInterfaceMessage) {
 				
 				// Succesfully connected to Google Play Services
 				case GOOGLE_DRIVE_FILE_OPEN:

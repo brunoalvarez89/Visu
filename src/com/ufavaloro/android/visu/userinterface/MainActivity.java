@@ -3,14 +3,14 @@
  * Clase que administra la interfaz de usuario.													 *
  ****************************************************************************************/
 
-package com.ufavaloro.android.visu.UI;
+package com.ufavaloro.android.visu.userinterface;
 
 import java.io.File;
 
 import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.draw.channel.Channel;
+import com.ufavaloro.android.visu.maininterface.MainInterface;
 import com.ufavaloro.android.visu.storage.datatypes.StorageData;
-import com.ufavaloro.android.visu.study.Study;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 import android.app.Activity;
@@ -25,7 +25,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	
 	// Estudio
-	private Study mStudy;
+	private MainInterface mStudy;
 	// Request código de apertura de archivo de Google Drive
 	private static final int GOOGLE_DRIVE_REQUEST_CODE_OPENER = 1;
 	// View para manejar Status Bar y Navigation Bar
@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
 		
 	// Método que se ejecuta luego de haberse creado el SurfaceView asociado
 	public void setupAfterSurfaceCreated() {
-		mStudy = new Study(this);		
+		mStudy = new MainInterface(this);		
 		mStudy.addSlaveBluetoothConnection();    
 	}
 	

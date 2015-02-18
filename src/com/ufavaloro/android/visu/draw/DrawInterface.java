@@ -8,13 +8,13 @@ package com.ufavaloro.android.visu.draw;
 import java.text.DecimalFormat;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.UI.MainActivity;
 import com.ufavaloro.android.visu.draw.channel.Channel;
 import com.ufavaloro.android.visu.draw.channel.ChannelList;
 import com.ufavaloro.android.visu.draw.channel.InfoBox;
 import com.ufavaloro.android.visu.draw.channel.Label;
 import com.ufavaloro.android.visu.draw.channel.SignalBox;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
+import com.ufavaloro.android.visu.userinterface.MainActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

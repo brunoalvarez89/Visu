@@ -16,7 +16,7 @@ import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
 import android.os.Environment;
 
-public class LocalStorageManager {
+public class LocalStorageInterface {
 	
 	// Flags
 	public boolean rootFoldersOk = false;

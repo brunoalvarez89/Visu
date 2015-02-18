@@ -1,6 +1,6 @@
 package com.ufavaloro.android.visu.storage.googledrive;
 
-public enum GoogleDriveManagerMessage {
+public enum GoogleDriveInterfaceMessage {
 
 	GOOGLE_DRIVE_FILE_OPEN(1),
 	GOOGLE_DRIVE_CONNECTED(2),
@@ -10,11 +10,11 @@ public enum GoogleDriveManagerMessage {
 	
 	private final int value;
 
-	private GoogleDriveManagerMessage(int value){
+	private GoogleDriveInterfaceMessage(int value){
 		this.value=value;
 	}
 	
-	public static GoogleDriveManagerMessage values(int what) {
+	public static GoogleDriveInterfaceMessage values(int what) {
 		
 		switch(what){
 		

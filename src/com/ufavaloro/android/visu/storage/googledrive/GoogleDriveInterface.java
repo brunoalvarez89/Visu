@@ -18,12 +18,12 @@ import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
-public class GoogleDriveManager {
+public class GoogleDriveInterface {
 	
 	GoogleDriveClient mGoogleDriveClient;
 	Handler mHandler;
 	
-	public GoogleDriveManager(Activity contextActivity, Handler mHandler) {
+	public GoogleDriveInterface(Activity contextActivity, Handler mHandler) {
 		mGoogleDriveClient = new GoogleDriveClient(contextActivity, mGoogleDriveClientHandler);
 		this.mHandler = mHandler;
 	}
@@ -166,20 +166,20 @@ public class GoogleDriveManager {
 	}
 	
 	private void onConnected() {
-		mHandler.obtainMessage(GoogleDriveManagerMessage.GOOGLE_DRIVE_CONNECTED.getValue()).sendToTarget();
+		mHandler.obtainMessage(GoogleDriveInterfaceMessage.GOOGLE_DRIVE_CONNECTED.getValue()).sendToTarget();
 		createRootFolder();
 		createStudiesFolder();
 	}
 	
 	private void onDisconnected() {
-		mHandler.obtainMessage(GoogleDriveManagerMessage.GOOGLE_DRIVE_DISCONNECTED.getValue()).sendToTarget();
+		mHandler.obtainMessage(GoogleDriveInterfaceMessage.GOOGLE_DRIVE_DISCONNECTED.getValue()).sendToTarget();
 		if(mGoogleDriveClient != null) {
 			mGoogleDriveClient.connect();
 		}
 	}
 	
 	private void onConnectionFailed(Message msg) {
-		mHandler.obtainMessage(GoogleDriveManagerMessage.GOOGLE_DRIVE_CONNECTION_FAILED.getValue()
+		mHandler.obtainMessage(GoogleDriveInterfaceMessage.GOOGLE_DRIVE_CONNECTION_FAILED.getValue()
 							   , -1, -1, msg).sendToTarget();
 	}
 	
@@ -196,11 +196,11 @@ public class GoogleDriveManager {
 	}
 	
 	private void onConnectionSuspended() {
-		mHandler.obtainMessage(GoogleDriveManagerMessage.GOOGLE_DRIVE_SUSPENDED.getValue()).sendToTarget();
+		mHandler.obtainMessage(GoogleDriveInterfaceMessage.GOOGLE_DRIVE_SUSPENDED.getValue()).sendToTarget();
 	}
 	
 	private void onFileOpen(Object object) {
-		mHandler.obtainMessage(GoogleDriveManagerMessage.GOOGLE_DRIVE_FILE_OPEN.getValue(), -1, -1, object)
+		mHandler.obtainMessage(GoogleDriveInterfaceMessage.GOOGLE_DRIVE_FILE_OPEN.getValue(), -1, -1, object)
 		  					   .sendToTarget();
 	}
 	

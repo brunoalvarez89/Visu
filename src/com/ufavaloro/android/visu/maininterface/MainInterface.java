@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.study;
+package com.ufavaloro.android.visu.maininterface;
 
 import java.util.ArrayList;
 
@@ -10,20 +10,20 @@ import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.UI.MainActivity;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocol;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocolMessage;
 import com.ufavaloro.android.visu.draw.DrawInterface;
 import com.ufavaloro.android.visu.storage.SamplesBuffer;
 import com.ufavaloro.android.visu.storage.StorageInterface;
-import com.ufavaloro.android.visu.storage.StorageHelperMessage;
+import com.ufavaloro.android.visu.storage.StorageInterfaceMessage;
 import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
 import com.ufavaloro.android.visu.storage.datatypes.AdcData;
 import com.ufavaloro.android.visu.storage.datatypes.PatientData;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
+import com.ufavaloro.android.visu.userinterface.MainActivity;
 import com.google.android.gms.drive.DriveId;
 
-public class Study {
+public class MainInterface {
 
 	// Storage System Interface (Local and Google Drive)
 	private StorageInterface storageInterface;
@@ -51,11 +51,11 @@ public class Study {
 	 * Constructor.
 	 * @param mainActivity - Main Activity of the program (needed for Google Drive API).
 	 */
-	public Study(Activity mainActivity) {
+	public MainInterface(Activity mainActivity) {
 		this.mainActivity = mainActivity;
 		drawInterface = (DrawInterface) mainActivity.findViewById(R.id.drawSurface);
 		bluetoothProtocol = new BluetoothProtocol(mBluetoothProtocolHandler);
-		storageInterface = new StorageInterface(mainActivity, mStorageHelperHandler);	
+		storageInterface = new StorageInterface(mainActivity, mStorageInterfaceHandler);	
 	}
 
 	/**
@@ -294,9 +294,9 @@ public class Study {
 		public void handleMessage(Message msg) {
 		
 			// Tipo de mensaje recibido
-			BluetoothProtocolMessage bluetoothHelperMessage = BluetoothProtocolMessage.values(msg.what);
+			BluetoothProtocolMessage bluetoothProtocolMessage = BluetoothProtocolMessage.values(msg.what);
 			
-			switch (bluetoothHelperMessage) {
+			switch (bluetoothProtocolMessage) {
 				
 				// Succesfully connected to Google Play Services
 				case NEW_SAMPLES_BATCH:
@@ -321,19 +321,18 @@ public class Study {
 			}
 		}
 	};
-	
-	
+		
 	@SuppressLint("HandlerLeak")
-	private final Handler mStorageHelperHandler = new Handler() {
+	private final Handler mStorageInterfaceHandler = new Handler() {
 		
 		// Método para manejar el mensaje
 		@Override
 		public void handleMessage(Message msg) {
 			
 			// Tipo de mensaje recibido
-			StorageHelperMessage storageHelperMessage = StorageHelperMessage.values(msg.what);
+			StorageInterfaceMessage storageInterfaceMessage = StorageInterfaceMessage.values(msg.what);
 			
-			switch (storageHelperMessage) {
+			switch (storageInterfaceMessage) {
 				
 				case GOOGLE_DRIVE_CONNECTED:
 					onGoogleDriveConnected();

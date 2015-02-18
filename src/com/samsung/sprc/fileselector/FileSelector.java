@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.UI.MainActivity;
+import com.ufavaloro.android.visu.userinterface.MainActivity;
 
 //import android.app.AlertDialog;
 import android.app.Dialog;

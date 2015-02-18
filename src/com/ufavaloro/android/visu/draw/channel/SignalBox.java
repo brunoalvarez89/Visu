@@ -10,8 +10,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.ufavaloro.android.visu.draw.RGB;
+import com.ufavaloro.android.visu.maininterface.StudyType;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
-import com.ufavaloro.android.visu.study.StudyType;
 
 public class SignalBox{
 

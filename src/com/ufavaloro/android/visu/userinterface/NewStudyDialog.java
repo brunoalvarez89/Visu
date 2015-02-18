@@ -1,9 +1,9 @@
-package com.ufavaloro.android.visu.UI;
+package com.ufavaloro.android.visu.userinterface;
 
 import java.util.ArrayList;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.study.Study;
+import com.ufavaloro.android.visu.maininterface.MainInterface;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -29,7 +29,7 @@ public class NewStudyDialog extends Dialog {
 	private Button mButtonCancelNewStudy;
 	
 	private Context mContext;
-	private Study mStudy;
+	private MainInterface mStudy;
 	private SparseArray<Integer> mChannelsToStore = new SparseArray<Integer>();
 	
 	
@@ -155,7 +155,7 @@ public class NewStudyDialog extends Dialog {
 		
 	}
 	
-	public void setStudy(Study study) {
+	public void setStudy(MainInterface study) {
 		mStudy = study;
 	}
 

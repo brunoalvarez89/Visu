@@ -1,6 +1,6 @@
 package com.ufavaloro.android.visu.storage;
 
-public enum StorageHelperMessage {
+public enum StorageInterfaceMessage {
 
 	GOOGLE_DRIVE_CONNECTED(1),
 	GOOGLE_DRIVE_SUSPENDED(2),
@@ -11,11 +11,11 @@ public enum StorageHelperMessage {
 	
 	private final int value;
 
-	private StorageHelperMessage(int value){
+	private StorageInterfaceMessage(int value){
 		this.value=value;
 	}
 	
-	public static StorageHelperMessage values(int what) {
+	public static StorageInterfaceMessage values(int what) {
 		switch(what){
 		case 1: return GOOGLE_DRIVE_CONNECTED;
 		case 2: return GOOGLE_DRIVE_SUSPENDED;

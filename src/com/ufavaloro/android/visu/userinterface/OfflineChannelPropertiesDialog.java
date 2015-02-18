@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.UI;
+package com.ufavaloro.android.visu.userinterface;
 
 import java.util.ArrayList;
 
@@ -18,9 +18,9 @@ import android.widget.TextView;
 
 import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.draw.channel.Channel;
+import com.ufavaloro.android.visu.maininterface.MainInterface;
+import com.ufavaloro.android.visu.maininterface.StudyType;
 import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
-import com.ufavaloro.android.visu.study.Study;
-import com.ufavaloro.android.visu.study.StudyType;
 
 public class OfflineChannelPropertiesDialog extends Dialog {
 	
@@ -40,7 +40,7 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 	
 	private Context mContext;
 	
-	private Study mStudy;
+	private MainInterface mStudy;
 	
 	private int mChannelNumber;
 	
@@ -130,7 +130,7 @@ public class OfflineChannelPropertiesDialog extends Dialog {
 		mEditTextAMin.setText(String.valueOf(channel.getStudyData().getAcquisitionData().getAMin()));
 	}
 	
-	public void setStudy(Study study) {
+	public void setStudy(MainInterface study) {
 		mStudy = study;
 	}
 

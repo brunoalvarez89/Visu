@@ -1,9 +1,9 @@
-package com.ufavaloro.android.visu.UI;
+package com.ufavaloro.android.visu.userinterface;
 
 import org.apache.http.auth.MalformedChallengeException;
 
 import com.ufavaloro.android.visu.draw.channel.Channel;
-import com.ufavaloro.android.visu.study.Study;
+import com.ufavaloro.android.visu.maininterface.MainInterface;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,7 +12,7 @@ import android.content.DialogInterface;
 public class ChannelOptionsDialog extends AlertDialog {
 
 	private MainActivity mMainActivity;
-	private Study mStudy;
+	private MainInterface mStudy;
 	private int mChannelNumber;
 	private final CharSequence[] mOnlineChannelOptions = {"Configurar", "Ocultar"};
 	private final CharSequence[] mOfflineChannelOptions = {"Propiedades", "Ocultar"};
@@ -84,7 +84,7 @@ public class ChannelOptionsDialog extends AlertDialog {
 		mMainActivity = mainActivity;
 	}
 
-	public void setStudy(Study study) {
+	public void setStudy(MainInterface study) {
 		mStudy = study;
 	}
 }

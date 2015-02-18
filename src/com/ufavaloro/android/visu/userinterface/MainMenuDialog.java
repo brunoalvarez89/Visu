@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.UI;
+package com.ufavaloro.android.visu.userinterface;
 
 
 import android.app.AlertDialog;

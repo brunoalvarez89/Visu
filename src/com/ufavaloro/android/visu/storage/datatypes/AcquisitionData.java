@@ -1,6 +1,6 @@
 package com.ufavaloro.android.visu.storage.datatypes;
 
-import com.ufavaloro.android.visu.study.StudyType;
+import com.ufavaloro.android.visu.maininterface.StudyType;
 
 
 public class AcquisitionData {

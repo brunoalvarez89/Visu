@@ -1,6 +1,6 @@
-package com.ufavaloro.android.visu.UI;
+package com.ufavaloro.android.visu.userinterface;
 
-import com.ufavaloro.android.visu.study.Study;
+import com.ufavaloro.android.visu.maininterface.MainInterface;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.widget.Toast;
 public class StopStudyDialog extends AlertDialog {
 
 	private Context mContext;
-	private Study mStudy;
+	private MainInterface mStudy;
 	
 	public StopStudyDialog(Context context, int theme) {
 		super(context, theme);
@@ -50,7 +50,7 @@ public class StopStudyDialog extends AlertDialog {
 		dismiss();
 	}
 	
-	public void setStudy(Study study) {
+	public void setStudy(MainInterface study) {
 		mStudy = study;
 	}
 }
