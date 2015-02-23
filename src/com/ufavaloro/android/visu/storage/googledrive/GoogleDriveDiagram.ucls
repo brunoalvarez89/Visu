@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.8" icons="true" always-add-relationships="true" generalizations="true" realizations="true" 
   associations="true" dependencies="true" nesting-relationships="true">  
-  <class id="1" language="java" name="com.ufavaloro.android.visu.storage.StorageInterface" project="Visu" 
-    file="/Visu/src/com/ufavaloro/android/visu/storage/StorageInterface.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="82" y="-658"/>    
+  <class id="1" language="java" name="com.ufavaloro.android.visu.storage.googledrive.GoogleDriveClient" project="Visu" 
+    file="/Visu/src/com/ufavaloro/android/visu/storage/googledrive/GoogleDriveClient.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="82" y="-511"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="com.ufavaloro.android.visu.storage.googledrive.GoogleDriveInterface" 
+  <enumeration id="2" language="java" name="com.ufavaloro.android.visu.storage.googledrive.GoogleDriveClientMessage" 
+    project="Visu" file="/Visu/src/com/ufavaloro/android/visu/storage/googledrive/GoogleDriveClientMessage.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="279" y="-548"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <class id="3" language="java" name="com.ufavaloro.android.visu.storage.googledrive.GoogleDriveInterface" 
     project="Visu" file="/Visu/src/com/ufavaloro/android/visu/storage/googledrive/GoogleDriveInterface.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="174" y="-598"/>    
-    <display autosize="true" stereotype="true" package="false" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <class id="3" language="java" name="com.ufavaloro.android.visu.storage.local.LocalStorageInterface" project="Visu" 
-    file="/Visu/src/com/ufavaloro/android/visu/storage/local/LocalStorageInterface.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="-17" y="-598"/>    
+    <position height="-1" width="-1" x="81" y="-584"/>    
     <display autosize="true" stereotype="true" package="false" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
@@ -31,29 +32,25 @@
     </display>  
   </class>  
   <association id="4">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="5" name="local">        
-        <position height="18" width="32" x="-156" y="-795"/>      
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="5" name="mGoogleDriveClient">        
+        <position height="18" width="103" x="-279" y="-816"/>      
       </attribute>      
       <multiplicity id="6" minimum="0" maximum="1">        
-        <position height="16" width="23" x="-166" y="-797"/>      
+        <position height="16" width="23" x="-244" y="-802"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="7">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="8" name="googleDrive">        
-        <position height="18" width="67" x="-167" y="-815"/>      
-      </attribute>      
-      <multiplicity id="9" minimum="0" maximum="1">        
-        <position height="16" width="23" x="-151" y="-801"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
+  <dependency id="7">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="8">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
   <classifier-display autosize="true" stereotype="true" package="false" initial-value="true" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false" static="false"/>    
