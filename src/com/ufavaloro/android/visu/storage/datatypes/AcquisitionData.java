@@ -86,7 +86,6 @@ public class AcquisitionData {
 	}
 	
 	public void setStudyType(int study) {
-		
 		mStudyType = new char[mStudyTypeSize];
 		mStudyType[0] = (char) study;
 	}

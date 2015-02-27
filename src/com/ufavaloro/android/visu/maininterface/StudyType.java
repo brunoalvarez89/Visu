@@ -4,11 +4,10 @@ public enum StudyType {
 
 	Ninguno(0),
 	ECG(1),
-	EEG(2),
-	Bruxismo(3);
+	Presion(2);
 	
 	private final int value;
-	private static int totalStudyTypes = 4;
+	private static int totalStudyTypes = 3;
 	
 	private StudyType(int value) {
 		this.value=value;
@@ -22,8 +21,7 @@ public enum StudyType {
 		switch(what){
 		case 0: return Ninguno;
 		case 1: return ECG;
-		case 2: return EEG;
-		case 3: return Bruxismo;
+		case 2: return Presion;
 		
 		default: return Ninguno;
 		}	
@@ -39,10 +37,8 @@ public enum StudyType {
 				return "?";
 			case ECG:
 				return "mV";
-			case EEG:
-				return "mV";
-			case Bruxismo:
-				return "Pa";
+			case Presion:
+				return "mmHg";
 			default:
 				return "?";
 		}	

@@ -267,7 +267,8 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 		for(int i = 0; i < mStudy.getTotalAdcChannels(); i++) {
 			channels.add("Canal " + String.valueOf(i+1));
 		}
-	    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, channels);	    
+	    
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, channels);	    
 	    mSpinnerChannel.setAdapter(arrayAdapter);
 	    if(mSelectedChannel != -1) mSpinnerChannel.setSelection(mSelectedChannel);
 	    
@@ -276,6 +277,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 	    for(int i = 0; i < StudyType.getTotalStudyTypes(); i++) {
 	    	studyTypes.add(StudyType.values(i).toString());
 	    }
+	    
 	    arrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, studyTypes);	    
 	    mSpinnerStudyType.setAdapter(arrayAdapter);
 	    
