@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class NewStudyDialog extends Dialog {
-	
+		
 	private EditText mEditTextPatientName;
 	private EditText mEditTextPatientSurname;
 	private EditText mEditTextStudyName;
@@ -29,29 +29,26 @@ public class NewStudyDialog extends Dialog {
 	private Button mButtonCancelNewStudy;
 	
 	private Context mContext;
-	private MainInterface mStudy;
+	private MainActivity mMainActivity;
 	private SparseArray<Integer> mChannelsToStore = new SparseArray<Integer>();
 	
-	
-	public NewStudyDialog(Context context, int theme) {
+	public NewStudyDialog(Context context, MainActivity mainActivity, int theme) {
 		super(context, theme);
 		mContext = context;
+		mMainActivity = mainActivity;
+		setup();
 	}
 	
 	public void setup() {
-		if(mStudy.getBluetoothProtocol().isConnected() == false) {
-			Toast.makeText(mContext, "No se encuentra conectado", Toast.LENGTH_SHORT).show();
-			return;
-		}
 		setCanceledOnTouchOutside(false);
 		setTitle("Seleccione una acción");
 		inflate();
 		setListeners();
 		populateListView();
+		show();
 	}
 	
 	private void inflate() {
-		
 		setContentView(R.layout.dialog_new_study);
 		
 		// Botón de iniciar estudio
@@ -110,7 +107,7 @@ public class NewStudyDialog extends Dialog {
 	private void populateListView() {
 		// Populate Channel ListView
 		ArrayList<String> channels = new ArrayList<String>();
-		for(int i = 0; i < mStudy.getTotalAdcChannels(); i++) {
+		for(int i = 0; i < mMainActivity.getMainInterface().getTotalAdcChannels(); i++) {
 			channels.add("Canal " + String.valueOf(i+1));
 		}
 	    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, channels);	    
@@ -143,8 +140,8 @@ public class NewStudyDialog extends Dialog {
 			studyName = studyName.trim().replace(' ', '_');
 			
 			// Creo estudios y empiezo a almacenar
-			mStudy.newStudy(patientName, patientSurname, studyName, mChannelsToStore);
-			mStudy.startRecording();
+			mMainActivity.getMainInterface().newStudy(patientName, patientSurname, studyName, mChannelsToStore);
+			mMainActivity.getMainInterface().startRecording();
 		
 		} else {
 			Toast.makeText(mContext, "Por favor complete los campos requeridos", Toast.LENGTH_SHORT).show();
@@ -153,10 +150,6 @@ public class NewStudyDialog extends Dialog {
 	    // Cierro dialog
 		dismiss();
 		
-	}
-	
-	public void setStudy(MainInterface study) {
-		mStudy = study;
 	}
 
 }

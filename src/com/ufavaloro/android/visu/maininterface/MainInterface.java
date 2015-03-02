@@ -41,7 +41,8 @@ public class MainInterface {
 	public ArrayList<StudyData> offlineStudyData = new ArrayList<StudyData>();
 	
 	// Activity Context (needed for Google Drive API)
-	private Activity mainActivity;
+	private MainActivity mMainActivity;
+	private Handler mMainActivityHandler;
 
 	// Online ADC Channels
 	private int mTotalAdcChannels;
@@ -51,8 +52,9 @@ public class MainInterface {
 	 * Constructor.
 	 * @param mainActivity - Main Activity of the program (needed for Google Drive API).
 	 */
-	public MainInterface(Activity mainActivity) {
-		this.mainActivity = mainActivity;
+	public MainInterface(MainActivity mainActivity, Handler mainActivityHandler) {
+		mMainActivity = mainActivity;
+		mMainActivityHandler = mainActivityHandler;
 		drawInterface = (DrawInterface) mainActivity.findViewById(R.id.drawSurface);
 		bluetoothProtocol = new BluetoothProtocol(mBluetoothProtocolHandler);
 		storageInterface = new StorageInterface(mainActivity, mStorageInterfaceHandler);	
@@ -158,6 +160,13 @@ public class MainInterface {
 	}
 	
 	/**
+	 * Removes a connection from the Bluetooth Connections array.
+	 */
+	public void removeBluetoothConnection() {
+		bluetoothProtocol.removeConnection();
+	}
+	
+	/**
 	 * Checks the last added Bluetooth connection.
 	 * @return True if connected, false otherwise.
 	 */
@@ -229,7 +238,7 @@ public class MainInterface {
  	private void onLocalStorageFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
  		if(studyData.getSamplesBuffer().getSize() == 0) {
- 			Toast.makeText(mainActivity, "El archivo no posee muestras", Toast.LENGTH_LONG).show();
+ 			Toast.makeText(mMainActivity, "El archivo no posee muestras", Toast.LENGTH_LONG).show();
  			return;
  		} else {
 	 		offlineStudyData.add(studyData);
@@ -244,6 +253,14 @@ public class MainInterface {
  	
  	private void onTotalAdcChannels(int totalAdcChannels) {
  		mTotalAdcChannels = totalAdcChannels;
+ 	}
+ 	
+ 	private void onBluetoothConnected() {
+ 		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_CONNECTED.getValue()).sendToTarget();
+ 	}
+ 	
+ 	private void onBluetoothDisconnected() {
+ 		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_DISCONNECTED.getValue()).sendToTarget();
  	}
  	
  	private void onAdcData(AdcData[] adcData) {
@@ -298,7 +315,6 @@ public class MainInterface {
 			
 			switch (bluetoothProtocolMessage) {
 				
-				// Succesfully connected to Google Play Services
 				case NEW_SAMPLES_BATCH:
 					short[] samples = (short[]) msg.obj;
 					int channel = msg.arg2;
@@ -313,6 +329,14 @@ public class MainInterface {
 				case TOTAL_ADC_CHANNELS:
 					int totalAdcChannels = (Integer) msg.obj;
 					onTotalAdcChannels(totalAdcChannels);
+					break;
+					
+				case CONNECTED:
+					onBluetoothConnected();
+					break;
+				
+				case DISCONNECTED:
+					onBluetoothDisconnected();
 					break;
 					
 				default:

@@ -50,7 +50,7 @@ public class StopStudyDialog extends AlertDialog {
 		dismiss();
 	}
 	
-	public void setStudy(MainInterface study) {
+	public void setMainInterface(MainInterface study) {
 		mStudy = study;
 	}
 }

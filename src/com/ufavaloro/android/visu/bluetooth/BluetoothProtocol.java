@@ -172,7 +172,8 @@ public class BluetoothProtocol extends Thread{
 				
 				// Me conecté
 				case CONNECTED: 
-					addSlaveBluetoothConnection();
+					// Informo
+					mHandler.obtainMessage(BluetoothProtocolMessage.CONNECTED.getValue()).sendToTarget();
 					mConnected = true;
 					break;
 			
@@ -183,32 +184,27 @@ public class BluetoothProtocol extends Thread{
 					break;
 					
 				// Me desconecté
-				case DISCONNECTED:					
-					break;
-
-				// Perdí la conexión
-				case CONNECTION_LOST:
-					// Obtengo canal
-					bluetoothChannel = msg.arg1;
-					// Lo elimino del array de conexiones
-					mBtConnections.remove(bluetoothChannel);
-					// Vuelvo a setear los flags de configuración en cero y el estado al
-					// estado por defecto.   
+				case DISCONNECTED:	
+					// Informo
+					mHandler.obtainMessage(BluetoothProtocolMessage.DISCONNECTED.getValue()).sendToTarget();
+					mConnected = false;
+					mTotalBluetoothConnections--;
 					mConfigurationOk = false;
 					mChannelsOk = false;
 					mStatus = WAITING_FOR_CONTROL;
 					break;
-			
+
 				default: 
 					break;
 			}//switch
 		}
-	};//mHandlerConexion
+	};
 
 	// Método que agrega una Conexión Bluetooth a la lista de conexiones
+
 	public void addSlaveBluetoothConnection() {
-		BluetoothService btConnection= new BluetoothService(mBluetoothServiceHandler, mTotalBluetoothConnections);
-		mBtConnections.put(mTotalBluetoothConnections, btConnection);
+		BluetoothService bluetoothService = new BluetoothService(mBluetoothServiceHandler, mTotalBluetoothConnections);
+		mBtConnections.put(mTotalBluetoothConnections, bluetoothService);
 		mBtConnections.get(mTotalBluetoothConnections).serverSide();
 		mTotalBluetoothConnections++;
 	}
@@ -416,7 +412,7 @@ public class BluetoothProtocol extends Thread{
 	
 	
 	/*************************************************************************************
-	* Control y graficación de muestras											         *
+	* Control de muestras											         *
 	*************************************************************************************/
 	// Método que chequea si estoy recibiendo una # (byte de control)
 	private boolean checkControl(Byte sample) {
@@ -493,7 +489,34 @@ public class BluetoothProtocol extends Thread{
 
 	
 /*****************************************************************************************
-* Métodos de conversión entre tipos de dato										         *
+* Envío de información															         *
+*****************************************************************************************/	
+	// Getter de estado de conexión
+	public boolean isConnected() {
+		return mConnected;
+	}
+
+	// Getter de dispositivo remoto actual
+	public String getActualRemoteDevice() {
+	
+		return mActualRemoteDevice;
+		
+	}
+	
+	// Getter de cantidad de canales del Adc 
+	public int getTotalAdcChannels() {
+		
+		return mTotalAdcChannels;
+	
+	}
+	
+	// Getter de configuración
+	public boolean getConfigurationOk() {
+		return mConfigurationOk;
+	}
+
+/*****************************************************************************************
+* Otros	métodos																	         *
 *****************************************************************************************/	
 	// Método para pasar las muestras de byte a short
 	private short[] byteArrayToShortArray(byte[] byteBuffer) {
@@ -521,33 +544,10 @@ public class BluetoothProtocol extends Thread{
 		}
 		return ByteBuffer.wrap(intBytes).getInt();
 	}
-
 	
-/*****************************************************************************************
-* Envío de información															         *
-*****************************************************************************************/	
-	// Getter de estado de conexión
-	public boolean isConnected() {
-		return mConnected;
-	}
-
-	// Getter de dispositivo remoto actual
-	public String getActualRemoteDevice() {
-	
-		return mActualRemoteDevice;
-		
+	// Método para desconectarme
+	public void removeConnection() {
+		mBtConnections.valueAt(0).stop();
 	}
 	
-	// Getter de cantidad de canales del Adc 
-	public int getTotalAdcChannels() {
-		
-		return mTotalAdcChannels;
-	
-	}
-	
-	// Getter de configuración
-	public boolean getConfigurationOk() {
-		return mConfigurationOk;
-	}
-
-}//BluetoothHelper
+}

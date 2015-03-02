@@ -13,8 +13,7 @@ public enum BluetoothServiceMessage {
 	LISTENING_RFCOMM(3),
 	CONNECTED(4),
 	NEW_SAMPLE(5),
-	REMOTE_DEVICE(6),
-	CONNECTION_LOST(7);
+	REMOTE_DEVICE(6);
 	
 	private final int value;
 
@@ -30,7 +29,6 @@ public enum BluetoothServiceMessage {
 		case 4: return CONNECTED;
 		case 5: return NEW_SAMPLE;
 		case 6: return REMOTE_DEVICE;
-		case 7: return CONNECTION_LOST;
 		
 		default: return DISCONNECTED;
 		}	

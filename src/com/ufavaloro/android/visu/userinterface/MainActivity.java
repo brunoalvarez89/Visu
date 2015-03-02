@@ -8,16 +8,19 @@ package com.ufavaloro.android.visu.userinterface;
 import java.io.File;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.draw.channel.Channel;
 import com.ufavaloro.android.visu.maininterface.MainInterface;
+import com.ufavaloro.android.visu.maininterface.MainInterfaceMessage;
+import com.ufavaloro.android.visu.storage.StorageInterfaceMessage;
 import com.ufavaloro.android.visu.storage.datatypes.StorageData;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
@@ -25,86 +28,122 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	
 	// Estudio
-	private MainInterface mStudy;
-	// Request código de apertura de archivo de Google Drive
-	private static final int GOOGLE_DRIVE_REQUEST_CODE_OPENER = 1;
+	private MainInterface mMainInterface;
 	// View para manejar Status Bar y Navigation Bar
 	private View mRootView;
-		
+	// Dialogs Theme
+	private int mDialogTheme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
+	// Request code for enabling Bluetooth
+	private static final int REQUEST_CODE_ENABLE_BLUETOOTH = 2;
+	// Request código de apertura de archivo de Google Drive
+	private static final int REQUEST_CODE_GOOGLE_DRIVE_FILE_BROWSER = 1;
+	// Incoming Connection Progress Dialog
+	private ProgressDialog mWaitingForConnectionDialog;
+
 	// Método que se ejecuta luego de haberse creado el SurfaceView asociado
 	public void setupAfterSurfaceCreated() {
-		mStudy = new MainInterface(this);		
-		mStudy.addSlaveBluetoothConnection();    
+		mMainInterface = new MainInterface(this, mMainInterfaceHandler);
 	}
-	
 
-/*****************************************************************************************
-* Dialogs													     	     				 *
-*****************************************************************************************/
+	/**
+	 * Dialogs
+	 */
+	
 	// Dialog de menú principal
 	public void mainMenuDialog() {
-		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		MainMenuDialog dialog = new MainMenuDialog(this, theme);
-		dialog.setMainActivity(this);
-		dialog.setup();
+		MainMenuDialog dialog = new MainMenuDialog(this, this, mDialogTheme);
 	}
 		
 	// Dialog de nuevo estudio
 	public void newStudyDialog() {
-		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		NewStudyDialog dialog = new NewStudyDialog(this, theme);
-		dialog.setStudy(mStudy);
-		dialog.setup();
-		dialog.show();
+		NewStudyDialog dialog = new NewStudyDialog(this, this, mDialogTheme);
 	}
 	
 	// Dialog para abrir un archivo desde la memoria interna
 	public void loadFileFromLocalStorageDialog() {
-		LoadFileFromLocalStorageDialog dialog = new LoadFileFromLocalStorageDialog(this, mStudy);
+		LoadFileFromLocalStorageDialog dialog = new LoadFileFromLocalStorageDialog(this, mMainInterface);
 		dialog.setup();
 	}
 
 	// Dialog para abrir un archivo desde Google Drive
 	public void loadFileFromGoogleDriveDialog() {
-		LoadFileFromGoogleDriveDialog dialog = new LoadFileFromGoogleDriveDialog(this, mStudy);
+		LoadFileFromGoogleDriveDialog dialog = new LoadFileFromGoogleDriveDialog(this, mMainInterface);
 		dialog.setup();
 	}
 		
 	// Dialog de parar estudio
 	public void stopStudyDialog() {
-		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		StopStudyDialog dialog = new StopStudyDialog(this, theme);
-		dialog.setStudy(mStudy);
+		StopStudyDialog dialog = new StopStudyDialog(this, mDialogTheme);
+		dialog.setMainInterface(mMainInterface);
 		dialog.setup();
 	}
 	
 	// Dialog con las opciones del canal
 	public void channelOptionsDialog(int channelNumber) {
-		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		ChannelOptionsDialog dialog = new ChannelOptionsDialog(this, theme, channelNumber);
+		ChannelOptionsDialog dialog = new ChannelOptionsDialog(this, mDialogTheme, channelNumber);
 		dialog.setMainActivity(this);
-		dialog.setStudy(mStudy);
+		dialog.setMainInterface(mMainInterface);
 		dialog.setup();
 	}
 		
 	// Dialog de configuración de canales ONLINE
 	public void onlineChannelPropertiesDialog(int channel) {
-		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		OnlineChannelPropertiesDialog dialog = new OnlineChannelPropertiesDialog(this, theme, channel);
-		dialog.setStudy(mStudy);
+		OnlineChannelPropertiesDialog dialog = new OnlineChannelPropertiesDialog(this, mDialogTheme, channel);
+		dialog.setStudy(mMainInterface);
 		dialog.setup();
 		dialog.show();
 	}
 	
 	// Dialog con las propiedades del canal OFFLINE
 	public void offlineChannelPropertiesDialog(int channelNumber) {
-		int theme = android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth;
-		OfflineChannelPropertiesDialog dialog = new OfflineChannelPropertiesDialog(this, theme, channelNumber);
-		dialog.setStudy(mStudy);
+		OfflineChannelPropertiesDialog dialog = new OfflineChannelPropertiesDialog(this, mDialogTheme, channelNumber);
+		dialog.setStudy(mMainInterface);
 		dialog.setup();
 		dialog.show();
 	}
 	
+	public void addBluetoothConnectionDialog() {
+		AddBluetoothConnectionDialog dialog = new AddBluetoothConnectionDialog(this, this, mDialogTheme);
+	}
+	
+	public void connectToRemoteDeviceDialog() {
+		RemoteBluetoothDevicesDialog dialog = new RemoteBluetoothDevicesDialog(this, this, mDialogTheme);
+	}
+	
+	public void waitingForConnectionDialog() {
+		mMainInterface.addSlaveBluetoothConnection();
+		mWaitingForConnectionDialog = ProgressDialog.show(this, "Conexión Bluetooth", "Esperando..."); 
+	}
+	
+	private final Handler mMainInterfaceHandler = new Handler() {
+		
+		// Método para manejar el mensaje
+		@Override
+		public void handleMessage(Message msg) {
+			
+			// Tipo de mensaje recibido
+			MainInterfaceMessage mainInterfaceMessage = MainInterfaceMessage.values(msg.what);
+			
+			switch (mainInterfaceMessage) {
+				
+				case NOTHING:
+					break;
+					
+				case BLUETOOTH_CONNECTED:
+					mWaitingForConnectionDialog.cancel();
+					shortToast("Conectado");
+					break;
+					
+				case BLUETOOTH_DISCONNECTED:
+					shortToast("Desconectado");
+					break;
+
+				default:
+					break;
+			}
+		}
+		
+	};
 /*****************************************************************************************
 * Visibilidad de Status Bar y Navigation Bar									 *
 *****************************************************************************************/
@@ -135,12 +174,12 @@ public class MainActivity extends Activity {
                     // The system bars are visible. Make any desired
                     // adjustments to your UI, such as showing the action bar or
                     // other navigational controls.
-        	        if(mStudy.getDrawInterface() != null) mStudy.getDrawInterface().setUiVisibility(true);
+        	        if(mMainInterface.getDrawInterface() != null) mMainInterface.getDrawInterface().setUiVisibility(true);
                 } else {
                     // The system bars are NOT visible. Make any desired
                     // adjustments to your UI, such as hiding the action bar or
                     // other navigational controls.
-        	        if(mStudy.getDrawInterface() != null) mStudy.getDrawInterface().setUiVisibility(false);
+        	        if(mMainInterface.getDrawInterface() != null) mMainInterface.getDrawInterface().setUiVisibility(false);
                 }
                 
                 new Handler().postDelayed(new Runnable() {
@@ -171,6 +210,11 @@ public class MainActivity extends Activity {
 		Toast.makeText(getApplicationContext(), toToast, Toast.LENGTH_LONG).show();
 	}
 	
+	// MainInterface Getter (for Dialogs)
+	public MainInterface getMainInterface() {
+		return mMainInterface;
+	}
+
 /*****************************************************************************************
 * Ciclo de vida de la activity 											 				 *
 *****************************************************************************************/
@@ -215,7 +259,7 @@ public class MainActivity extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		// Paro todos los Threads
-		 mStudy.getBluetoothProtocol().stopConnections();
+		 mMainInterface.getBluetoothProtocol().stopConnections();
 	}
 	
 	// this.activity on back pressed
@@ -228,14 +272,26 @@ public class MainActivity extends Activity {
         
 		switch (requestCode) {
         
-		case GOOGLE_DRIVE_REQUEST_CODE_OPENER:
+		case REQUEST_CODE_GOOGLE_DRIVE_FILE_BROWSER:
         	if (resultCode == RESULT_OK) {
-        		if(!mStudy.isGoogleDriveConnected()) return;
+        		if(!mMainInterface.isGoogleDriveConnected()) return;
         		DriveId driveId = (DriveId) data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-        		mStudy.loadFileFromGoogleDrive(driveId);
+        		mMainInterface.loadFileFromGoogleDrive(driveId);
         		shortToast("Abriendo archivo...");
-        	}               
-        break;
+        	}    
+        	break;
+        	
+		case REQUEST_CODE_ENABLE_BLUETOOTH:
+			if (resultCode == Activity.RESULT_OK) {
+				shortToast("Bluetooth activado");
+				addBluetoothConnectionDialog();
+			}
+			
+			if (resultCode == Activity.RESULT_CANCELED) {
+				shortToast("Por favor, active el Bluetooth");
+			}
+		
+			break;
         
         default:
         	break;

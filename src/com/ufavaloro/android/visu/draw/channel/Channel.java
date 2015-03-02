@@ -154,7 +154,6 @@ public class Channel {
 		this.mOnline = mOnline;
 	}
 
-	
 	public boolean isPaused() {
 		return mPaused;
 	}

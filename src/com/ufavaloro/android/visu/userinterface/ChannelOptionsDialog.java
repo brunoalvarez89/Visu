@@ -84,7 +84,7 @@ public class ChannelOptionsDialog extends AlertDialog {
 		mMainActivity = mainActivity;
 	}
 
-	public void setStudy(MainInterface study) {
+	public void setMainInterface(MainInterface study) {
 		mStudy = study;
 	}
 }

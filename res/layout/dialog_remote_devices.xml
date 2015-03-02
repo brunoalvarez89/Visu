@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/scanForDevicesButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Escanear" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dispositivos no sincronizados" />
+
+    <ListView
+        android:id="@+id/unpairedDevicesListView"
+        android:layout_width="wrap_content"
+        android:layout_height="177dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false" >
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dispositivos sincronizados" />
+   
+    <ListView
+        android:id="@+id/pairedDevicesListView"
+        android:layout_width="wrap_content"
+        android:layout_height="176dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false" >
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+</LinearLayout>

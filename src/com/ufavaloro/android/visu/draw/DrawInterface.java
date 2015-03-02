@@ -5,8 +5,6 @@
 
 package com.ufavaloro.android.visu.draw;
 
-import java.text.DecimalFormat;
-
 import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.draw.channel.Channel;
 import com.ufavaloro.android.visu.draw.channel.ChannelList;
@@ -94,8 +92,6 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 	private boolean mUiVisibility = false;
 
 	public boolean currentlyRecording;
-
-	private Label mLabelAwaitingConnections;
 	
 	private boolean mDrawOk = false;
 	
@@ -142,28 +138,6 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 		// Inicializo bitmaps
 		mBitmapManager = new BitmapManager(getContext());
 		bitmapSetup();
-		
-		// Inicializo Labels
-		labelSetup();
-	}
-	
-	// Método que configura los Labels
-	private void labelSetup() {
-		
-		// Label de esperando conexión
-		mLabelAwaitingConnections = new Label();
-		mLabelAwaitingConnections.setText("Esperando conexiones entrantes");
-		int textSize = getBoundedTextSize(mLabelAwaitingConnections
-											, 0.9 * mBitmapManager.getBackgroundLogoWidth()
-											, 0.15 * mBitmapManager.getBackgroundLogoHeight());
-		mLabelAwaitingConnections.setTextSize(textSize);
-		int widthCorrection = mBitmapManager.getBackgroundLogoWidth() - mLabelAwaitingConnections.getBoundingBox().width();
-		int heightCorrection = mLabelAwaitingConnections.getBoundingBox().height();
-		mLabelAwaitingConnections.setX(mBitmapManager.getBackgroundLogoX() + (widthCorrection / 2));
-		mLabelAwaitingConnections.setY(mBitmapManager.getBackgroundLogoY() 
-									   + mBitmapManager.getBackgroundLogoHeight()
-									   + heightCorrection);
-
 	}
 	
 	// Método que configura los Bitmaps
@@ -472,15 +446,14 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 			mPaint.setTextSize(label.getTextSize());
 			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 
-			/* Dibujo Label de Pausa
+			// Dibujo Label de Pausa
 			setPaint(Color.RED, 2);
-			if (channel.getInfoBox().getPaused() == true) {
-				label = infoBox.getLabelPaused();
+			if (channel.isPaused() && channel.isOnline()) {
+				label = channel.getInfoBox().getLabelPaused();
 				mPaint.setTextSize(label.getTextSize());
-				canvas.drawText(label.getText(), label.getX(), label.getY(),
-						mPaint);
+				canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 			}
-			*/
+			
 		}
 
 		mPaint.setAlpha(255);
@@ -509,15 +482,6 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 
 	// Dibujo otros labels
 	private synchronized void drawOtherLabels(Canvas canvas) {
-		// Label de "Esperando conexiones entrantes"
-		if(mChannelList.size() == 0) {
-			mPaint.setTextSize(mLabelAwaitingConnections.getTextSize());
-			canvas.drawText(mLabelAwaitingConnections.getText()
-							, mLabelAwaitingConnections.getX()
-							, mLabelAwaitingConnections.getY()
-							, mPaint);
-		}
-		
 		// Label de los canales ocultados
 		if(mChannelList.getHiddenChannelsLabels().size() > 0 && mUiVisibility == true || mChannelList.size() == 0) {
 			for(int i = 0; i < mChannelList.getHiddenChannelsLabels().size(); i++) {

@@ -10,7 +10,9 @@ public enum BluetoothProtocolMessage {
 
 	NEW_SAMPLES_BATCH(1),
 	ADC_DATA(2),
-	TOTAL_ADC_CHANNELS(3);
+	TOTAL_ADC_CHANNELS(3),
+	CONNECTED(4),
+	DISCONNECTED(5);
 	
 	private final int value;
 
@@ -23,6 +25,8 @@ public enum BluetoothProtocolMessage {
 		case 1: return NEW_SAMPLES_BATCH;
 		case 2: return ADC_DATA;
 		case 3: return TOTAL_ADC_CHANNELS;
+		case 4: return CONNECTED;
+		case 5: return DISCONNECTED;
 		
 		default: return NEW_SAMPLES_BATCH;
 		}	

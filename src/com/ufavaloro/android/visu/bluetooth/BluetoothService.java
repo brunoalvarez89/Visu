@@ -186,6 +186,9 @@ public class BluetoothService {
 		
 		// Actualizo estado
 		setStatus(STATUS_DISCONNECTED);
+		
+		// Informo
+		mHandler.obtainMessage(BluetoothServiceMessage.DISCONNECTED.getValue()).sendToTarget();
 	}
 
 	// Método que mata el Thread Cliente
@@ -541,8 +544,7 @@ public class BluetoothService {
 					setStatus(STATUS_DISCONNECTED);
 				
 					// Informo
-					mHandler.obtainMessage(BluetoothServiceMessage.CONNECTION_LOST.getValue(), 
-										   mBluetoothChannel, -1, mmInputBuffer).sendToTarget();
+					mHandler.obtainMessage(BluetoothServiceMessage.DISCONNECTED.getValue()).sendToTarget();
 					break; 
 				}	
 			}//while
@@ -606,9 +608,7 @@ public class BluetoothService {
 			mRun = false;
 			
 			try {
-			
-				mmBluetoothSocket.close();
-			
+				mmInputStream.close();
 			} catch (IOException e) {}
 		}
 

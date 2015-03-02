@@ -31,7 +31,7 @@ public class InfoBox{
 	private final double mLeftPadding = (mWidth*(1-mLabelWidthPercent))/3;
 	
 	// Padding entre Labels para espaciarlos mejor
-	private final double mInterLabelPadding = 0;//mHeight*0.01; 
+	private double mInterLabelPadding = mHeight*0; 
 	
 	// Label con el # de canal
 	private Label mChannelLabel;
@@ -62,7 +62,7 @@ public class InfoBox{
 		//createBitsLabel();
 		//createHorizontalZoomLabel();
 		//createVerticalZoomLabel();
-		//createPausedLabel();
+		createPausedLabel();
 	}
 	
 	// Cuando se agrega o elimina un canal, se redimensionan los boxes
@@ -71,6 +71,7 @@ public class InfoBox{
 		setHeight(height);
 		setChannelIndex(channelIndex);
 		
+		mInterLabelPadding = mHeight*0.02;
 		
 		mLabelList.clear();
 		
@@ -81,7 +82,7 @@ public class InfoBox{
 		// Actualizo tamaños
 		updateChannelLabelSize();
 		updatePatientLabelSize();
-		//updatePausedLabelSize();
+		updatePausedLabelSize();
 		
 		// Seteo tamaño mínimo global de texto
 		setMinimumSize();
@@ -89,7 +90,7 @@ public class InfoBox{
 		// Actualizo posiciones
 		updateChannelLabelPosition();
 		updatePatientLabelPosition();
-		//UpdatePausedLabelPosition();
+		UpdatePausedLabelPosition();
 
 	}
 
@@ -192,7 +193,7 @@ public class InfoBox{
 	private void UpdatePausedLabelPosition() {
 		
 		mPausedLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
-		mPausedLabel.setY((int) (mHeight - mInterLabelPadding));
+		mPausedLabel.setY((int) ((mChannelIndex+1)*mHeight - mInterLabelPadding));
 		
 	}	
 		
