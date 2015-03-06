@@ -14,7 +14,7 @@ public class ChannelList {
 	private SparseArray<Channel> mHiddenChannelList;
 	private SparseArray<Label> mHiddenChannelsLabels;
 	// Channel colors
-	public RGB[] mColorArray = new RGB[10];
+	public RGB[] mColorArray = new RGB[9];
 	// Cantidad de canales
 	private int mOfflineChannelsQty;
 	private int mOnlineChannelsQty;
@@ -94,7 +94,13 @@ public class ChannelList {
 	public void addChannel(int mTotalHeight, int mTotalWidth, int mTotalPages, StudyData studyData) {
 		int channelNumber = studyData.getAcquisitionData().getAdcChannel();
 		// Genero canal
-		RGB color = mColorArray[channelNumber];
+		int colorIndex;
+		if(channelNumber >= mColorArray.length) {
+			colorIndex = 0;
+		} else {
+			colorIndex = channelNumber;
+		}
+		RGB color = mColorArray[colorIndex];
 		Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, mTotalPages, studyData);
 		
 		// Si el canal ya se encuentra en la lista
@@ -120,7 +126,14 @@ public class ChannelList {
 	public void addChannel(int mTotalHeight, int mTotalWidth, StudyData studyData) {
 		// Genero canal
 		int channelNumber = mOnlineChannelList.size() + mHiddenChannelList.size();
-		RGB color = mColorArray[channelNumber];
+		// Genero canal
+		int colorIndex;
+		if(channelNumber > mColorArray.length) {
+			colorIndex = 0;
+		} else {
+			colorIndex = channelNumber;
+		}
+		RGB color = mColorArray[colorIndex];
 		Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, studyData);
 		// Agrego canal
 		mOnlineChannelList.append(channel.getChannelNumber(), channel);

@@ -316,6 +316,7 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 
 				if ((y0 > lowerBound && y0 < upperBound) && (yf > lowerBound && yf < upperBound)) {
 					canvas.drawPoint(x0, y0, mPaint);
+					canvas.drawLine(x0, y0, xf, yf, mPaint);
 				}
 				
 			}
