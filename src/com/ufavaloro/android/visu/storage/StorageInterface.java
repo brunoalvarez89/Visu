@@ -1,5 +1,5 @@
 /*****************************************************************************************
- * StorageHelper.java																	 *
+ * StorageInterface.java																	 *
  * Clase que administra el almacenamiento de datos en el disco local y en Google Drive	 *
  ****************************************************************************************/
 
@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,7 +36,7 @@ import com.ufavaloro.android.visu.storage.local.LocalStorageInterface;
 import com.ufavaloro.android.visu.userinterface.MainActivity;
 
 public class StorageInterface {
-	
+		
 /*****************************************************************************************
 * Inicio de atributos de clase		 									   				 *
 *****************************************************************************************/

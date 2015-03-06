@@ -388,4 +388,4 @@ public class MainInterface {
 		
 	};
 
-}//Study.java
+}//MainInterface

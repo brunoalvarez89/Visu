@@ -15,8 +15,11 @@ import com.ufavaloro.android.visu.storage.datatypes.StorageData;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
 import android.os.Environment;
+import android.util.Log;
 
 public class LocalStorageInterface {
+	
+	int contador = 0;
 	
 	// Flags
 	public boolean rootFoldersOk = false;
@@ -289,7 +292,13 @@ public class LocalStorageInterface {
 			for(int i = 0; i < size; i++) byteBuffer.putShort(storingBuffer[i]);
 			
 			// Escribo
-			writeSamples(file, byteBuffer);
+			boolean success = writeSamples(file, byteBuffer);
+			if(success) {			
+				contador++;
+				Log.i("", "Operación de guardado nº:" + contador);
+			} else {
+				Log.i("", "Error.");
+			}
 		} 
 
 	}
