@@ -31,6 +31,7 @@ public class BluetoothProtocol extends Thread{
 	private double mPackageCount;
 	private double mReceivedPackages;
 	private byte[] mPackageNumberByteBuffer = new byte[Double.SIZE/8];
+	private boolean mLog = false;
 	
 /*****************************************************************************************
 * Variables de control													   				 *
@@ -470,10 +471,10 @@ public class BluetoothProtocol extends Thread{
 					if(mPackageNumberByteCount == Double.SIZE/8) {
 						ByteBuffer auxBuffer = ByteBuffer.wrap(mPackageNumberByteBuffer);
 						mPackageCount = auxBuffer.getDouble();
-						Log.d("Bluetooth Reception", "Paquete: " + mPackageCount);
+						if(mLog) Log.d("Bluetooth Reception", "Paquete: " + mPackageCount);
 						
 						mReceivedPackages++;
-						Log.d("Bluetooth Reception", "Contador: " + mReceivedPackages);
+						if(mLog) Log.d("Bluetooth Reception", "Contador: " + mReceivedPackages);
 						
 						mStatus = WAITING_FOR_CONTROL;
 						mSampleByteCount = 0;

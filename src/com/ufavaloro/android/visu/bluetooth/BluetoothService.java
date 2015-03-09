@@ -28,7 +28,7 @@ public class BluetoothService {
 	
 	// Debugging
     private static final String TAG = "Bluetooth";
-    private static final boolean D = true;
+    private static final boolean mLog = false;
     
 	// UUID del dispositivo
 	private static final UUID SERVICE_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
@@ -72,7 +72,7 @@ public class BluetoothService {
 	public BluetoothService(Handler mHandler, int mBluetoothChannel) {
 		
 		// Log
-		if (D) Log.d(TAG, "Creando servicio Bluetooth...");
+		if (mLog) Log.d(TAG, "Creando servicio Bluetooth...");
 		
 		// Obtengo antena
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -91,7 +91,7 @@ public class BluetoothService {
 	public synchronized void serverSide() {
 		
 		// Log
-		if (D) Log.d(TAG, "Iniciando Servicio Bluetooth como servidor...");
+		if (mLog) Log.d(TAG, "Iniciando Servicio Bluetooth como servidor...");
 		
 		// Cancelo cualquier Thread de Establecer Conexion
 		stopClientThread();
@@ -116,7 +116,7 @@ public class BluetoothService {
 	public synchronized void clientSide(BluetoothDevice device) {
 		
 		// Log
-		if (D) Log.d(TAG, "Iniciando Servicio BT como cliente...");	
+		if (mLog) Log.d(TAG, "Iniciando Servicio BT como cliente...");	
 		
 		// Cancelo cualquier Thread de Establecer Conexion
 		if (mStatus == STATUS_SEARCHING) stopClientThread();
@@ -140,7 +140,7 @@ public class BluetoothService {
 	private synchronized void connected(BluetoothSocket connectedSocket) {
 		
 		// Log
-		if (D) Log.d(TAG, "Intentando conectar dispositivos...");
+		if (mLog) Log.d(TAG, "Intentando conectar dispositivos...");
 		
 		// Cierro cualquier Thread de Escuchar Conexion
 		stopServerThread();
@@ -241,7 +241,7 @@ public class BluetoothService {
 		public ServerThread() {
 			
 			// Log
-			if (D) Log.d(TAG, "Inicializando ThreadServidor()...");
+			if (mLog) Log.d(TAG, "Inicializando ThreadServidor()...");
 			
 			// Inicializo Socket a null 
 			BluetoothServerSocket tmp = null;
@@ -250,18 +250,18 @@ public class BluetoothService {
 			try {
 				
 				// Log
-				if (D) Log.d(TAG, "Generando canal RFCOMM...");
+				if (mLog) Log.d(TAG, "Generando canal RFCOMM...");
 				
 				// Escucho... blocking call!
 				tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(SERVICE_NAME, SERVICE_UUID);
 				
 				// Log
-				if (D) Log.d(TAG, "Canal RFCOMM generado exitosamente.");
+				if (mLog) Log.d(TAG, "Canal RFCOMM generado exitosamente.");
 			
 			} catch (IOException e) {
 				
 				// Log
-				if (D) Log.d(TAG, "Error al generar canal RFCOMM (" + e.getMessage() +").");
+				if (mLog) Log.d(TAG, "Error al generar canal RFCOMM (" + e.getMessage() +").");
 			
 			}
 			
@@ -280,7 +280,7 @@ public class BluetoothService {
 				
 				try {
 					
-					if (D) Log.d(TAG, "A la espera de conexiones entrantes...");
+					if (mLog) Log.d(TAG, "A la espera de conexiones entrantes...");
 					
 					// Escucho socket servidor... blocking call!
 					mmBluetoothSocket = mmBluetoothServerSocket.accept();
@@ -296,12 +296,12 @@ public class BluetoothService {
 										   ,-1, -1, mmRemoteDevice).sendToTarget();
 					
 					// Log
-					if (D) Log.d(TAG, "Conectado con " + mRemoteDevice + ".");
+					if (mLog) Log.d(TAG, "Conectado con " + mRemoteDevice + ".");
 				
 				} catch (IOException e) {
 					
 					// Log
-					if (D) Log.d(TAG, "Conexión entrante rechazada (" + e.getMessage() + ").");
+					if (mLog) Log.d(TAG, "Conexión entrante rechazada (" + e.getMessage() + ").");
 					
 					break;
 				
@@ -364,7 +364,7 @@ public class BluetoothService {
 		public ClientThread(BluetoothDevice localDevice) {
 			
 			// Log
-			if (D) Log.d(TAG, "Inicializando ThreadCliente()...");
+			if (mLog) Log.d(TAG, "Inicializando ThreadCliente()...");
 			
 			// Dummy socket
 			BluetoothSocket tmp = null;
@@ -407,7 +407,7 @@ public class BluetoothService {
 			  } catch (IOException e) {}
 			
 			// Log
-			if (D) Log.d(TAG, "Socket cliente creado: " + tmp);
+			if (mLog) Log.d(TAG, "Socket cliente creado: " + tmp);
 			
 			// Obtengo socket generado
 			mmBluetoothSocket = tmp;
@@ -424,18 +424,18 @@ public class BluetoothService {
 			try {
 				
 				// Log
-				if (D) Log.d(TAG, "Ejecutando BluetoothSocket.connect()...");
+				if (mLog) Log.d(TAG, "Ejecutando BluetoothSocket.connect()...");
 				
 				// Intento conectarme... blocking call!
 				mmBluetoothSocket.connect();
 				
 				// Log
-				if (D) Log.d(TAG, "Conectado a " + mmLocalDevice.getName() + " exitosamente." );
+				if (mLog) Log.d(TAG, "Conectado a " + mmLocalDevice.getName() + " exitosamente." );
 			
 			} catch(IOException e1) {
 				
 				// Log
-				if (D) Log.d(TAG, "mmBluetoothSocket.connect() falló (" + e1.getMessage() +"), cerrando Socket...");
+				if (mLog) Log.d(TAG, "mmBluetoothSocket.connect() falló (" + e1.getMessage() +"), cerrando Socket...");
 				
 				// Intento cerrar el socket
 				try {
@@ -445,7 +445,7 @@ public class BluetoothService {
 				} catch (IOException e2) {
 					
 					// Log
-					if (D) Log.d(TAG, "mmBluetoothSocket.close() falló (" + e2.getMessage() +").");
+					if (mLog) Log.d(TAG, "mmBluetoothSocket.close() falló (" + e2.getMessage() +").");
 				
 				}
 			}
@@ -509,7 +509,7 @@ public class BluetoothService {
 			 ****************************************************************************/
 			
 			// Log
-			if (D) Log.d(TAG, "Iniciando bucle de escucha...");
+			if (mLog) Log.d(TAG, "Iniciando bucle de escucha...");
 			
 			// 
 			while(mRun) {
@@ -538,7 +538,7 @@ public class BluetoothService {
 				 catch (IOException e) { 
 					
 					 // Log
-					 if (D) Log.d(TAG, "Conexión perdida (" + e.getMessage() +").");
+					 if (mLog) Log.d(TAG, "Conexión perdida (" + e.getMessage() +").");
 					
 					 // Actualizo estado
 					setStatus(STATUS_DISCONNECTED);
@@ -553,7 +553,7 @@ public class BluetoothService {
 		// Constructor de clase
 		public ConnectedThread(BluetoothSocket Socket) {
 			// Log
-			if (D) Log.d(TAG, "Inicializando ThreadConexion()...");
+			if (mLog) Log.d(TAG, "Inicializando ThreadConexion()...");
 			
 			// Socket conectado
 			mmBluetoothSocket = Socket;
@@ -566,7 +566,7 @@ public class BluetoothService {
 			try {
 				
 				// Log
-				if (D) Log.d(TAG, "Generando InputSTream() y OutputStream()...");
+				if (mLog) Log.d(TAG, "Generando InputSTream() y OutputStream()...");
 				
 				// Obtengo inpustream
 				tmpIn = mmBluetoothSocket.getInputStream();
@@ -575,12 +575,12 @@ public class BluetoothService {
 				tmpOut = mmBluetoothSocket.getOutputStream();
 				
 				// Log
-				if (D) Log.d(TAG, "InputSTream() y OutputStream() generados exitosamente.");
+				if (mLog) Log.d(TAG, "InputSTream() y OutputStream() generados exitosamente.");
 			
 			} catch (IOException e) {				
 				
 				// Log
-				if (D) Log.d(TAG, "Error en la creación de InputSTream() y OutputStream() (" + e.getMessage() +").");
+				if (mLog) Log.d(TAG, "Error en la creación de InputSTream() y OutputStream() (" + e.getMessage() +").");
 			
 			}
 			

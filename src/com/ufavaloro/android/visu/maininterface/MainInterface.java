@@ -3,9 +3,9 @@ package com.ufavaloro.android.visu.maininterface;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
 
@@ -13,6 +13,8 @@ import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocol;
 import com.ufavaloro.android.visu.bluetooth.BluetoothProtocolMessage;
 import com.ufavaloro.android.visu.draw.DrawInterface;
+import com.ufavaloro.android.visu.processing.OperationType;
+import com.ufavaloro.android.visu.processing.ProcessingInterface;
 import com.ufavaloro.android.visu.storage.SamplesBuffer;
 import com.ufavaloro.android.visu.storage.StorageInterface;
 import com.ufavaloro.android.visu.storage.StorageInterfaceMessage;
@@ -31,8 +33,11 @@ public class MainInterface {
 	// Bluetooth Protocol (needed for decoding incoming packages)
 	private BluetoothProtocol bluetoothProtocol;
 	
-	// Drawing System Interface
+	// Draw Interface
 	private DrawInterface drawInterface;
+	
+	// Processing Interface
+	private ProcessingInterface processingInterface;
 	
 	// On-Line StudyData (data acquired in real-time from a sensor)
 	public StudyData[] onlineStudyData;
@@ -57,7 +62,8 @@ public class MainInterface {
 		mMainActivityHandler = mainActivityHandler;
 		drawInterface = (DrawInterface) mainActivity.findViewById(R.id.drawSurface);
 		bluetoothProtocol = new BluetoothProtocol(mBluetoothProtocolHandler);
-		storageInterface = new StorageInterface(mainActivity, mStorageInterfaceHandler);	
+		storageInterface = new StorageInterface(mainActivity, mStorageInterfaceHandler);
+		processingInterface = new ProcessingInterface(mProcessingInterfaceHandler);
 	}
 
 	/**
@@ -249,6 +255,8 @@ public class MainInterface {
  	private void onNewSamplesBatch(short[] samples, int channel) {
  		if(drawInterface.onlineDrawBuffersOk == true) drawInterface.draw(samples, channel);
 		if(storageInterface.recording == true) storageInterface.saveSamplesBatch(onlineStudyData[channel], samples);
+		
+		processingInterface.detectQrs(samples, channel);
  	}
  	
  	private void onTotalAdcChannels(int totalAdcChannels) {
@@ -257,10 +265,12 @@ public class MainInterface {
  	
  	private void onBluetoothConnected() {
  		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_CONNECTED.getValue()).sendToTarget();
+ 		processingInterface.start();
  	}
  	
  	private void onBluetoothDisconnected() {
  		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_DISCONNECTED.getValue()).sendToTarget();
+ 		processingInterface.stop();
  	}
  	
  	private void onAdcData(AdcData[] adcData) {
@@ -282,6 +292,7 @@ public class MainInterface {
 			addChannel(i);
 		}
 		
+ 		addChannel(0);
 		// Empiezo a dibujar
 		startDrawing();
  		//mainActivity.onConfigurationOk();
@@ -300,6 +311,16 @@ public class MainInterface {
  	
  	private void onGoogleDriveConnectionFailed(Message msg) {
  		
+ 	}
+ 	
+ 	private void onQrsDetection(int[] samples, OperationType operationType, int channel) {
+ 		/*
+ 		short[] sam = new short[samples.length];
+ 		for(int i = 0; i < samples.length; i++) {
+ 			sam[i] = (short) samples[i];
+ 		}
+ 		drawInterface.draw(sam, channel);
+ 		*/ 		
  	}
  	
 	@SuppressLint("HandlerLeak")
@@ -388,4 +409,32 @@ public class MainInterface {
 		
 	};
 
+	private final Handler mProcessingInterfaceHandler = new Handler() {
+		
+		int[] samples;
+		int channel;
+		
+		// Método para manejar el mensaje
+		@SuppressLint("HandlerLeak")
+		@Override
+		public void handleMessage(Message msg) {
+		
+			// Tipo de mensaje recibido
+			OperationType operationType = OperationType.values(msg.what);
+			
+			switch (operationType) {
+				
+				case QRS_DETECTION:
+					samples = (int[]) msg.obj;
+					channel = msg.arg2;
+					onQrsDetection(samples, operationType, channel);
+			 		Log.d("", "hola");
+					break;
+					
+				default:
+					break;
+			
+			}
+		}
+	};
 }//MainInterface

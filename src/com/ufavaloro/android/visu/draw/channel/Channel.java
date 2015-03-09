@@ -102,7 +102,7 @@ public class Channel {
 		return mAdcChannelNumber;
 	}
 	
-	public void storeSamples(short[] samples) {
+	public void setSamples(short[] samples) {
 		mSignalBox.getDrawBuffer().storeSamples(samples);
 	}
 	

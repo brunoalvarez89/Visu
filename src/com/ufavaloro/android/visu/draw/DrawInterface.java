@@ -167,7 +167,7 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 		
 		if(mChannelList.size() == 0 || channel == null || mDrawOk == false) return;
 		
-		if (channel.isPaused() == false) channel.storeSamples(samples);
+		if (!channel.isPaused()) channel.setSamples(samples);
 	}
 
 	// Método que se llama cuando se dibuja en el SurfaceView
@@ -516,7 +516,6 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 	/*************************************************************************************
 	* Agregar/eliminar canales						 *
 	*************************************************************************************/
-	// Método para agregar un canal online
 	public synchronized void addChannel(StudyData studyData, boolean online) {
 		if(online) {
 			mChannelList.addChannel(mTotalHeight, mTotalWidth, mTotalPages, studyData);
@@ -893,8 +892,7 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 		private long mSleep;
 
 		// Constructor
-		public DrawingThread(SurfaceHolder mSurfaceHolder,
-				DrawInterface mPlotSurfaceView) {
+		public DrawingThread(SurfaceHolder mSurfaceHolder, DrawInterface mPlotSurfaceView) {
 			this.mSurfaceHolder = mSurfaceHolder;
 			mRun = false;
 			mPauseLock = new Object();
