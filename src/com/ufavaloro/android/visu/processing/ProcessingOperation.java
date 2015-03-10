@@ -1,8 +1,10 @@
 package com.ufavaloro.android.visu.processing;
 
+import com.google.android.gms.common.data.DataBuffer;
+
 public class ProcessingOperation {
 	
-	protected short[] mSamples;
+	protected SamplesBuffer mProcessingBuffer;
 	protected boolean mProcessing;
 	protected OperationType mOperationType;
 	protected int mChannel;
@@ -12,18 +14,19 @@ public class ProcessingOperation {
 	}
 
 	public ProcessingOperation(short[] samples, OperationType operationType, int channel) {
-		mSamples = samples;
+		mProcessingBuffer = samples;
 		mOperationType = operationType;
 		mChannel = channel;
 	}
 
 	public ProcessingOperation() {
+		mProcessingBuffer = new DataBuffer();
 		mOperationType = null;
 		mChannel = -1;
 	}
 
 	public void setSamples(short[] samples) {
-		mSamples = samples;
+		mProcessingBuffer = samples;
 	}
 	
 	public boolean isProcessing() {

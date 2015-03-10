@@ -17,11 +17,11 @@ public class ProcessingInterface {
 		mProcessingThread.start();
 	}
 	
-	public void start() {
+	public void resume() {
 		mProcessingThread.onResume();
 	}
 	
-	public void stop() {
+	public void pause() {
 		mProcessingThread.onPause();
 	}
 	

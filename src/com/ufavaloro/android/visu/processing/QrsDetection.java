@@ -124,9 +124,9 @@ public class QrsDetection extends ProcessingOperation{
 	// Full Procedure
 	@Override
 	public int[] operate() {
-		float[] highPass = mafHighPass(mSamples, mSamples.length);
-        float[] lowPass = lowPass(highPass, mSamples.length);
-        int[] QRS = qrs(lowPass, mSamples.length);
+		float[] highPass = mafHighPass(mProcessingBuffer, mProcessingBuffer.length);
+        float[] lowPass = lowPass(highPass, mProcessingBuffer.length);
+        int[] QRS = qrs(lowPass, mProcessingBuffer.length);
         
         return QRS;
 	}

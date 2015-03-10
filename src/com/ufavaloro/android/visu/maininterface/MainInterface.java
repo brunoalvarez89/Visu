@@ -254,7 +254,7 @@ public class MainInterface {
  	
  	private void onNewSamplesBatch(short[] samples, int channel) {
  		if(drawInterface.onlineDrawBuffersOk == true) drawInterface.draw(samples, channel);
-		if(storageInterface.recording == true) storageInterface.saveSamplesBatch(onlineStudyData[channel], samples);
+		if(storageInterface.recording == true) storageInterface.setSamples(onlineStudyData[channel], samples);
 		
 		processingInterface.detectQrs(samples, channel);
  	}
@@ -265,12 +265,12 @@ public class MainInterface {
  	
  	private void onBluetoothConnected() {
  		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_CONNECTED.getValue()).sendToTarget();
- 		processingInterface.start();
+ 		processingInterface.resume();
  	}
  	
  	private void onBluetoothDisconnected() {
  		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_DISCONNECTED.getValue()).sendToTarget();
- 		processingInterface.stop();
+ 		processingInterface.pause();
  	}
  	
  	private void onAdcData(AdcData[] adcData) {

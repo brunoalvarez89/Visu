@@ -140,7 +140,7 @@ public class StorageInterface {
 	}
 	
 	// Método que recibe el paquete de muestras, lo procesa y lo manda a almacenar con writeSamples
-	public boolean saveSamplesBatch(StudyData studyData, short[] toStore) {
+	public boolean setSamples(StudyData studyData, short[] toStore) {
 		
 		if(local.studyFilesOk == false || recording == false || studyData.isMarkedForStoring() == false) return false;
 		
