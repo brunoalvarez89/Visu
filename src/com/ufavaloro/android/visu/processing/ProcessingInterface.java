@@ -1,6 +1,10 @@
 package com.ufavaloro.android.visu.processing;
 
+import com.ufavaloro.android.visu.storage.SamplesBuffer;
+
+import android.annotation.SuppressLint;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 
@@ -12,24 +16,38 @@ public class ProcessingInterface {
 	
 	public ProcessingInterface(Handler mainInterfaceHandler) {
 		mMainInterfaceHandler = mainInterfaceHandler;
-		mProcessingOperation = new ProcessingOperation();
 		mProcessingThread = new ProcessingThread();
 		mProcessingThread.start();
-	}
-	
-	public void resume() {
-		mProcessingThread.onResume();
-	}
-	
-	public void pause() {
 		mProcessingThread.onPause();
 	}
 	
-	public void detectQrs(short[] samples, int channel) {
-		mProcessingOperation.setSamples(samples);
-		mProcessingOperation.setChannel(channel);
-		mProcessingOperation.setOperationType(OperationType.QRS_DETECTION);
-		mProcessingThread.setOperation(mProcessingOperation);
+	public synchronized void writeSamples(short[] samples, int channel) {
+		SamplesBuffer buffer = mProcessingOperation.getProcessingBuffer();
+		buffer.writeSamples(samples);
+		if(buffer.getStoringIndex() == 0) mProcessingThread.onResume();
+		
+	}
+	
+	public synchronized void addProcessingOperation(OperationType operationType, double fs, int samplesPerPackage, int channel) {
+		if(operationType == OperationType.QRS_DETECTION) {
+			mProcessingOperation = (ProcessingOperation) new QrsDetector(operationType
+																		  , fs
+																		  , samplesPerPackage
+																		  , mProcessingOperationHandler
+																		  , channel);
+		}
+	}
+	
+	public synchronized void removeProcessingOperation(OperationType operationType, int channel) {
+		mProcessingOperation = null;
+	}
+	
+	public synchronized void resume() {
+		mProcessingThread.onResume();
+	}
+	
+	public synchronized void pause() {
+		mProcessingThread.onPause();
 	}
 	
 	private class ProcessingThread extends Thread {
@@ -37,10 +55,6 @@ public class ProcessingInterface {
 		private boolean mRun = true;
 		private Object mPauseLock = new Object();
 		private boolean mPaused = false;
-		
-		public void setOperation(ProcessingOperation processingOperation) {
-			mProcessingOperation = processingOperation;	
-		}
 		
 		public ProcessingThread() {}
 			
@@ -58,47 +72,37 @@ public class ProcessingInterface {
 					}
 				}
 
-				if(mProcessingOperation.getOperationType() == OperationType.QRS_DETECTION) {
-
-					synchronized(this) {
-
+					if(mProcessingOperation != null) {
 						OperationType operationType = mProcessingOperation.getOperationType();
-						
-						switch (operationType) {
-						
-							case NULL:
-								break;
-						
-							case QRS_DETECTION:
-								int[] result = mProcessingOperation.operate();
-								int channel = mProcessingOperation.getChannel();
-								int operation = OperationType.QRS_DETECTION.getValue();
-								int success = ProcessingInterfaceMessage.SUCCESS.getValue();
-								
-								mMainInterfaceHandler.obtainMessage(// What did I do?
-																	operation
-																	// Was it succesful?
-																	, success			
-																	// What channel?
-																	, channel
-																	// Result
-																	, result).sendToTarget();
-								break;
-						}
-					}				
+					
+						if(operationType == OperationType.QRS_DETECTION) {
+							int[] result = mProcessingOperation.operate();
+							int channel = mProcessingOperation.getChannel();
+							int operation = OperationType.QRS_DETECTION.getValue();
+							int success = ProcessingInterfaceMessage.SUCCESS.getValue();
+							
+							mMainInterfaceHandler.obtainMessage(// What did I do?
+																operation
+																// Was it succesful?
+																, success			
+																// What channel?
+																, channel
+																// Result
+																, result).sendToTarget();
+						}				
+					
+					
+					this.onPause();
 				}
 			}
 		}
 
-
-		@SuppressWarnings("unused")
 		public void onPause() {
 			synchronized (mPauseLock) {
 				mPaused = true;
 			}
 		}
 		 
-		@SuppressWarnings("unused")
 		public void onResume() {
 			synchronized (mPauseLock) {
 				mPaused = false;
@@ -108,4 +112,30 @@ public class ProcessingInterface {
 		
 	}//ProcessingThread
 
+	@SuppressLint("HandlerLeak")
+	private final Handler mProcessingOperationHandler = new Handler() {
+		
+		// Método para manejar el mensaje
+		@SuppressLint("HandlerLeak")
+		@Override
+		public void handleMessage(Message msg) {
+		
+			// Tipo de mensaje recibido
+			OperationType operationType = OperationType.values(msg.what);
+			
+			switch (operationType) {
+				
+				case QRS_DETECTION:
+					break;
+					
+				case HEARTBEAT:
+					mMainInterfaceHandler.obtainMessage(OperationType.HEARTBEAT.getValue()).sendToTarget();
+					break;
+					
+				default:
+					break;
+			
+			}
+		}
+	};
 }

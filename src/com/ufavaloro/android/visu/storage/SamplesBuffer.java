@@ -36,12 +36,15 @@ public class SamplesBuffer {
 		mSamplesBuffer = new short[i * samplesPerPackage];
 	}
 	
-	public SamplesBuffer() {
-	// TODO Auto-generated constructor stub
+	public SamplesBuffer(int bufferSize) {
+		mSamplesBuffer = new short[bufferSize];
 	}
 
+	
+	public SamplesBuffer() {}
+
 	// Método para almacenar muestras
-	public void storeSamples(short[] x) {
+	public void writeSamples(short[] x) {
 		
 		// Almaceno
 		for(int i=0; i<x.length; i++) {

@@ -145,7 +145,7 @@ public class StorageInterface {
 		if(local.studyFilesOk == false || recording == false || studyData.isMarkedForStoring() == false) return false;
 		
 		SamplesBuffer samplesBuffer = studyData.getSamplesBuffer();
-		samplesBuffer.storeSamples(toStore);
+		samplesBuffer.writeSamples(toStore);
 		boolean success = false;
 		
 		// Llené el buffer?

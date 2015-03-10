@@ -1,9 +1,13 @@
 package com.ufavaloro.android.visu.processing;
 
-public class QrsDetection extends ProcessingOperation{
+import android.os.Handler;
 
-	public QrsDetection(short[] samples, OperationType operationType, int channel) {
-		super(samples, operationType, channel);
+
+public class QrsDetector extends ProcessingOperation{
+
+	public QrsDetector(OperationType operationType, double fs, int samplesPerPackage
+					   , Handler processingInterfaceHandler, int channel) {
+		super(operationType, fs, samplesPerPackage, processingInterfaceHandler, channel);
 	}
 
 	private static int M = 5;
@@ -70,8 +74,7 @@ public class QrsDetection extends ProcessingOperation{
 	        lowPass[i] = sum;
 	    }
 	 
-	    return lowPass;
-	 
+	    return lowPass; 
 	}
 	
 	// QRS Detection
@@ -91,20 +94,25 @@ public class QrsDetection extends ProcessingOperation{
 	    for(int i=0; i<lowPass.length; i+=frame) {
 	        float max = 0;
 	        int index = 0;
+	       
 	        if(i + frame > lowPass.length) {
 	            index = lowPass.length;
 	        }
 	        else {
 	            index = i + frame;
 	        }
+	        
 	        for(int j=i; j<index; j++) {
 	            if(lowPass[j] > max) max = lowPass[j];
 	        }
+	        
 	        boolean added = false;
+	        
 	        for(int j=i; j<index; j++) {
 	            if(lowPass[j] > treshold && !added) {
 	                QRS[j] = 1;
 	                added = true;
+	                mProcessingInterfaceHandler.obtainMessage(OperationType.HEARTBEAT.getValue()).sendToTarget();
 	            }
 	            else {
 	                QRS[j] = 0;
@@ -124,10 +132,21 @@ public class QrsDetection extends ProcessingOperation{
 	// Full Procedure
 	@Override
 	public int[] operate() {
-		float[] highPass = mafHighPass(mProcessingBuffer, mProcessingBuffer.length);
-        float[] lowPass = lowPass(highPass, mProcessingBuffer.length);
-        int[] QRS = qrs(lowPass, mProcessingBuffer.length);
+		short[] samples = mProcessingBuffer.getBuffer();
+		//int[] samples_int = new int[samples.length];
+		
+		//for(int i = 0; i < samples.length; i++) samples_int[i] = (int) samples[i]; 
+		//for(int i = 0; i < samples.length; i++) System.out.println(samples_int[i]);
+		
+		float[] highPass = mafHighPass(samples, samples.length);
+		//for(int i = 0; i < samples.length; i++) System.out.println(highPass[i]);
         
+		float[] lowPass = lowPass(highPass, samples.length);
+		//for(int i = 0; i < samples.length; i++) System.out.println(lowPass[i]);
+
+		int[] QRS = qrs(lowPass, samples.length);
+		//for(int i = 0; i < samples.length; i++) System.out.println(QRS[i]);
+
         return QRS;
 	}
 	

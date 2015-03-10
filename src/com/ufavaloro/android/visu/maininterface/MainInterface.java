@@ -25,6 +25,7 @@ import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 import com.ufavaloro.android.visu.userinterface.MainActivity;
 import com.google.android.gms.drive.DriveId;
 
+@SuppressLint("HandlerLeak")
 public class MainInterface {
 
 	// Storage System Interface (Local and Google Drive)
@@ -256,7 +257,7 @@ public class MainInterface {
  		if(drawInterface.onlineDrawBuffersOk == true) drawInterface.draw(samples, channel);
 		if(storageInterface.recording == true) storageInterface.setSamples(onlineStudyData[channel], samples);
 		
-		processingInterface.detectQrs(samples, channel);
+		processingInterface.writeSamples(samples, channel);
  	}
  	
  	private void onTotalAdcChannels(int totalAdcChannels) {
@@ -265,17 +266,17 @@ public class MainInterface {
  	
  	private void onBluetoothConnected() {
  		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_CONNECTED.getValue()).sendToTarget();
- 		processingInterface.resume();
  	}
  	
  	private void onBluetoothDisconnected() {
  		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_DISCONNECTED.getValue()).sendToTarget();
  		processingInterface.pause();
+ 		processingInterface.removeProcessingOperation(OperationType.QRS_DETECTION, 0);
  	}
  	
  	private void onAdcData(AdcData[] adcData) {
  		onlineStudyData = new StudyData[mTotalAdcChannels];
- 		AcquisitionData acquisitionData;
+ 		AcquisitionData acquisitionData = null;
  		SamplesBuffer samplesBuffer;
  		
  		for(int i = 0; i < mTotalAdcChannels; i++) {
@@ -290,37 +291,43 @@ public class MainInterface {
 
  		for(int i = 0; i < getTotalAdcChannels(); i++) {
 			addChannel(i);
+			processingInterface.addProcessingOperation(OperationType.QRS_DETECTION,
+													   acquisitionData.getFs(),
+													   acquisitionData.getSamplesPerPackage(),
+													   i);
 		}
 		
+ 		processingInterface.resume();
+
  		addChannel(0);
 		// Empiezo a dibujar
 		startDrawing();
  		//mainActivity.onConfigurationOk();
  	}
  	
- 	private void onGoogleDriveConnected() {
- 	}
+ 	private void onGoogleDriveConnected() {}
  	
- 	private void onGoogleDriveSuspended() {
- 		
- 	}
+ 	private void onGoogleDriveSuspended() {}
  	
- 	private void onGoogleDriveDisconnected() {
- 		
- 	}
+ 	private void onGoogleDriveDisconnected() {}
  	
- 	private void onGoogleDriveConnectionFailed(Message msg) {
- 		
- 	}
+ 	private void onGoogleDriveConnectionFailed(Message msg) {}
  	
  	private void onQrsDetection(int[] samples, OperationType operationType, int channel) {
- 		/*
  		short[] sam = new short[samples.length];
+ 		
  		for(int i = 0; i < samples.length; i++) {
  			sam[i] = (short) samples[i];
  		}
- 		drawInterface.draw(sam, channel);
- 		*/ 		
+ 		
+ 	}
+ 	
+ 	private void onHeartBeat() {
+ 		short[] beat = new short[20];
+ 		for(int i = 0; i < 10; i++) beat[i] = 4000;
+ 		for(int i = 10; i < 20; i++) beat[i] = 2000;
+ 		
+ 		drawInterface.draw(beat, 1);
  	}
  	
 	@SuppressLint("HandlerLeak")
@@ -409,6 +416,7 @@ public class MainInterface {
 		
 	};
 
+	@SuppressLint("HandlerLeak")
 	private final Handler mProcessingInterfaceHandler = new Handler() {
 		
 		int[] samples;
@@ -428,7 +436,10 @@ public class MainInterface {
 					samples = (int[]) msg.obj;
 					channel = msg.arg2;
 					onQrsDetection(samples, operationType, channel);
-			 		Log.d("", "hola");
+					break;
+					
+				case HEARTBEAT:
+					onHeartBeat();
 					break;
 					
 				default:
@@ -437,4 +448,5 @@ public class MainInterface {
 			}
 		}
 	};
+
 }//MainInterface
