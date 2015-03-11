@@ -30,7 +30,7 @@ public class ProcessingInterface {
 	}
 	
 	public synchronized void addProcessingOperation(OperationType operationType, double fs, int samplesPerPackage, int channel) {
-		if(operationType == OperationType.QRS_DETECTION) {
+		if(operationType == OperationType.QRS_DETECTION_MAF) {
 			mProcessingOperation = (ProcessingOperation) new MAF(operationType
 																		  , fs
 																		  , samplesPerPackage
@@ -73,28 +73,27 @@ public class ProcessingInterface {
 					}
 				}
 
-					if(mProcessingOperation != null) {
-						OperationType operationType = mProcessingOperation.getOperationType();
-					
-						if(operationType == OperationType.QRS_DETECTION) {
-							int[] result = mProcessingOperation.operate();
-							int channel = mProcessingOperation.getChannel();
-							int operation = OperationType.QRS_DETECTION.getValue();
-							int success = ProcessingInterfaceMessage.SUCCESS.getValue();
-							
-							mMainInterfaceHandler.obtainMessage(// What did I do?
-																operation
-																// Was it succesful?
-																, success			
-																// What channel?
-																, channel
-																// Result
-																, result).sendToTarget();
-						}				
-					
-					
-					this.onPause();
+				if(mProcessingOperation != null) {
+					OperationType operationType = mProcessingOperation.getOperationType();
+				
+					if(operationType == OperationType.QRS_DETECTION_MAF) {
+						int[] result = mProcessingOperation.operate();
+						int channel = mProcessingOperation.getChannel();
+						int operation = OperationType.QRS_DETECTION_MAF.getValue();
+						
+						/*
+						mMainInterfaceHandler.obtainMessage(// What did I do?
+															operation
+															// Was it succesful?
+															, success			
+															// What channel?
+															, channel
+															// Result
+														, result).sendToTarget();
+														*/
+					}				
 				}
+				this.onPause();
 			}
 		}
 
@@ -126,7 +125,7 @@ public class ProcessingInterface {
 			
 			switch (operationType) {
 				
-				case QRS_DETECTION:
+				case QRS_DETECTION_MAF:
 					break;
 					
 				case HEARTBEAT:

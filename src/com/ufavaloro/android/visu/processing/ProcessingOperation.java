@@ -24,7 +24,7 @@ public class ProcessingOperation {
 		mProcessingInterfaceHandler = processingInterfaceHandler;
 
 		int i = 0;
-		while((1/fs)*samplesPerPackage*i < mWaitTime) i++;
+		while(samplesPerPackage*i < 200) i++;
 		mProcessingBuffer = new SamplesBuffer(samplesPerPackage*i);
 	}
 	

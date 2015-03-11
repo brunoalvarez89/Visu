@@ -3,8 +3,7 @@ package com.ufavaloro.android.visu.processing;
 public enum ProcessingInterfaceMessage {
 
 	NULL(-1),
-	SUCCESS(1),
-	ERROR(2);
+	HEARTBEAT(0);
 	
 	private final int value;
 
@@ -14,8 +13,7 @@ public enum ProcessingInterfaceMessage {
 	
 	public static ProcessingInterfaceMessage values(int what) {
 		switch(what){
-		case 1: return SUCCESS;
-		case 2: return ERROR;
+		case 0: return HEARTBEAT;
 		
 		default: return NULL;
 		}	

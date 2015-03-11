@@ -3,8 +3,9 @@ package com.ufavaloro.android.visu.processing;
 public enum OperationType {
 
 	NULL(-1),
-	QRS_DETECTION(1),
-	HEARTBEAT(2);
+	QRS_DETECTION_MAF(1),
+	QRS_DETECTION_DERIVATIVE(2),
+	HEARTBEAT(3);
 	
 	private final int value;
 
@@ -14,8 +15,9 @@ public enum OperationType {
 	
 	public static OperationType values(int what) {
 		switch(what){
-		case 1: return QRS_DETECTION;
-		case 2: return HEARTBEAT;
+		case 1: return QRS_DETECTION_MAF;
+		case 2: return QRS_DETECTION_DERIVATIVE;
+		case 3: return HEARTBEAT;
 		
 		default: return NULL;
 		}	

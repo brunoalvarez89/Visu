@@ -271,7 +271,7 @@ public class MainInterface {
  	private void onBluetoothDisconnected() {
  		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_DISCONNECTED.getValue()).sendToTarget();
  		processingInterface.pause();
- 		processingInterface.removeProcessingOperation(OperationType.QRS_DETECTION, 0);
+ 		processingInterface.removeProcessingOperation(OperationType.QRS_DETECTION_MAF, 0);
  	}
  	
  	private void onAdcData(AdcData[] adcData) {
@@ -291,7 +291,7 @@ public class MainInterface {
 
  		for(int i = 0; i < getTotalAdcChannels(); i++) {
 			addChannel(i);
-			processingInterface.addProcessingOperation(OperationType.QRS_DETECTION,
+			processingInterface.addProcessingOperation(OperationType.QRS_DETECTION_MAF,
 													   acquisitionData.getFs(),
 													   acquisitionData.getSamplesPerPackage(),
 													   i);
@@ -427,12 +427,6 @@ public class MainInterface {
 			
 			switch (operationType) {
 				
-				case QRS_DETECTION:
-					samples = (int[]) msg.obj;
-					channel = msg.arg2;
-					onQrsDetection(samples, operationType, channel);
-					break;
-					
 				case HEARTBEAT:
 					onHeartBeat();
 					break;

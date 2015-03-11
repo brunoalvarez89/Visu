@@ -12,12 +12,12 @@ public class MAF extends QrsDetection {
 		super(operationType, fs, samplesPerPackage, processingInterfaceHandler, channel);
 	}
 
-	private static int M = 5;
+	private int M = 5;
+	private float mConstant = 1/M;
 
 	// Moving Average Filter (High Pass)
 	private float[] mafHighPass(short[] sig0, int nsamp) {
 		float[] highPass = new float[nsamp];
-        float constant = (float) 1/M;
  
         for(int i = 0; i < sig0.length; i++) {
             float y1 = 0;
@@ -38,7 +38,7 @@ public class MAF extends QrsDetection {
                 y1_sum += sig0[x_index];
             }
  
-            y1 = constant * y1_sum;
+            y1 = mConstant * y1_sum;
             highPass[i] = y2 - y1;
  
         }        
