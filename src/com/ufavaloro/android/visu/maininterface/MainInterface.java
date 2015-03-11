@@ -299,8 +299,7 @@ public class MainInterface {
 		
  		processingInterface.resume();
 
- 		addChannel(0);
-		// Empiezo a dibujar
+ 		// Empiezo a dibujar
 		startDrawing();
  		//mainActivity.onConfigurationOk();
  	}
@@ -323,11 +322,7 @@ public class MainInterface {
  	}
  	
  	private void onHeartBeat() {
- 		short[] beat = new short[20];
- 		for(int i = 0; i < 10; i++) beat[i] = 4000;
- 		for(int i = 10; i < 20; i++) beat[i] = 2000;
- 		
- 		drawInterface.draw(beat, 1);
+ 		drawInterface.heartBeat();
  	}
  	
 	@SuppressLint("HandlerLeak")

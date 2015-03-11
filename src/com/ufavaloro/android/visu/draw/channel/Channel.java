@@ -3,6 +3,8 @@ package com.ufavaloro.android.visu.draw.channel;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import android.content.Context;
+
 import com.ufavaloro.android.visu.draw.RGB;
 import com.ufavaloro.android.visu.maininterface.StudyType;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
@@ -27,7 +29,7 @@ public class Channel {
 	
 	// Offline channel constructor
 	public Channel(int channelNumber, int totalScreenHeight, int totalScreenWidth
-				   , RGB channelColor, StudyData studyData) {
+				   , RGB channelColor, Context context, StudyData studyData) {
 		mStudyData = studyData;
 		mAdcChannelNumber = channelNumber;
 		mWidth = (int) (totalScreenWidth);
@@ -43,12 +45,12 @@ public class Channel {
 		// Creo InfoBox
 		InfoBox.setWidth((float) (totalScreenWidth*mInfoBoxWidthPercent));
 		InfoBox.setVerticalDivisorXPosition((int) SignalBox.getWidth());
-		mInfoBox = new InfoBox(channelNumber, studyData);
+		mInfoBox = new InfoBox(channelNumber, context, studyData);
 	}
 	
 	// Online channel constructor
 	public Channel(int channelNumber, int totalScreenHeight, int totalScreenWidth
-				   , RGB channelColor, int totalPages, StudyData studyData) {
+				   , RGB channelColor, int totalPages, Context context, StudyData studyData) {
 		setStudyData(studyData);
 		mAdcChannelNumber = channelNumber;
 		mWidth = (int) (totalScreenWidth);
@@ -64,7 +66,7 @@ public class Channel {
 		// Creo InfoBox
 		InfoBox.setWidth((float) (totalScreenWidth*mInfoBoxWidthPercent));
 		InfoBox.setVerticalDivisorXPosition((int) SignalBox.getWidth());
-		mInfoBox = new InfoBox(channelNumber, studyData);
+		mInfoBox = new InfoBox(channelNumber, context, studyData);
 	}
 	
 	public void update(int totalChannels, int channelIndex) {

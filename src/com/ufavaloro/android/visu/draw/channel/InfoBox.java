@@ -2,10 +2,13 @@ package com.ufavaloro.android.visu.draw.channel;
 
 import java.util.ArrayList;
 
+import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.draw.RGB;
 import com.ufavaloro.android.visu.maininterface.StudyType;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
+import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -40,6 +43,12 @@ public class InfoBox{
 	// Label de Nombre de Paciente
 	private Label mPatientLabel;
 	private final double mPatientLabelHeightPercent = 0.1;
+	
+	// Parameter Label 
+	private Label mParameterLabel;
+	private final double mParameterLabelHeightPercent = 0.2;
+	private ScreenBitmap mParameterBitmap;
+	private final double mParameterBitmapHeightPercent = 0.2;
 
 	// Label de Pausa
 	private Label mPausedLabel;
@@ -52,16 +61,17 @@ public class InfoBox{
 	// Color
 	private RGB mColor;
 
-	InfoBox(int channelNumber, StudyData studyData) {
+	// Application Context (needed for decodifying bitmaps)
+	private Context mContext;
+	
+	InfoBox(int channelNumber, Context context, StudyData studyData) {
 		this.studyData = studyData;
+		mContext = context;
 		mAdcChannelNumber = channelNumber;
 		
 		createChannelLabel();
-		//createElapsedTimeLabel();
 		createPatientLabel();
-		//createBitsLabel();
-		//createHorizontalZoomLabel();
-		//createVerticalZoomLabel();
+		createParameterLabel();
 		createPausedLabel();
 	}
 	
@@ -76,12 +86,14 @@ public class InfoBox{
 		mLabelList.clear();
 		
 		createChannelLabel();
-		//createElapsedTimeLabel();
 		createPatientLabel();
+		createParameterLabel();
+		createPausedLabel();
 		
 		// Actualizo tamaños
 		updateChannelLabelSize();
 		updatePatientLabelSize();
+		updateParameterLabelSize();
 		updatePausedLabelSize();
 		
 		// Seteo tamaño mínimo global de texto
@@ -90,22 +102,46 @@ public class InfoBox{
 		// Actualizo posiciones
 		updateChannelLabelPosition();
 		updatePatientLabelPosition();
+		updateParameterLabelPosition();
 		UpdatePausedLabelPosition();
 
 	}
 
+	// Channel Label
 	protected void createChannelLabel() {
 		String channelLabel;
-		if(studyData.getAcquisitionData().getStudyType() != null) {
+		char[] studyType =  studyData.getAcquisitionData().getStudyType();
+		if(studyType[0] != 0) {
 			char[] aux = studyData.getAcquisitionData().getStudyType();
-			int studyType = aux[0];
-			channelLabel = String.valueOf(StudyType.values(studyType));
+			channelLabel = String.valueOf(StudyType.values((int)studyType[0]));
 		} else {
 			channelLabel = "Canal " + String.valueOf(mAdcChannelNumber + 1);
 		}
 		mChannelLabel = new Label(0, 0, 0, channelLabel);
 	}
 
+	protected void updateChannelLabelSize() {
+		int textSize = getBoundedTextSize(mChannelLabel, mLabelWidthPercent * mWidth
+										  , mChannelLabelHeightPercent * mHeight);
+		mChannelLabel.setTextSize(textSize);
+		
+		mLabelList.add(mChannelLabel);
+	}
+
+	private void updateChannelLabelPosition() {
+		
+		mChannelLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
+		mChannelLabel.setY((int) (mChannelLabel.getBoundingBox().height() 
+								  + mChannelIndex*mHeight
+								  + mInterLabelPadding));
+	
+	}
+	
+	public Label getChannelLabel() {
+		return mChannelLabel;
+	}
+	
+	// Patient Label
 	protected void createPatientLabel() {
 		String patientLabel;
 		if(studyData.getPatientData() != null) {
@@ -121,26 +157,65 @@ public class InfoBox{
 		}
 		mPatientLabel = new Label(0, 0, 0, patientLabel);
 	}
-
-	private void createPausedLabel() {
-		String text = "EN PAUSA";
-		mPausedLabel = new Label(0, 0, 0, text);
-	}
 	
-	protected void updateChannelLabelSize() {
-		int textSize = getBoundedTextSize(mChannelLabel, mLabelWidthPercent * mWidth
-										  , mChannelLabelHeightPercent * mHeight);
-		mChannelLabel.setTextSize(textSize);
-		
-		mLabelList.add(mChannelLabel);
-	}
-
 	protected void updatePatientLabelSize() {
 		int textSize = getBoundedTextSize(mPatientLabel, mLabelWidthPercent * mWidth
 										  , mPatientLabelHeightPercent * mHeight);
 		mPatientLabel.setTextSize(textSize);
 
 		mLabelList.add(mPatientLabel);
+	}
+	
+	private void updatePatientLabelPosition() {
+		mPatientLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
+		mPatientLabel.setY((int) (mPatientLabel.getBoundingBox().height()
+					         + mChannelLabel.getY()
+					         + mInterLabelPadding));
+	}
+	
+	public Label getPatientLabel() {
+		return mPatientLabel;
+	}
+	
+	// Parameter Label	
+	private void createParameterLabel() {
+		String parameterLabel = "?";
+		mParameterLabel = new Label(0, 0, 0, parameterLabel);
+		mParameterBitmap = new ScreenBitmap(mContext, R.drawable.heart);
+	}
+	
+	private void updateParameterLabelSize() {
+		int textSize = getBoundedTextSize(mParameterLabel, mLabelWidthPercent * mWidth
+				  						  , mParameterLabelHeightPercent * mHeight);
+		mParameterLabel.setTextSize(textSize);
+
+		mLabelList.add(mParameterLabel);
+	}
+	
+	private void updateParameterLabelPosition() {
+		mParameterBitmap.scale(mParameterLabel.getBoundingBox().height()*2
+				   , mParameterLabel.getBoundingBox().height()*2);
+		mParameterBitmap.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
+		mParameterBitmap.setY((int) (mPatientLabel.getY() + mInterLabelPadding));
+		
+		mParameterLabel.setX((int) (mParameterBitmap.getX() + mParameterBitmap.mWidth + mLeftPadding));
+		mParameterLabel.setY((int) (mParameterLabel.getBoundingBox().height()
+					         + mPatientLabel.getY()
+					         + mInterLabelPadding));
+	}
+	
+	public Label getParameterLabel() {
+		return mParameterLabel;
+	}
+	
+	public ScreenBitmap getParameterBitmap() {
+		return mParameterBitmap;
+	}
+	
+	// Paused Label
+	private void createPausedLabel() {
+		String text = "EN PAUSA";
+		mPausedLabel = new Label(0, 0, 0, text);
 	}
 	
 	private void updatePausedLabelSize() {
@@ -150,6 +225,16 @@ public class InfoBox{
 		
 		mLabelList.add(mPausedLabel);
 	}	
+	
+	private void UpdatePausedLabelPosition() {	
+		mPausedLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
+		mPausedLabel.setY((int) ((mChannelIndex+1)*mHeight - mInterLabelPadding));
+	}	
+	
+	public Label getPausedLabel() {
+		return mPausedLabel;
+	}
+	
 	
 	private void setMinimumSize() {
 		
@@ -169,48 +254,8 @@ public class InfoBox{
 		}
 	}
 
-	// Acualizo el Label con el # de canal
-	private void updateChannelLabelPosition() {
-		
-		mChannelLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
-		mChannelLabel.setY((int) (mChannelLabel.getBoundingBox().height() 
-								  + mChannelIndex*mHeight
-								  + mInterLabelPadding));
-	
-	}
-
-	// Update Patient Label
-	private void updatePatientLabelPosition() {
-		
-		mPatientLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
-		mPatientLabel.setY((int) (mPatientLabel.getBoundingBox().height()
-					         + mChannelLabel.getY()
-					         + mInterLabelPadding));
-	
-	}
-		
-	// Acualizo el Label de Pausa
-	private void UpdatePausedLabelPosition() {
-		
-		mPausedLabel.setX((int) (mVerticalDivisorXPosition + mLeftPadding));
-		mPausedLabel.setY((int) ((mChannelIndex+1)*mHeight - mInterLabelPadding));
-		
-	}	
-		
 	public int getChannel() {
 		return mAdcChannelNumber;
-	}
-	
-	public Label getLabelChannel() {
-		return mChannelLabel;
-	}
-
-	public Label getPatientLabel() {
-		return mPatientLabel;
-	}
-
-	public Label getLabelPaused() {
-		return mPausedLabel;
 	}
 	
 	public static void setWidth(float boxWidth) {

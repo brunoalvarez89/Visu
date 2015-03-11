@@ -1,11 +1,13 @@
-package com.ufavaloro.android.visu.processing;
+package com.ufavaloro.android.visu.processing.qrsdetection;
 
+import com.ufavaloro.android.visu.processing.OperationType;
 import android.os.Handler;
 
+// Moving Average based Filtering 
+// http://cinc.org/archives/2003/pdf/585.pdf
+public class MAF extends QrsDetection {
 
-public class QrsDetector extends ProcessingOperation{
-
-	public QrsDetector(OperationType operationType, double fs, int samplesPerPackage
+	public MAF(OperationType operationType, double fs, int samplesPerPackage
 					   , Handler processingInterfaceHandler, int channel) {
 		super(operationType, fs, samplesPerPackage, processingInterfaceHandler, channel);
 	}

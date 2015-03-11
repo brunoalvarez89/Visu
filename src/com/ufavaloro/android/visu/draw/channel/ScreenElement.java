@@ -38,4 +38,5 @@ public abstract class ScreenElement {
 	public void setBoundingBox(Rect boundingBox) {
 		mBoundingBox = boundingBox;
 	}
+
 }

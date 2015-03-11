@@ -4,6 +4,7 @@ import com.google.android.gms.internal.mn;
 import com.ufavaloro.android.visu.draw.RGB;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
+import android.content.Context;
 import android.util.SparseArray;
 
 public class ChannelList {
@@ -91,7 +92,7 @@ public class ChannelList {
 	}
 
 	// Add online channel
-	public void addChannel(int mTotalHeight, int mTotalWidth, int mTotalPages, StudyData studyData) {
+	public void addChannel(int mTotalHeight, int mTotalWidth, int mTotalPages, Context context, StudyData studyData) {
 		int channelNumber = studyData.getAcquisitionData().getAdcChannel();
 		// Genero canal
 		int colorIndex;
@@ -101,7 +102,7 @@ public class ChannelList {
 			colorIndex = channelNumber;
 		}
 		RGB color = mColorArray[colorIndex];
-		Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, mTotalPages, studyData);
+		Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, mTotalPages, context, studyData);
 		
 		// Si el canal ya se encuentra en la lista
 		if(mOnlineChannelList.get(channelNumber) != null) {
@@ -123,7 +124,7 @@ public class ChannelList {
 	}
 
 	// Add offline channel
-	public void addChannel(int mTotalHeight, int mTotalWidth, StudyData studyData) {
+	public void addChannel(int mTotalHeight, int mTotalWidth, Context context, StudyData studyData) {
 		// Genero canal
 		int channelNumber = mOnlineChannelList.size() + mHiddenChannelList.size();
 		// Genero canal
@@ -134,7 +135,7 @@ public class ChannelList {
 			colorIndex = channelNumber;
 		}
 		RGB color = mColorArray[colorIndex];
-		Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, studyData);
+		Channel channel = new Channel(channelNumber, mTotalHeight, mTotalWidth, color, context, studyData);
 		// Agrego canal
 		mOnlineChannelList.append(channel.getChannelNumber(), channel);
 		mOfflineChannelsQty++;

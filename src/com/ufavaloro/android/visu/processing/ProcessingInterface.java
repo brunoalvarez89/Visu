@@ -1,5 +1,6 @@
 package com.ufavaloro.android.visu.processing;
 
+import com.ufavaloro.android.visu.processing.qrsdetection.MAF;
 import com.ufavaloro.android.visu.storage.SamplesBuffer;
 
 import android.annotation.SuppressLint;
@@ -30,7 +31,7 @@ public class ProcessingInterface {
 	
 	public synchronized void addProcessingOperation(OperationType operationType, double fs, int samplesPerPackage, int channel) {
 		if(operationType == OperationType.QRS_DETECTION) {
-			mProcessingOperation = (ProcessingOperation) new QrsDetector(operationType
+			mProcessingOperation = (ProcessingOperation) new MAF(operationType
 																		  , fs
 																		  , samplesPerPackage
 																		  , mProcessingOperationHandler

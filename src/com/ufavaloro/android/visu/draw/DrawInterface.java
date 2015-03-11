@@ -10,6 +10,7 @@ import com.ufavaloro.android.visu.draw.channel.Channel;
 import com.ufavaloro.android.visu.draw.channel.ChannelList;
 import com.ufavaloro.android.visu.draw.channel.InfoBox;
 import com.ufavaloro.android.visu.draw.channel.Label;
+import com.ufavaloro.android.visu.draw.channel.ScreenBitmap;
 import com.ufavaloro.android.visu.draw.channel.SignalBox;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 import com.ufavaloro.android.visu.userinterface.MainActivity;
@@ -101,8 +102,9 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 	private double mVerticalZoomThreshold;
 	private double mDxAcum = 0;
 	private double mDyAcum = 0;
-
-	BitmapManager mBitmapManager;
+	private boolean mHeartBeat;
+	
+	IconsManager mIconsManager;
 /*****************************************************************************************
 * Inicio de métodos de clase 															 *
 *****************************************************************************************/
@@ -136,29 +138,32 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 		mReferenceMatrix.setVerticalDivisor(Channel.getSignalBoxWidthPercent()*mTotalWidth);
 		
 		// Inicializo bitmaps
-		mBitmapManager = new BitmapManager(getContext());
+		mIconsManager = new IconsManager(getContext());
 		bitmapSetup();
 	}
 	
 	// Método que configura los Bitmaps
 	private void bitmapSetup() {
-		mBitmapManager.setIconsWidth((int) (0.07 * mTotalWidth));
-		mBitmapManager.setIconsHeight((int) (0.11 * mTotalHeight));
-		mBitmapManager.setIconsLeftPadding((int) (0.05 * mTotalHeight));
-		mBitmapManager.setIconsUpperPadding((int) (0.1 * mTotalHeight));
-		mBitmapManager.setup();
+		mIconsManager.setIconsWidth((int) (0.07 * mTotalWidth));
+		mIconsManager.setIconsHeight((int) (0.11 * mTotalHeight));
+		mIconsManager.setIconsLeftPadding((int) (0.05 * mTotalHeight));
+		mIconsManager.setIconsUpperPadding((int) (0.1 * mTotalHeight));
+		mIconsManager.setup();
 		
 		// Fondo de pantalla inicial
 		Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
 				R.drawable.background_logo);
-		mBitmapManager.setBackgroundLogoWidth((int) (0.5 * mTotalWidth));
-		mBitmapManager.setBackgroundLogoHeight((int) (0.3 * mTotalHeight));
-		mBitmapManager.setBackgroundLogo(Bitmap.createScaledBitmap(bitmap
-																  , mBitmapManager.getBackgroundLogoWidth()
-																  , mBitmapManager.getBackgroundLogoHeight()
+		mIconsManager.setBackgroundLogoWidth((int) (0.5 * mTotalWidth));
+		mIconsManager.setBackgroundLogoHeight((int) (0.3 * mTotalHeight));
+		mIconsManager.setBackgroundLogo(Bitmap.createScaledBitmap(bitmap
+																  , mIconsManager.getBackgroundLogoWidth()
+																  , mIconsManager.getBackgroundLogoHeight()
 																  , false));
-		mBitmapManager.setBackgroundLogoX((int) ((0.5 * mTotalWidth) / 2));
-		mBitmapManager.setBackgroundLogoY((int) ((0.7 * mTotalHeight) / 2));
+		mIconsManager.setBackgroundLogoX((int) ((0.5 * mTotalWidth) / 2));
+		mIconsManager.setBackgroundLogoY((int) ((0.7 * mTotalHeight) / 2));
+		
+		// Heart icon
+		
 	}
 
 	// Método que recibe y almacena muestras
@@ -214,34 +219,34 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 
 		// Dibujo ícono de estudio nuevo
 		if (mUiVisibility == true || mChannelList.size() == 0) {
-			canvas.drawBitmap(mBitmapManager.getNewStudyIcon()
-							  , mBitmapManager.getNewStudyIconX()
-							  , mBitmapManager.getNewStudyIconY()
+			canvas.drawBitmap(mIconsManager.getNewStudyIcon()
+							  , mIconsManager.getNewStudyIconX()
+							  , mIconsManager.getNewStudyIconY()
 							  , mPaint);
 		}
 
 		// Dibujo ícono de configurar canales
 		if (mUiVisibility == true && mChannelList.getOnlineChannelsQty() > 0) {
-			canvas.drawBitmap(mBitmapManager.getConfigureChannelsIcon()
-							  , mBitmapManager.getConfigureChannelsIconX()
-							  , mBitmapManager.getConfigureChannelsIconY()
+			canvas.drawBitmap(mIconsManager.getConfigureChannelsIcon()
+							  , mIconsManager.getConfigureChannelsIconX()
+							  , mIconsManager.getConfigureChannelsIconY()
 							  , mPaint);
 		}
 		
 		// Dibujo ícono de parar estudio
 		if (mUiVisibility == true && mChannelList.size() != 0 && currentlyRecording == true) {
-			canvas.drawBitmap(mBitmapManager.getStopStudyIcon()
-							  , mBitmapManager.getStopStudyIconX()
-							  , mBitmapManager.getStopStudyIconY()
+			canvas.drawBitmap(mIconsManager.getStopStudyIcon()
+							  , mIconsManager.getStopStudyIconX()
+							  , mIconsManager.getStopStudyIconY()
 							  , mPaint);
 		}
 
 		// Dibujo fondo
 		if (mChannelList.size() == 0) {
 			mPaint.setAlpha(130);
-			canvas.drawBitmap(mBitmapManager.getBackgroundLogo()
-							  , mBitmapManager.getBackgroundLogoX()
-							  , mBitmapManager.getBackgroundLogoY()
+			canvas.drawBitmap(mIconsManager.getBackgroundLogo()
+							  , mIconsManager.getBackgroundLogoX()
+							  , mIconsManager.getBackgroundLogoY()
 							  , mPaint);
 			mPaint.setAlpha(255);
 		}
@@ -438,7 +443,7 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 			mPaint.setAlpha(200);
 
 			// Dibujo Label de número de Canal
-			label = channel.getInfoBox().getLabelChannel();
+			label = channel.getInfoBox().getChannelLabel();
 			mPaint.setTextSize(label.getTextSize());
 			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 
@@ -446,11 +451,24 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 			label = channel.getInfoBox().getPatientLabel();
 			mPaint.setTextSize(label.getTextSize());
 			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
+			
+			// Dibujo Parameter Label y Bitmap
+			if(mHeartBeat == true) {
+				ScreenBitmap bitmap = channel.getInfoBox().getParameterBitmap();
+				canvas.drawBitmap(bitmap.getBitmap()
+								  , bitmap.getX()
+								  , bitmap.getY()
+								  , mPaint);
+			}
+			label = channel.getInfoBox().getParameterLabel();
+			mPaint.setTextSize(label.getTextSize());
+			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
+						
 
 			// Dibujo Label de Pausa
 			setPaint(Color.RED, 2);
 			if (channel.isPaused() && channel.isOnline()) {
-				label = channel.getInfoBox().getLabelPaused();
+				label = channel.getInfoBox().getPausedLabel();
 				mPaint.setTextSize(label.getTextSize());
 				canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 			}
@@ -488,9 +506,9 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 			for(int i = 0; i < mChannelList.getHiddenChannelsLabels().size(); i++) {
 				int channelKey = mChannelList.getHiddenChannelsLabels().keyAt(i);
 				Label label = mChannelList.getHiddenChannelsLabels().get(channelKey);
-				label.setTextSize(getBoundedTextSize(label, mBitmapManager.getIconsWidth(), mBitmapManager.getIconsHeight()));
-				label.setX((int) ((0.05 * mTotalHeight) + (i*mBitmapManager.getIconsWidth())));
-				label.setY(mTotalHeight - mBitmapManager.getIconsHeight());
+				label.setTextSize(getBoundedTextSize(label, mIconsManager.getIconsWidth(), mIconsManager.getIconsHeight()));
+				label.setX((int) ((0.05 * mTotalHeight) + (i*mIconsManager.getIconsWidth())));
+				label.setY(mTotalHeight - mIconsManager.getIconsHeight());
 				Channel deletedChannel = mChannelList.getHiddenChannels().get(channelKey);
 				
 				int[] rgb = deletedChannel.getColor().getRGB();
@@ -501,7 +519,7 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 			}
 		}
 	}
-
+	
 	// Método que configura el color y grosor del brush
 	private synchronized void setPaint(int color, float strokeWidth) {
 		mPaint.setColor(color);
@@ -518,9 +536,9 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 	*************************************************************************************/
 	public synchronized void addChannel(StudyData studyData, boolean online) {
 		if(online) {
-			mChannelList.addChannel(mTotalHeight, mTotalWidth, mTotalPages, studyData);
+			mChannelList.addChannel(mTotalHeight, mTotalWidth, mTotalPages, getContext(), studyData);
 		} else {
-			mChannelList.addChannel(mTotalHeight, mTotalWidth, studyData);
+			mChannelList.addChannel(mTotalHeight, mTotalWidth, getContext(), studyData);
 		}
 
 		mReferenceMatrix.addChannel();
@@ -634,11 +652,11 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 		if (mUiVisibility == true || mChannelList.size() == 0) {
 
 			TouchPointer tp = mTouchPointer.valueAt(0);
-			int width = mBitmapManager.getNewStudyIcon().getWidth();
-			int height = mBitmapManager.getNewStudyIcon().getHeight();
+			int width = mIconsManager.getNewStudyIcon().getWidth();
+			int height = mIconsManager.getNewStudyIcon().getHeight();
 
-			if (tp.x > mBitmapManager.getNewStudyIconX() && tp.x < mBitmapManager.getNewStudyIconX() + width) {
-				if (tp.y > mBitmapManager.getNewStudyIconY() && tp.y < mBitmapManager.getNewStudyIconY() + height) {
+			if (tp.x > mIconsManager.getNewStudyIconX() && tp.x < mIconsManager.getNewStudyIconX() + width) {
+				if (tp.y > mIconsManager.getNewStudyIconY() && tp.y < mIconsManager.getNewStudyIconY() + height) {
 					((MainActivity) getContext()).mainMenuDialog();
 				}
 			}
@@ -649,11 +667,11 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 	private void onTouch_ConfigureChannelsIcon() {
 		if (mUiVisibility == true && mChannelList.getOnlineChannelsQty() > 0) {
 			TouchPointer tp = mTouchPointer.valueAt(0);
-			int width = mBitmapManager.getConfigureChannelsIcon().getWidth();
-			int height = mBitmapManager.getConfigureChannelsIcon().getHeight();
+			int width = mIconsManager.getConfigureChannelsIcon().getWidth();
+			int height = mIconsManager.getConfigureChannelsIcon().getHeight();
 
-			if (tp.x > mBitmapManager.getConfigureChannelsIconX() && tp.x < mBitmapManager.getConfigureChannelsIconX() + width) {
-				if (tp.y > mBitmapManager.getConfigureChannelsIconY() && tp.y < mBitmapManager.getConfigureChannelsIconY() + height) {
+			if (tp.x > mIconsManager.getConfigureChannelsIconX() && tp.x < mIconsManager.getConfigureChannelsIconX() + width) {
+				if (tp.y > mIconsManager.getConfigureChannelsIconY() && tp.y < mIconsManager.getConfigureChannelsIconY() + height) {
 					((MainActivity) getContext()).onlineChannelPropertiesDialog(-1);
 				}
 			}
@@ -665,11 +683,11 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 		if (mUiVisibility == true && mChannelList.size() != 0 && currentlyRecording == true) {
 
 			TouchPointer tp = mTouchPointer.valueAt(0);
-			int width = mBitmapManager.getStopStudyIcon().getWidth();
-			int height = mBitmapManager.getStopStudyIcon().getHeight();
+			int width = mIconsManager.getStopStudyIcon().getWidth();
+			int height = mIconsManager.getStopStudyIcon().getHeight();
 
-			if (tp.x > mBitmapManager.getStopStudyIconX() && tp.x < mBitmapManager.getStopStudyIconX() + width) {
-				if (tp.y > mBitmapManager.getStopStudyIconY() && tp.y < mBitmapManager.getStopStudyIconY() + height) {
+			if (tp.x > mIconsManager.getStopStudyIconX() && tp.x < mIconsManager.getStopStudyIconX() + width) {
+				if (tp.y > mIconsManager.getStopStudyIconY() && tp.y < mIconsManager.getStopStudyIconY() + height) {
 					((MainActivity) getContext()).stopStudyDialog();
 				}
 			}
@@ -1030,6 +1048,26 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 		mDrawOk = false;
 	}
 	
+	public synchronized void heartBeat() {
+		
+		Runnable otherRunnable = new Runnable() {
+			  public void run() {
+					mHeartBeat = true;
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					mHeartBeat = false;
+			  }
+			};
+			
+		Thread thread = new Thread(null, otherRunnable, "Background");
+		thread.start();
+		
+	}
+
 /*****************************************************************************************
 * Métodos de Ciclo de Vida 																 *
 *****************************************************************************************/

@@ -55,23 +55,22 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <association id="7">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="8" name="mSignalBox">        
-        <position height="18" width="64" x="15" y="7"/>      
+  <dependency id="7">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <association id="8">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="9" name="mReferenceMatrix">        
+        <position height="18" width="96" x="-292" y="50"/>      
       </attribute>      
-      <multiplicity id="9" minimum="0" maximum="1">        
-        <position height="16" width="23" x="-16" y="-4"/>      
+      <multiplicity id="10" minimum="0" maximum="1">        
+        <position height="16" width="23" x="-247" y="54"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="10">    
-    <bendpoint x="668" y="357"/>    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="6"/>  
-  </dependency>  
   <association id="11">    
     <end type="SOURCE" refId="2" navigable="false">      
       <attribute id="12" name="mDrawingThread">        
@@ -84,40 +83,41 @@
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="14">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <nesting id="15">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
-  </nesting>  
-  <dependency id="16">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
-  <association id="17">    
+  <association id="14">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="18" name="mInfoBox">        
+      <attribute id="15" name="mInfoBox">        
         <position height="18" width="53" x="-10" y="4"/>      
       </attribute>      
-      <multiplicity id="19" minimum="0" maximum="1">        
+      <multiplicity id="16" minimum="0" maximum="1">        
         <position height="16" width="23" x="-33" y="-48"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <dependency id="17">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <nesting id="18">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </nesting>  
+  <dependency id="19">    
+    <bendpoint x="668" y="357"/>    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
   <association id="20">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="21" name="mReferenceMatrix">        
-        <position height="18" width="96" x="-292" y="50"/>      
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="21" name="mSignalBox">        
+        <position height="18" width="64" x="15" y="7"/>      
       </attribute>      
       <multiplicity id="22" minimum="0" maximum="1">        
-        <position height="16" width="23" x="-247" y="54"/>      
+        <position height="16" width="23" x="-16" y="-4"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
+    <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <dependency id="23">    
@@ -125,8 +125,8 @@
     <end type="TARGET" refId="2"/>  
   </dependency>  
   <dependency id="24">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="4"/>  
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
   </dependency>  
   <dependency id="25">    
     <bendpoint x="75" y="300"/>    

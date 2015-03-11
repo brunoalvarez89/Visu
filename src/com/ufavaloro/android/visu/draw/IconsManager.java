@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 
-public class BitmapManager{
+public class IconsManager {
 	
 	private int mIconsWidth;
 	private int mIconsHeight;
@@ -15,7 +15,7 @@ public class BitmapManager{
 	private int mIconsUpperPadding;
 	private Context mContext;
 	
-	public BitmapManager(Context context) {
+	public IconsManager(Context context) {
 		mContext = context;
 	}
 
@@ -23,7 +23,6 @@ public class BitmapManager{
 		return mIconsWidth;
 	}
 
-	
 	public void setIconsWidth(int mIconsWidth) {
 		this.mIconsWidth = mIconsWidth;
 	}
@@ -72,7 +71,6 @@ public class BitmapManager{
 		setStopStudyIconY(getIconsUpperPadding() + getConfigureChannelsIconY());
 	}
 	
-	
 
 /*****************************************************************************************
 * New Study Icon																	     *
@@ -105,6 +103,7 @@ public class BitmapManager{
 		this.mNewStudyIconY = mNewStudyIconY;
 	}
 
+
 /*****************************************************************************************
 * Configure Channels Icon															     *
 *****************************************************************************************/
@@ -136,8 +135,9 @@ public class BitmapManager{
 		this.mConfigureChannelsIconY = mConfigureChannelsIconY;
 	}
 
+
 /*****************************************************************************************
-* Stop Study Icon																     *
+* Stop Study Icon																	     *
 *****************************************************************************************/
 	private Bitmap mStopStudyIcon;
 	private int mStopStudyIconX;
@@ -167,8 +167,9 @@ public class BitmapManager{
 		this.mStopStudyIconY = mStopStudyIconY;
 	}
 
+
 /*****************************************************************************************
-* Background Logo																     *
+* Background Logo																	     *
 *****************************************************************************************/
 	private Bitmap mBackgroundLogo;
 	private int mBackgroundLogoWidth;
@@ -215,6 +216,14 @@ public class BitmapManager{
 	public void setBackgroundLogoY(int mBackgroundLogoY) {
 		this.mBackgroundLogoY = mBackgroundLogoY;
 	}
+
+
+/*****************************************************************************************
+* Heart Icon																		     *
+*****************************************************************************************/
+	private Bitmap mHearIcon;
+	private int mHearIconX;
+	private int mHeartIconY;
 
 
 }
