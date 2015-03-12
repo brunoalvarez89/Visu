@@ -6,17 +6,35 @@ import com.ufavaloro.android.visu.storage.SamplesBuffer;
 
 public class ProcessingOperation {
 	
-	protected SamplesBuffer mProcessingBuffer;
+	protected ProcessingBuffer mProcessingBuffer;
 	protected double mWaitTime = 1.5; // x seg
 	protected boolean mIsProcessing;
 	protected OperationType mOperationType;
 	protected int mChannel;
 	protected Handler mProcessingInterfaceHandler;
 
-	public int[] operate() {
-		return null;
+	public void nextOperation() {
+		mIsProcessing = true;
+		
+		getRawSample();
+		operate();
+		increaseProcessingIndex();
+		
+		mIsProcessing = false;
+	}
+	
+	public void operate() {
 	}
 
+	public void increaseProcessingIndex() {
+		mProcessingBuffer.increaseProcessingIndex();
+	}
+	
+	public void getRawSample() {
+		int processingIndex = mProcessingBuffer.getProcessingIndex();
+		mProcessingBuffer.getRawSample(processingIndex);
+	}
+	
 	public ProcessingOperation(OperationType operationType, double fs, int samplesPerPackage
 							   , Handler processingInterfaceHandler, int channel) {
 		mOperationType = operationType;
@@ -44,7 +62,7 @@ public class ProcessingOperation {
 		mOperationType = operationType;
 	}
 	
-	public SamplesBuffer getProcessingBuffer() {
+	public ProcessingBuffer getProcessingBuffer() {
 		return mProcessingBuffer;
 	}
 }

@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.processing.qrsdetection;
+package com.ufavaloro.android.visu.processing.ekg;
 
 import android.os.Handler;
 

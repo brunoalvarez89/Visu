@@ -1,8 +1,3 @@
-/*****************************************************************************************
- * SamplesBuffer.java																	 *
- * Buffer de almacenamiento.															 *
- ****************************************************************************************/
-
 package com.ufavaloro.android.visu.storage;
 
 import java.util.ArrayList;
@@ -24,7 +19,7 @@ public class SamplesBuffer {
 /*****************************************************************************************
 * Métodos principales								      						         *
 *****************************************************************************************/	
-	// Constructor
+	// Constructors
 	public SamplesBuffer(AcquisitionData acquisitionData, String units) {
 		double fs = acquisitionData.getFs();
 		double ts = 1 / fs;
@@ -39,13 +34,10 @@ public class SamplesBuffer {
 	public SamplesBuffer(int bufferSize) {
 		mSamplesBuffer = new short[bufferSize];
 	}
-
 	
 	public SamplesBuffer() {}
 
-	// Método para almacenar muestras
 	public void writeSamples(short[] x) {
-		
 		// Almaceno
 		for(int i=0; i<x.length; i++) {
 			
@@ -56,12 +48,9 @@ public class SamplesBuffer {
 			
 			// Si llego al máximo, pongo índices en cero
 			if(mStoringIndex == mSamplesBuffer.length) mStoringIndex = 0;
-		
 		}
-	
 	}
 
-	
 /*****************************************************************************************
 * Getters											      						         *
 *****************************************************************************************/
@@ -77,7 +66,6 @@ public class SamplesBuffer {
 		return mSamplesBuffer;
 	}
 
-	
 	public void createSamplesBuffer(ArrayList<Short> samplesBuffer) {
 		mSamplesBuffer = new short[samplesBuffer.size()];
 		for(int i = 0; i < samplesBuffer.size(); i++) {
@@ -85,5 +73,5 @@ public class SamplesBuffer {
 		}
 	}
 
-}//StoringBuffer
+}
 

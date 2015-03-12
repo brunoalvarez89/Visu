@@ -8,7 +8,7 @@ import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 public class DrawBuffer {
 	
 	// Buffer
-	private short[] mBuffer;
+	private short[] mSamplesBuffer;
 	
 	// Largo total del Buffer
 	private int mSize;
@@ -20,7 +20,7 @@ public class DrawBuffer {
 	private int mStoringIndex;
 	
 	// Puntero de graficación
-	private int mGraphingIndex;
+	private int mDrawingIndex;
 	
 	private float mHorizontalZoom;
 	private float mVerticalZoom;
@@ -35,7 +35,7 @@ public class DrawBuffer {
 	public DrawBuffer(int channelNumber, int samplesPerPage, int totalPages, int bits) {
 		mSize = samplesPerPage*totalPages;
 		mTotalPages = totalPages;
-		mBuffer = new short[mSize];
+		mSamplesBuffer = new short[mSize];
 		mBits = bits;
 		setZero();
 		mHorizontalZoom = 1;
@@ -46,9 +46,9 @@ public class DrawBuffer {
 	public DrawBuffer(int mAdcChannelNumber, StudyData studyData, int totalPages) {
 		mSize = studyData.getSamplesBuffer().getSize();
 		mTotalPages = totalPages;
-		mBuffer = new short[mSize];
+		mSamplesBuffer = new short[mSize];
 		mBits = studyData.getAcquisitionData().getBits();
-		mBuffer = studyData.getSamplesBuffer().getBuffer();	
+		mSamplesBuffer = studyData.getSamplesBuffer().getBuffer();	
 		mHorizontalZoom = 1;
 		mVerticalZoom = 1;
 	}
@@ -59,15 +59,15 @@ public class DrawBuffer {
 		// Almaceno
 		for(int i=0; i<x.length; i++) {
 			
-			this.mBuffer[mStoringIndex] = x[i];
+			this.mSamplesBuffer[mStoringIndex] = x[i];
 			
 			// Incremento índices
 			mStoringIndex++;
-			mGraphingIndex++;
+			mDrawingIndex++;
 			
 			// Si llego al máximo, pongo índices en cero
 			if(mStoringIndex == mSize) mStoringIndex = 0;
-			if(mGraphingIndex == mSize) mGraphingIndex = 0;
+			if(mDrawingIndex == mSize) mDrawingIndex = 0;
 		
 		}
 	
@@ -77,7 +77,7 @@ public class DrawBuffer {
 	public int getSample(int index) {
 		
 		// Resto offset de muestras
-		index = index + (mGraphingIndex - mSize/mTotalPages);
+		index = index + (mDrawingIndex - mSize/mTotalPages);
 		
 		// Inicializo un índice dummy
 		int newIndex = 0;
@@ -101,20 +101,20 @@ public class DrawBuffer {
 		}
 		
 		// Devuelvo muestra
-		return mBuffer[newIndex];
+		return mSamplesBuffer[newIndex];
 	}
 	
 	// Método para incrementar el índice de graficación
 	public void increaseGraphingIndex(int inc) {
 		
 		// Incremento
-		mGraphingIndex = mGraphingIndex + inc;
+		mDrawingIndex = mDrawingIndex + inc;
 		
 		// Si me pasé del largo total
-		if(mGraphingIndex > mSize - 1) { 
+		if(mDrawingIndex > mSize - 1) { 
 			
 			// Le resto el largo total al índice
-			mGraphingIndex = mGraphingIndex - mSize;
+			mDrawingIndex = mDrawingIndex - mSize;
 		
 		}
 	
@@ -124,13 +124,13 @@ public class DrawBuffer {
 	public void decreaseGraphingIndex(int dec) {
 		
 		// Incremento
-		mGraphingIndex = mGraphingIndex - dec;
+		mDrawingIndex = mDrawingIndex - dec;
 		
 		// Si el índice es negativo
-		if(mGraphingIndex < 0) { 
+		if(mDrawingIndex < 0) { 
 			
 			// Le resto el índice al largo total
-			mGraphingIndex = mGraphingIndex + mSize;
+			mDrawingIndex = mDrawingIndex + mSize;
 		
 		}
 	
@@ -140,14 +140,14 @@ public class DrawBuffer {
 	public void setZero() {
 		short zero = (short) (Math.pow(2, mBits) / 2);
 		for(int i=0; i<mSize; i++) { 
-			mBuffer[i] = zero;
+			mSamplesBuffer[i] = zero;
 		}
 		
 	}
 
 	// Setter de graphing index, para resetear
 	public void setGraphingIndex(int graphingIndex) {
-		mGraphingIndex = graphingIndex;
+		mDrawingIndex = graphingIndex;
 	}
 
 	public void setHorizontalZoom(float horizontalZoom) {
@@ -166,11 +166,11 @@ public class DrawBuffer {
 	}
 	
 	public int getGraphingIndex() {
-		return mGraphingIndex;
+		return mDrawingIndex;
 	}
 	
 	public short[] getBuffer() {
-		return mBuffer;
+		return mSamplesBuffer;
 	}
 	
 	public float getHorizontalZoom() {

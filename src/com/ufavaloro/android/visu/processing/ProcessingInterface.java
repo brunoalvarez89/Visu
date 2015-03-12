@@ -1,13 +1,11 @@
 package com.ufavaloro.android.visu.processing;
 
-import com.ufavaloro.android.visu.processing.qrsdetection.MAF;
+import com.ufavaloro.android.visu.processing.ekg.MAF;
 import com.ufavaloro.android.visu.storage.SamplesBuffer;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-
 
 public class ProcessingInterface {
 	
@@ -19,14 +17,11 @@ public class ProcessingInterface {
 		mMainInterfaceHandler = mainInterfaceHandler;
 		mProcessingThread = new ProcessingThread();
 		mProcessingThread.start();
-		mProcessingThread.onPause();
 	}
 	
 	public synchronized void writeSamples(short[] samples, int channel) {
-		SamplesBuffer buffer = mProcessingOperation.getProcessingBuffer();
-		buffer.writeSamples(samples);
-		if(buffer.getStoringIndex() == 0) mProcessingThread.onResume();
-		
+		ProcessingBuffer buffer = mProcessingOperation.getProcessingBuffer();
+		buffer.writeRawSamples(samples);
 	}
 	
 	public synchronized void addProcessingOperation(OperationType operationType, double fs, int samplesPerPackage, int channel) {
@@ -73,31 +68,14 @@ public class ProcessingInterface {
 					}
 				}
 
-				synchronized(mProcessingOperation) {
-					
-					if(mProcessingOperation != null) {
-						OperationType operationType = mProcessingOperation.getOperationType();
-					
-						if(operationType == OperationType.QRS_DETECTION_MAF) {
-							int[] result = mProcessingOperation.operate();
-							int channel = mProcessingOperation.getChannel();
-							int operation = OperationType.QRS_DETECTION_MAF.getValue();
-							
-							/*
-							mMainInterfaceHandler.obtainMessage(// What did I do?
-																operation
-																// Was it succesful?
-																, success			
-																// What channel?
-																, channel
-																// Result
-															, result).sendToTarget();
-															*/
-						}				
+				if(mProcessingOperation != null) {
+					try {
+						Thread.sleep(2);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					
-					this.onPause();
-					
+					if(!mProcessingOperation.isProcessing()) mProcessingOperation.nextOperation();
 				}
 			}
 		}

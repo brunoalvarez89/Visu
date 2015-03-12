@@ -1,6 +1,7 @@
-package com.ufavaloro.android.visu.processing.qrsdetection;
+package com.ufavaloro.android.visu.processing.ekg;
 
 import com.ufavaloro.android.visu.processing.OperationType;
+import com.ufavaloro.android.visu.processing.ProcessingBuffer;
 import com.ufavaloro.android.visu.storage.SamplesBuffer;
 
 import android.os.Handler;
@@ -19,49 +20,34 @@ public class MAF extends QrsDetection {
 	
 	public MAF(OperationType operationType, double fs, int samplesPerPackage
 			   , Handler processingInterfaceHandler, int channel) {
+		
 		super(operationType, fs, samplesPerPackage, processingInterfaceHandler, channel);
 		
 		int i = 0;
 		while(samplesPerPackage*i < 50) i++;
-		mProcessingBuffer = new SamplesBuffer(samplesPerPackage*i);
+		mProcessingBuffer = new ProcessingBuffer(samplesPerPackage*i);
 		
 		mHighPass = new float[samplesPerPackage*i];
 		mLowPass = new float[samplesPerPackage*i];
 		mMean = new float[samplesPerPackage*i];
 		mQrs = new int[samplesPerPackage*i];
-		
 	}
 
 	// Moving Average Filter (High Pass)
 	private void mafHighPass() {
-		//float[] highPass = new float[nsamp];
-		short[] samples = mProcessingBuffer.getBuffer();
-		int nsamp = samples.length;
+		int index = mProcessingBuffer.getProcessingIndex();
 		
-        for(int i = 0; i < nsamp; i++) {
-            float y1 = 0;
-            float y2 = 0;
- 
-            int y2_index = i-((M+1)/2);
-            if(y2_index < 0) {
-                y2_index = nsamp + y2_index;
-            }
-            y2 = samples[y2_index];
- 
-            float y1_sum = 0;
-            for(int j=i; j>i-M; j--) {
-                int x_index = i - (i-j);
-                if(x_index < 0) {
-                    x_index = nsamp + x_index;
-                }
-                y1_sum += samples[x_index];
-            }
- 
-            y1 = mConstant * y1_sum;
-            mHighPass[i] = y2 - y1;
- 
-        }        
- 
+        float y1_sum = 0;
+        for(int j = index; j > index - M; j--) {
+        	y1_sum = y1_sum + mProcessingBuffer.getProcessedSample(j);
+        }
+        float y1 = mConstant * y1_sum;
+        
+        float y2 = mProcessingBuffer.getProcessedSample(index-((M+1)/2));
+
+        mHighPass[index] = (y2-y1)*(y2-y1);       
+		mProcessingInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), mHighPass[index]).sendToTarget();
+
     }
 
 	// Low Pass Filter
@@ -96,7 +82,7 @@ public class MAF extends QrsDetection {
 	 
 	        mLowPass[i] = sum;
 	    }
-		mProcessingInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), mLowPass).sendToTarget();
+		//mProcessingInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), mLowPass).sendToTarget();
 
 	}
 	
@@ -109,9 +95,8 @@ public class MAF extends QrsDetection {
 		for(int i = 0; i < mMean.length; i++) {
 			mMean[i] = sum / mMean.length;
 		}
-	 
-		//mProcessingInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), mMean).sendToTarget();
-
+		
+		mProcessingInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), mMean).sendToTarget();
 	}
 	
 	// QRS Detection
@@ -171,21 +156,19 @@ public class MAF extends QrsDetection {
 
 	// Full Procedure
 	@Override
-	public int[] operate() {	
+	public void operate() {	
 		//for(int i = 0; i < samples.length; i++) samples_int[i] = (int) samples[i]; 
 		//for(int i = 0; i < samples.length; i++) System.out.println(samples_int[i]);
 		
 		mafHighPass();
 		//for(int i = 0; i < samples.length; i++) System.out.println(highPass[i]);
         
-		lowPass();
+		//lowPass();
 		//for(int i = 0; i < samples.length; i++) System.out.println(lowPass[i]);
 
-		mean();
+		//mean();
 		//qrs();
 		//for(int i = 0; i < samples.length; i++) System.out.println(QRS[i]);
-		
-		return mQrs;
 	}
 	
 }
