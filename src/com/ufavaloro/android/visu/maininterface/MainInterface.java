@@ -24,6 +24,7 @@ import com.ufavaloro.android.visu.storage.datatypes.PatientData;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 import com.ufavaloro.android.visu.userinterface.MainActivity;
 import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.internal.dr;
 
 @SuppressLint("HandlerLeak")
 public class MainInterface {
@@ -296,7 +297,8 @@ public class MainInterface {
 													   acquisitionData.getSamplesPerPackage(),
 													   i);
 		}
-		
+ 		drawInterface.addChannel(onlineStudyData[0], true);
+
  		processingInterface.resume();
 
  		// Empiezo a dibujar
@@ -323,6 +325,14 @@ public class MainInterface {
  	
  	private void onHeartBeat() {
  		drawInterface.heartBeat();
+ 	}
+ 	
+ 	private void onLowPass(float[] lowPass) {
+ 		short[] low = new short[lowPass.length];
+ 		for(int i = 0; i < lowPass.length; i++) {
+ 			low[i] = (short)(lowPass[i]/100000);
+ 		}
+ 		drawInterface.draw(low, 1);
  	}
  	
 	@SuppressLint("HandlerLeak")
@@ -430,6 +440,9 @@ public class MainInterface {
 				case HEARTBEAT:
 					onHeartBeat();
 					break;
+					
+				case LOWPASS:
+					onLowPass((float[])msg.obj);
 					
 				default:
 					break;

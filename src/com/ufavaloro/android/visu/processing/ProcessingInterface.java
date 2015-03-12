@@ -73,27 +73,32 @@ public class ProcessingInterface {
 					}
 				}
 
-				if(mProcessingOperation != null) {
-					OperationType operationType = mProcessingOperation.getOperationType();
-				
-					if(operationType == OperationType.QRS_DETECTION_MAF) {
-						int[] result = mProcessingOperation.operate();
-						int channel = mProcessingOperation.getChannel();
-						int operation = OperationType.QRS_DETECTION_MAF.getValue();
-						
-						/*
-						mMainInterfaceHandler.obtainMessage(// What did I do?
-															operation
-															// Was it succesful?
-															, success			
-															// What channel?
-															, channel
-															// Result
-														, result).sendToTarget();
-														*/
-					}				
+				synchronized(mProcessingOperation) {
+					
+					if(mProcessingOperation != null) {
+						OperationType operationType = mProcessingOperation.getOperationType();
+					
+						if(operationType == OperationType.QRS_DETECTION_MAF) {
+							int[] result = mProcessingOperation.operate();
+							int channel = mProcessingOperation.getChannel();
+							int operation = OperationType.QRS_DETECTION_MAF.getValue();
+							
+							/*
+							mMainInterfaceHandler.obtainMessage(// What did I do?
+																operation
+																// Was it succesful?
+																, success			
+																// What channel?
+																, channel
+																// Result
+															, result).sendToTarget();
+															*/
+						}				
+					}
+					
+					this.onPause();
+					
 				}
-				this.onPause();
 			}
 		}
 
@@ -131,6 +136,9 @@ public class ProcessingInterface {
 				case HEARTBEAT:
 					mMainInterfaceHandler.obtainMessage(OperationType.HEARTBEAT.getValue()).sendToTarget();
 					break;
+					
+				case LOWPASS:
+					mMainInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), msg.obj).sendToTarget();
 					
 				default:
 					break;

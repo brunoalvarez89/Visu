@@ -22,10 +22,6 @@ public class ProcessingOperation {
 		mOperationType = operationType;
 		mChannel = channel;
 		mProcessingInterfaceHandler = processingInterfaceHandler;
-
-		int i = 0;
-		while(samplesPerPackage*i < 200) i++;
-		mProcessingBuffer = new SamplesBuffer(samplesPerPackage*i);
 	}
 	
 	public boolean isProcessing() {
