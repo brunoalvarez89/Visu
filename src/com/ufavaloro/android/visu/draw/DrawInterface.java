@@ -167,7 +167,7 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 	}
 
 	// Método que recibe y almacena muestras
-	public synchronized void draw(short[] samples, int channelNumber) {
+	public void draw(short[] samples, int channelNumber) {
 		Channel channel = mChannelList.getChannelAtKey(channelNumber);
 		
 		if(mChannelList.size() == 0 || channel == null || mDrawOk == false) return;
@@ -175,6 +175,14 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 		if (!channel.isPaused()) channel.setSamples(samples);
 	}
 
+	public synchronized void draw(short sample, int channelNumber) {
+		Channel channel = mChannelList.getChannelAtKey(channelNumber);
+		
+		if(mChannelList.size() == 0 || channel == null || mDrawOk == false) return;
+		
+		if (!channel.isPaused()) channel.setSample(sample);
+	}
+	
 	// Método que se llama cuando se dibuja en el SurfaceView
 	@Override
 	protected synchronized void onDraw(Canvas canvas) {

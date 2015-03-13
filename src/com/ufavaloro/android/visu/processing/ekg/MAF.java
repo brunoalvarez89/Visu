@@ -22,15 +22,6 @@ public class MAF extends QrsDetection {
 			   , Handler processingInterfaceHandler, int channel) {
 		
 		super(operationType, fs, samplesPerPackage, processingInterfaceHandler, channel);
-		
-		int i = 0;
-		while(samplesPerPackage*i < 50) i++;
-		mProcessingBuffer = new ProcessingBuffer(samplesPerPackage*i);
-		
-		mHighPass = new float[samplesPerPackage*i];
-		mLowPass = new float[samplesPerPackage*i];
-		mMean = new float[samplesPerPackage*i];
-		mQrs = new int[samplesPerPackage*i];
 	}
 
 	// Moving Average Filter (High Pass)
@@ -39,14 +30,14 @@ public class MAF extends QrsDetection {
 		
         float y1_sum = 0;
         for(int j = index; j > index - M; j--) {
-        	y1_sum = y1_sum + mProcessingBuffer.getProcessedSample(j);
+        	y1_sum = y1_sum + mProcessingBuffer.getProcessingBufferSample(j);
         }
         float y1 = mConstant * y1_sum;
         
-        float y2 = mProcessingBuffer.getProcessedSample(index-((M+1)/2));
+        float y2 = mProcessingBuffer.getProcessingBufferSample(index-((M+1)/2));
 
-        mHighPass[index] = (y2-y1)*(y2-y1);       
-		mProcessingInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), mHighPass[index]).sendToTarget();
+        float result = (y2-y1)*(y2-y1);       
+		//mProcessingInterfaceHandler.obtainMessage(OperationType.TIME_DERIVATIVE.getValue(), result).sendToTarget();
 
     }
 
@@ -96,7 +87,7 @@ public class MAF extends QrsDetection {
 			mMean[i] = sum / mMean.length;
 		}
 		
-		mProcessingInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), mMean).sendToTarget();
+		//mProcessingInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), mMean).sendToTarget();
 	}
 	
 	// QRS Detection
@@ -136,7 +127,7 @@ public class MAF extends QrsDetection {
 	            if(samples[j] > treshold && !added) {
 	                mQrs[j] = 1;
 	                added = true;
-	                mProcessingInterfaceHandler.obtainMessage(OperationType.HEARTBEAT.getValue()).sendToTarget();
+	                //mProcessingInterfaceHandler.obtainMessage(OperationType.HEARTBEAT.getValue()).sendToTarget();
 	                break;
 	            }
 	            else {

@@ -105,7 +105,11 @@ public class Channel {
 	}
 	
 	public void setSamples(short[] samples) {
-		mSignalBox.getDrawBuffer().storeSamples(samples);
+		mSignalBox.getDrawBuffer().writeSamples(samples);
+	}
+	
+	public void setSample(short sample) {
+		mSignalBox.getDrawBuffer().storeSample(sample);
 	}
 	
 	public RGB getColor() {

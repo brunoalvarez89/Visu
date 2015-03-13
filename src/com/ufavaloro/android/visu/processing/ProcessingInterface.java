@@ -1,7 +1,7 @@
 package com.ufavaloro.android.visu.processing;
 
 import com.ufavaloro.android.visu.processing.ekg.MAF;
-import com.ufavaloro.android.visu.storage.SamplesBuffer;
+import com.ufavaloro.android.visu.processing.timeoperations.FirstOrderDerivative;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
@@ -25,12 +25,20 @@ public class ProcessingInterface {
 	}
 	
 	public synchronized void addProcessingOperation(OperationType operationType, double fs, int samplesPerPackage, int channel) {
-		if(operationType == OperationType.QRS_DETECTION_MAF) {
+		if(operationType == OperationType.EKG_QRS_MAF) {
 			mProcessingOperation = (ProcessingOperation) new MAF(operationType
 																		  , fs
 																		  , samplesPerPackage
 																		  , mProcessingOperationHandler
 																		  , channel);
+		}
+		
+		if(operationType == OperationType.TIME_FIRST_ORDER_DERIVATIVE) {
+			mProcessingOperation = (ProcessingOperation) new FirstOrderDerivative(operationType
+					  , fs
+					  , samplesPerPackage
+					  , mProcessingOperationHandler
+					  , channel);
 		}
 	}
 	
@@ -69,13 +77,16 @@ public class ProcessingInterface {
 				}
 
 				if(mProcessingOperation != null) {
+					
 					try {
-						Thread.sleep(2);
+						Thread.sleep(1);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					if(!mProcessingOperation.isProcessing()) mProcessingOperation.nextOperation();
+					
+					 mProcessingOperation.nextOperation();
+					
 				}
 			}
 		}
@@ -108,15 +119,13 @@ public class ProcessingInterface {
 			
 			switch (operationType) {
 				
-				case QRS_DETECTION_MAF:
+				case TIME_FIRST_ORDER_DERIVATIVE:
+					mMainInterfaceHandler.obtainMessage(OperationType.TIME_FIRST_ORDER_DERIVATIVE.getValue(), msg.obj).sendToTarget();
 					break;
 					
-				case HEARTBEAT:
-					mMainInterfaceHandler.obtainMessage(OperationType.HEARTBEAT.getValue()).sendToTarget();
+				case EKG_QRS_MAF:
+					mMainInterfaceHandler.obtainMessage(OperationType.EKG_QRS_MAF.getValue()).sendToTarget();
 					break;
-					
-				case LOWPASS:
-					mMainInterfaceHandler.obtainMessage(OperationType.LOWPASS.getValue(), msg.obj).sendToTarget();
 					
 				default:
 					break;

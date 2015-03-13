@@ -272,7 +272,7 @@ public class MainInterface {
  	private void onBluetoothDisconnected() {
  		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_DISCONNECTED.getValue()).sendToTarget();
  		processingInterface.pause();
- 		processingInterface.removeProcessingOperation(OperationType.QRS_DETECTION_MAF, 0);
+ 		processingInterface.removeProcessingOperation(OperationType.EKG_QRS_MAF, 0);
  	}
  	
  	private void onAdcData(AdcData[] adcData) {
@@ -292,7 +292,7 @@ public class MainInterface {
 
  		for(int i = 0; i < getTotalAdcChannels(); i++) {
 			addChannel(i);
-			processingInterface.addProcessingOperation(OperationType.QRS_DETECTION_MAF,
+			processingInterface.addProcessingOperation(OperationType.TIME_FIRST_ORDER_DERIVATIVE,
 													   acquisitionData.getFs(),
 													   acquisitionData.getSamplesPerPackage(),
 													   i);
@@ -314,25 +314,15 @@ public class MainInterface {
  	
  	private void onGoogleDriveConnectionFailed(Message msg) {}
  	
- 	private void onQrsDetection(int[] samples, OperationType operationType, int channel) {
- 		short[] sam = new short[samples.length];
- 		
- 		for(int i = 0; i < samples.length; i++) {
- 			sam[i] = (short) samples[i];
- 		}
- 		
+ 	private void onFirstOrderDerivative(Message msg) {
+ 		short[] derivative = new short[1];
+ 		derivative[0] = (short)((float)((int)msg.obj));
+ 		Log.d("", String.valueOf(derivative[0]));
+ 		drawInterface.draw(derivative, 1);
  	}
  	
- 	private void onHeartBeat() {
+ 	private void onQrs() {
  		drawInterface.heartBeat();
- 	}
- 	
- 	private void onLowPass(float[] lowPass) {
- 		short[] low = new short[lowPass.length];
- 		for(int i = 0; i < lowPass.length; i++) {
- 			low[i] = (short)(lowPass[i]/100000);
- 		}
- 		drawInterface.draw(low, 1);
  	}
  	
 	@SuppressLint("HandlerLeak")
@@ -437,12 +427,12 @@ public class MainInterface {
 			
 			switch (operationType) {
 				
-				case HEARTBEAT:
-					onHeartBeat();
+				case TIME_FIRST_ORDER_DERIVATIVE:
+					onFirstOrderDerivative(msg);
 					break;
 					
-				case LOWPASS:
-					onLowPass((float[])msg.obj);
+				case EKG_QRS_MAF:
+					onQrs();
 					
 				default:
 					break;

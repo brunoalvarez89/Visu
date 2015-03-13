@@ -6,12 +6,14 @@ public class ProcessingBuffer {
 	private short[] mProcessingSamplesBuffer;
 	private int mStoringIndex;
 	private int mProcessingIndex;
+
 	
 	public ProcessingBuffer(int bufferSize) {
 		mRawSamplesBuffer = new short[bufferSize];
 		mProcessingSamplesBuffer = new short[bufferSize];
 		mStoringIndex = 0;
 		mProcessingIndex = 0;
+
 	}
 	
 	public void writeRawSamples(short[] x) {
@@ -23,18 +25,23 @@ public class ProcessingBuffer {
 			mStoringIndex++;
 			
 			// Si llego al máximo, pongo índices en cero
-			if(mStoringIndex == mRawSamplesBuffer.length) mStoringIndex = 0;
+			if(mStoringIndex == mRawSamplesBuffer.length) { 
+				mStoringIndex = 0;
+			}
 		}
 	}
 	
-	public void writeProcessedSample(short x) {
+	public void writeProcessingSample(short x) {
 		mProcessingSamplesBuffer[mProcessingIndex] = x;
 		
 		// Incremento índices
 		mProcessingIndex++;
 		
 		// Si llego al máximo, pongo índices en cero
-		if(mProcessingIndex == mProcessingSamplesBuffer.length) mProcessingIndex = 0;
+		if(mProcessingIndex == mProcessingSamplesBuffer.length) { 
+			mProcessingIndex = 0;
+			mProcessingSamplesBuffer = new short[mProcessingSamplesBuffer.length];
+		}
 	}
 	
 	public int getStoringIndex() {
@@ -80,7 +87,7 @@ public class ProcessingBuffer {
 		return mRawSamplesBuffer[newIndex];
 	}
 
-	public short getProcessedSample(int index) {
+	public short getProcessingBufferSample(int index) {
 		int length = mProcessingSamplesBuffer.length;
 		// Inicializo un índice dummy
 		int newIndex = 0;

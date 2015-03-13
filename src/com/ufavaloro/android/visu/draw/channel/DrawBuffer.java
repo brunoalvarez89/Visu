@@ -54,12 +54,11 @@ public class DrawBuffer {
 	}
 
 	// Método para almacenar muestras
-	public void storeSamples(short[] x) {
-		
+	public void writeSamples(short[] samples) {
 		// Almaceno
-		for(int i=0; i<x.length; i++) {
+		for(int i=0; i<samples.length; i++) {
 			
-			this.mSamplesBuffer[mStoringIndex] = x[i];
+			this.mSamplesBuffer[mStoringIndex] = samples[i];
 			
 			// Incremento índices
 			mStoringIndex++;
@@ -70,9 +69,20 @@ public class DrawBuffer {
 			if(mDrawingIndex == mSize) mDrawingIndex = 0;
 		
 		}
-	
 	}
 	
+	public void storeSample(short sample) {
+		// Almaceno
+		this.mSamplesBuffer[mStoringIndex] = sample;
+		
+		// Incremento índices
+		mStoringIndex++;
+		mDrawingIndex++;
+		
+		// Si llego al máximo, pongo índices en cero
+		if(mStoringIndex == mSize) mStoringIndex = 0;
+		if(mDrawingIndex == mSize) mDrawingIndex = 0;
+	}
 	// Método para recibir muestras
 	public int getSample(int index) {
 		
@@ -180,6 +190,7 @@ public class DrawBuffer {
 	public float getVerticalZoom() {
 		return mVerticalZoom;
 	}
+
 
 }// DrawBuffer
 
