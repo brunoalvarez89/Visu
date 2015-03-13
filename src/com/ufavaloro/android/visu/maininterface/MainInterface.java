@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.util.MonthDisplayHelper;
 import android.util.SparseArray;
 import android.widget.Toast;
 
@@ -258,7 +259,7 @@ public class MainInterface {
  		if(drawInterface.onlineDrawBuffersOk == true) drawInterface.draw(samples, channel);
 		if(storageInterface.recording == true) storageInterface.setSamples(onlineStudyData[channel], samples);
 		
-		processingInterface.writeSamples(samples, channel);
+		processingInterface.writeSamples(samples, channel, 0);
  	}
  	
  	private void onTotalAdcChannels(int totalAdcChannels) {
@@ -293,9 +294,13 @@ public class MainInterface {
  		for(int i = 0; i < getTotalAdcChannels(); i++) {
 			addChannel(i);
 			processingInterface.addProcessingOperation(OperationType.TIME_FIRST_ORDER_DERIVATIVE,
-													   acquisitionData.getFs(),
-													   acquisitionData.getSamplesPerPackage(),
-													   i);
+													  	acquisitionData.getFs(),
+													  	acquisitionData.getSamplesPerPackage(),
+													  	i);
+			processingInterface.addProcessingOperation(OperationType.TIME_SQUARING,
+					   									acquisitionData.getFs(),
+					   									1,
+					   									i);
 		}
  		drawInterface.addChannel(onlineStudyData[0], true);
 
@@ -316,8 +321,21 @@ public class MainInterface {
  	
  	private void onFirstOrderDerivative(Message msg) {
  		short[] derivative = new short[1];
- 		derivative[0] = (short)((float)((int)msg.obj));
- 		Log.d("", String.valueOf(derivative[0]));
+ 		float result = (float) msg.obj; 		
+ 		int bits = onlineStudyData[0].getAcquisitionData().getBits();
+ 		int steps = (int) Math.pow(2, bits);
+ 		 		
+ 		derivative[0] = (short) (result*steps);
+ 		processingInterface.writeSamples(derivative, 0, 1);
+ 	}
+ 	
+ 	private void onSquaring(Message msg) {
+ 		short[] derivative = new short[1];
+ 		float result = (float) msg.obj; 		
+ 		int bits = onlineStudyData[0].getAcquisitionData().getBits();
+ 		int steps = (int) Math.pow(2, bits);
+ 		 		
+ 		derivative[0] = (short) (result*steps);
  		drawInterface.draw(derivative, 1);
  	}
  	
@@ -414,9 +432,6 @@ public class MainInterface {
 	@SuppressLint("HandlerLeak")
 	private final Handler mProcessingInterfaceHandler = new Handler() {
 		
-		int[] samples;
-		int channel;
-		
 		// Método para manejar el mensaje
 		@SuppressLint("HandlerLeak")
 		@Override
@@ -430,6 +445,9 @@ public class MainInterface {
 				case TIME_FIRST_ORDER_DERIVATIVE:
 					onFirstOrderDerivative(msg);
 					break;
+					
+				case TIME_SQUARING:
+					onSquaring(msg);
 					
 				case EKG_QRS_MAF:
 					onQrs();

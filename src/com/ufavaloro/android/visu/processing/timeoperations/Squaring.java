@@ -6,31 +6,24 @@ import com.ufavaloro.android.visu.processing.ProcessingOperation;
 import android.os.Handler;
 import android.util.Log;
 
-public class FirstOrderDerivative extends ProcessingOperation {
+public class Squaring extends ProcessingOperation {
 
-	public FirstOrderDerivative(OperationType operationType, double fs,
+	public Squaring(OperationType operationType, double fs,
 			int samplesPerPackage, Handler processingInterfaceHandler,
 			int channel) {
 		super(operationType, fs, samplesPerPackage, processingInterfaceHandler, channel);
 	}
 
-	public void firstOrderDerivative() {
+	public void squaring() {
 		int index = mProcessingBuffer.getProcessingIndex();
 		
-		// Avoid first sample (reduces noise)
-		if(index == 0) return;
-		
-		int y2 = mProcessingBuffer.getProcessingBufferSample(index);
-		//Log.d("", "y2: " + String.valueOf(y2));
-		
-		int y1 = mProcessingBuffer.getProcessingBufferSample(index-1);
-		//Log.d("", "y1: " + String.valueOf(y1));
+		int y = mProcessingBuffer.getProcessingBufferSample(index);
 
-		mOperationResult = y2 - y1;
+		mOperationResult = (int) Math.pow(y, 2);
 	}
 	
 	@Override
 	public void operate() {
-		firstOrderDerivative();
+		squaring();
 	}
 }

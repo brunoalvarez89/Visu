@@ -33,7 +33,9 @@ public class ProcessingBuffer {
 	
 	public void writeProcessingSample(short x) {
 		mProcessingSamplesBuffer[mProcessingIndex] = x;
-		
+	}
+	
+	public void increaseProcessingIndex() {
 		// Incremento índices
 		mProcessingIndex++;
 		
@@ -112,12 +114,6 @@ public class ProcessingBuffer {
 		
 		// Devuelvo muestra
 		return mProcessingSamplesBuffer[newIndex];
-	}
-
-	
-	public void increaseProcessingIndex() {
-		mProcessingIndex++;
-		if(mProcessingIndex == mProcessingSamplesBuffer.length) mProcessingIndex = 0;
 	}
 
 	public short[] getProcessingSamplesBuffer() {
