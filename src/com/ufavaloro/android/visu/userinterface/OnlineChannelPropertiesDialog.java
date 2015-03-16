@@ -264,7 +264,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 		
 		// Populate Channel Spinner
 		ArrayList<String> channels = new ArrayList<String>();
-		for(int i = 0; i < mStudy.getTotalAdcChannels(); i++) {
+		for(int i = 0; i < mStudy.getBluetoothProtocol().getTotalAdcChannels(); i++) {
 			channels.add("Canal " + String.valueOf(i+1));
 		}
 	    

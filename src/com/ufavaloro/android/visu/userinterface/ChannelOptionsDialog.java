@@ -39,12 +39,12 @@ public class ChannelOptionsDialog extends AlertDialog {
 						
 					// Ocultar canal
 	    			case 1: 
-	    				mStudy.hideChannel(mChannelNumber);
+	    				mStudy.getDrawInterface().hideChannel(mChannelNumber);
 	    				break;
 	    				
 	    			// Remover canal
 	    			case 2:
-	    				mStudy.removeChannel(mChannelNumber);
+	    				mStudy.getDrawInterface().removeChannel(mChannelNumber);
 	    				
 	    			default:
 	    				break;
@@ -63,12 +63,12 @@ public class ChannelOptionsDialog extends AlertDialog {
 						
 					// Ocultar canal
 	    			case 1: 
-	    				mStudy.hideChannel(mChannelNumber);
+	    				mStudy.getDrawInterface().hideChannel(mChannelNumber);
 	    				break;
 	    				
 	    			// Remover canal
 	    			case 2:
-	    				mStudy.removeChannel(mChannelNumber);
+	    				mStudy.getDrawInterface().removeChannel(mChannelNumber);
 	    				
 	    			default:
 	    				break;

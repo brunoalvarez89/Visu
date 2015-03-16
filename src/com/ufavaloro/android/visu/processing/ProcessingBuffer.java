@@ -31,6 +31,19 @@ public class ProcessingBuffer {
 		}
 	}
 	
+	public void writeRawSample(short sample) {
+		mRawSamplesBuffer[mStoringIndex] = sample;
+		
+		// Incremento índices
+		mStoringIndex++;
+		
+		// Si llego al máximo, pongo índices en cero
+		if(mStoringIndex == mRawSamplesBuffer.length) { 
+			mStoringIndex = 0;
+		}
+		
+	}
+	
 	public void writeProcessingSample(short x) {
 		mProcessingSamplesBuffer[mProcessingIndex] = x;
 	}
@@ -42,7 +55,6 @@ public class ProcessingBuffer {
 		// Si llego al máximo, pongo índices en cero
 		if(mProcessingIndex == mProcessingSamplesBuffer.length) { 
 			mProcessingIndex = 0;
-			mProcessingSamplesBuffer = new short[mProcessingSamplesBuffer.length];
 		}
 	}
 	
@@ -119,6 +131,7 @@ public class ProcessingBuffer {
 	public short[] getProcessingSamplesBuffer() {
 		return mProcessingSamplesBuffer;
 	}
+
 	
 }
 

@@ -107,7 +107,7 @@ public class NewStudyDialog extends Dialog {
 	private void populateListView() {
 		// Populate Channel ListView
 		ArrayList<String> channels = new ArrayList<String>();
-		for(int i = 0; i < mMainActivity.getMainInterface().getTotalAdcChannels(); i++) {
+		for(int i = 0; i < mMainActivity.getMainInterface().getBluetoothProtocol().getTotalAdcChannels(); i++) {
 			channels.add("Canal " + String.valueOf(i+1));
 		}
 	    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, channels);	    

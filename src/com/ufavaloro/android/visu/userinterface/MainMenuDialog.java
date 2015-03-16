@@ -49,7 +49,7 @@ public class MainMenuDialog extends AlertDialog {
 	        			
 	        		// Desconecto
 	        		case 3:
-	        			mMainActivity.getMainInterface().removeBluetoothConnection();
+	        			mMainActivity.getMainInterface().getBluetoothProtocol().removeConnection();
 	     
 	        		default:
 	        			break;

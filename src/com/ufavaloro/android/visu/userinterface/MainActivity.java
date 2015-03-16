@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 	// Método que se ejecuta luego de haberse creado el SurfaceView asociado
 	public void setupAfterSurfaceCreated() {
 		mMainInterface = new MainInterface(this, mMainInterfaceHandler);
-		mMainInterface.addSlaveBluetoothConnection();
+		mMainInterface.getBluetoothProtocol().addSlaveBluetoothConnection();
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class MainActivity extends Activity {
 	}
 	
 	public void waitingForConnectionDialog() {
-		mMainInterface.addSlaveBluetoothConnection();
+		mMainInterface.getBluetoothProtocol().addSlaveBluetoothConnection();
 		mWaitingForConnectionDialog = ProgressDialog.show(this, "Conexión Bluetooth", "Esperando..."); 
 	}
 	
@@ -277,7 +277,7 @@ public class MainActivity extends Activity {
         	if (resultCode == RESULT_OK) {
         		if(!mMainInterface.isGoogleDriveConnected()) return;
         		DriveId driveId = (DriveId) data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-        		mMainInterface.loadFileFromGoogleDrive(driveId);
+        		mMainInterface.getStorageInterface().loadFileFromGoogleDrive(driveId);
         		shortToast("Abriendo archivo...");
         	}    
         	break;

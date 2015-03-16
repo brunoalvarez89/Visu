@@ -32,7 +32,7 @@ public class LoadFileFromLocalStorageDialog {
 	OnHandleFileListener mLoadFileListener = new OnHandleFileListener() {
 		@Override
 		public void handleFile(final String filePath) {
-			mStudy.loadFileFromLocalStorage(filePath);
+			mStudy.getStorageInterface().loadFileFromLocalStorage(filePath);
 			Toast.makeText(mMainActivity, "Abriendo estudio...", Toast.LENGTH_SHORT).show();
 		}
 	};

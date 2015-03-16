@@ -9,13 +9,12 @@ public class QrsDetection extends ProcessingOperation {
 
 	private int mCardiacFrecuency;
 	
-	public QrsDetection(OperationType operationType, double fs,
-			int samplesPerPackage, Handler processingInterfaceHandler,
-			int channel) {
-		super(operationType, fs, samplesPerPackage, processingInterfaceHandler, channel);
+	public QrsDetection(OperationType operationType, double fs, int samplesPerPackage, int operationOrder,
+			Handler processingInterfaceHandler, int channel) {
+		super(operationType, fs, samplesPerPackage, operationOrder, processingInterfaceHandler, channel);
 	}
 
-	protected int estimateCardiacFrecuency() {
-		return 0;
-	}
+	protected void estimateQrs() {}
+	
+	protected void estimateCardiacFrecuency() {}
 }
