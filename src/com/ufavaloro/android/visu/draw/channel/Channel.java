@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import android.content.Context;
 
 import com.ufavaloro.android.visu.draw.RGB;
-import com.ufavaloro.android.visu.maininterface.StudyType;
+import com.ufavaloro.android.visu.main.StudyType;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
 public class Channel {

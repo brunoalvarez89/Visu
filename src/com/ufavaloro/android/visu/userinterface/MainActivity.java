@@ -8,8 +8,8 @@ package com.ufavaloro.android.visu.userinterface;
 import java.io.File;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.maininterface.MainInterface;
-import com.ufavaloro.android.visu.maininterface.MainInterfaceMessage;
+import com.ufavaloro.android.visu.main.MainInterface;
+import com.ufavaloro.android.visu.main.MainInterfaceMessage;
 import com.ufavaloro.android.visu.storage.StorageInterfaceMessage;
 import com.ufavaloro.android.visu.storage.datatypes.StorageData;
 import com.google.android.gms.drive.DriveId;
@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
 	// Dialog para abrir un archivo desde Google Drive
 	public void loadFileFromGoogleDriveDialog() {
 		LoadFileFromGoogleDriveDialog dialog = new LoadFileFromGoogleDriveDialog(this, mMainInterface);
-		dialog.setup();
+		//dialog.setup();
 	}
 		
 	// Dialog de parar estudio
@@ -260,7 +260,7 @@ public class MainActivity extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		// Paro todos los Threads
-		 mMainInterface.getBluetoothProtocol().stopConnections();
+		if(mMainInterface != null) mMainInterface.getBluetoothProtocol().stopConnections();
 	}
 	
 	// this.activity on back pressed

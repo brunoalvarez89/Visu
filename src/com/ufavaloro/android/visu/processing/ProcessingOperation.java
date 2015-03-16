@@ -3,11 +3,6 @@ package com.ufavaloro.android.visu.processing;
 import android.os.Handler;
 import android.util.Log;
 
-import com.google.android.gms.internal.mp;
-import com.google.android.gms.internal.mr;
-import com.google.android.gms.internal.op;
-import com.ufavaloro.android.visu.storage.SamplesBuffer;
-
 public class ProcessingOperation {
 	
 	protected ProcessingBuffer mProcessingBuffer;
@@ -132,7 +127,6 @@ public class ProcessingOperation {
 		if(mLog) Log.d("", "Op. Result: " + String.valueOf(mOperationResult));
 		if(mLog) Log.d("", "Corrected Op. Result: " + String.valueOf(mCorrectedOperationResult));
 	}
-	
 	
 	public void calculateAverages() {		
 		

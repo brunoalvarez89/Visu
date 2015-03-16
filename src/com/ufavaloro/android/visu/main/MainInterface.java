@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.maininterface;
+package com.ufavaloro.android.visu.main;
 
 import java.util.ArrayList;
 
@@ -11,8 +11,8 @@ import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.bluetooth.BluetoothProtocol;
-import com.ufavaloro.android.visu.bluetooth.BluetoothProtocolMessage;
+import com.ufavaloro.android.visu.connection.Protocol;
+import com.ufavaloro.android.visu.connection.ProtocolMessage;
 import com.ufavaloro.android.visu.draw.DrawInterface;
 import com.ufavaloro.android.visu.processing.OperationType;
 import com.ufavaloro.android.visu.processing.ProcessingInterface;
@@ -36,7 +36,7 @@ public class MainInterface {
 	private StorageInterface storageInterface;
 	
 	// Bluetooth Protocol (needed for decoding incoming packages)
-	private BluetoothProtocol bluetoothProtocol;
+	private Protocol bluetoothProtocol;
 	
 	// Draw Interface
 	private DrawInterface drawInterface;
@@ -66,7 +66,7 @@ public class MainInterface {
 		mMainActivity = mainActivity;
 		mMainActivityHandler = mainActivityHandler;
 		drawInterface = (DrawInterface) mainActivity.findViewById(R.id.drawSurface);
-		bluetoothProtocol = new BluetoothProtocol(mBluetoothProtocolHandler);
+		bluetoothProtocol = new Protocol(ConnectionInterfaceHandler);
 		storageInterface = new StorageInterface(mainActivity, mStorageInterfaceHandler);
 		processingInterface = new ProcessingInterface(mProcessingInterfaceHandler);
 	}
@@ -165,15 +165,15 @@ public class MainInterface {
  		return storageInterface;
  	}
  	
- 	public BluetoothProtocol getBluetoothProtocol() {
+ 	public Protocol getBluetoothProtocol() {
  		return bluetoothProtocol;
  	}
 
 /*****************************************************************************************
-Bluetooth Protocol Event Handling
+Protocol Event Handling
 *****************************************************************************************/	
 	@SuppressLint("HandlerLeak")
-	private final Handler mBluetoothProtocolHandler = new Handler() {
+	private final Handler ConnectionInterfaceHandler = new Handler() {
 		
 		// Método para manejar el mensaje
 		@SuppressLint("HandlerLeak")
@@ -181,9 +181,9 @@ Bluetooth Protocol Event Handling
 		public void handleMessage(Message msg) {
 		
 			// Tipo de mensaje recibido
-			BluetoothProtocolMessage bluetoothProtocolMessage = BluetoothProtocolMessage.values(msg.what);
+			ProtocolMessage protocolMessage = ProtocolMessage.values(msg.what);
 			
-			switch (bluetoothProtocolMessage) {
+			switch (protocolMessage) {
 				
 				case NEW_SAMPLES_BATCH:
 					short[] samples = (short[]) msg.obj;
@@ -254,16 +254,16 @@ Bluetooth Protocol Event Handling
  			drawInterface.addChannel(onlineStudyData[i], true);
 			
  			
-			processingInterface.addProcessingOperation(OperationType.TIME_LOWPASS
-									, acquisitionData.getFs()
-									, acquisitionData.getSamplesPerPackage()
-									, i);
-			/*
-			processingInterface.addProcessingOperation(OperationType.TIME_LOWPASS
+			processingInterface.addProcessingOperation(OperationType.TIME_DERIVATIVE
 									, acquisitionData.getFs()
 									, acquisitionData.getSamplesPerPackage()
 									, i);
 			
+			processingInterface.addProcessingOperation(OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE
+									, acquisitionData.getFs()
+									, acquisitionData.getSamplesPerPackage()
+									, i);
+			/*
 			processingInterface.addProcessingOperation(OperationType.EKG_QRS_ADAPTIVE_THRESHOLD
 					, acquisitionData.getFs()
 					, acquisitionData.getSamplesPerPackage()
@@ -272,7 +272,7 @@ Bluetooth Protocol Event Handling
 		}
  		
  		drawInterface.addChannel(onlineStudyData[0], true);
- 		//drawInterface.addChannel(onlineStudyData[0], true);
+ 		drawInterface.addChannel(onlineStudyData[0], true);
  		//drawInterface.addChannel(onlineStudyData[0], true);
  		
 		drawInterface.onlineDrawBuffersOk = true;
@@ -417,6 +417,7 @@ Processing Operation Interface Event Handling
 
 	private void onTimeDerivative(double operationResult, int operationOrder) {
  		short adaptedResult = adaptResult(operationResult); 
+ 		processingInterface.writeSample(adaptedResult, 0, 1);
  		drawInterface.drawSample(adaptedResult, 1);
  	}
  	
@@ -435,6 +436,8 @@ Processing Operation Interface Event Handling
  	
  	private void onQrsFirstDerivativeSlope(double operationResult) {
  		short adaptedResult = adaptResult(operationResult); 
+ 		drawInterface.drawSample(adaptedResult, 2);
+ 		if(operationResult == 1) drawInterface.heartBeat();
  	}
  	
  	private void onTimeMAF(double operationResult, int operationOrder) {

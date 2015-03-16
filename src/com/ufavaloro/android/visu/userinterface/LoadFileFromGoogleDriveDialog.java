@@ -2,7 +2,7 @@ package com.ufavaloro.android.visu.userinterface;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
-import com.ufavaloro.android.visu.maininterface.MainInterface;
+import com.ufavaloro.android.visu.main.MainInterface;
 
 import android.content.IntentSender;
 import android.content.IntentSender.SendIntentException;

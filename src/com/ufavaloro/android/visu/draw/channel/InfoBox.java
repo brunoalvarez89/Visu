@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.draw.RGB;
-import com.ufavaloro.android.visu.maininterface.StudyType;
+import com.ufavaloro.android.visu.main.StudyType;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
 import android.content.Context;

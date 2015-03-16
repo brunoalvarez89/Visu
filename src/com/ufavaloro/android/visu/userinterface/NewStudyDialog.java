@@ -3,7 +3,7 @@ package com.ufavaloro.android.visu.userinterface;
 import java.util.ArrayList;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.maininterface.MainInterface;
+import com.ufavaloro.android.visu.main.MainInterface;
 
 import android.app.Dialog;
 import android.content.Context;

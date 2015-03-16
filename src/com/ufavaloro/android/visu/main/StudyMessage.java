@@ -1,4 +1,4 @@
-package com.ufavaloro.android.visu.maininterface;
+package com.ufavaloro.android.visu.main;
 
 public enum StudyMessage {
 

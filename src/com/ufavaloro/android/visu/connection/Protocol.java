@@ -1,14 +1,9 @@
-/*****************************************************************************************
- * BluetoothHelper.java																	 *
- * Clase que sirve de interfaz entre Study y el servicio de conexión Bluetooth.			 *
- * Posee métodos para control y procesamiento de paquetes recibidos.					 *
- ****************************************************************************************/
-
-package com.ufavaloro.android.visu.bluetooth;
+package com.ufavaloro.android.visu.connection;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import com.ufavaloro.android.visu.connection.bluetooth.BluetoothConnection;
 import com.ufavaloro.android.visu.storage.datatypes.AdcData;
 
 import android.annotation.SuppressLint;
@@ -18,13 +13,13 @@ import android.util.Log;
 import android.util.SparseArray;
 
 
-public class BluetoothProtocol extends Thread{
+public class Protocol extends Thread{
 
 /*****************************************************************************************
 * Inicio de atributos de clase											   				 *
 *****************************************************************************************/
 	// Handler que se comunica con las capas superiores
-	private Handler mHandler;
+	private Handler mConnectionInterfaceHandler;
 	
 	private boolean mDebugMode = true;
 	private int mPackageNumberByteCount = 0;
@@ -61,7 +56,7 @@ public class BluetoothProtocol extends Thread{
 * Atributos de conexión											   						 *
 *****************************************************************************************/
 	// Array de conexiones (sockets) BT
-	private SparseArray<BluetoothService> mBtConnections = new SparseArray<BluetoothService>();
+	private SparseArray<BluetoothConnection> mBtConnections = new SparseArray<BluetoothConnection>();
 	
 	// Contador de conexiones establecidas
 	private int mTotalBluetoothConnections = 0;
@@ -129,8 +124,8 @@ public class BluetoothProtocol extends Thread{
 * Mètodos principales																	 *
 *****************************************************************************************/
 	// Constructor
-	public BluetoothProtocol(Handler handler) {
-		mHandler = handler;
+	public Protocol(Handler handler) {
+		mConnectionInterfaceHandler = handler;
 	}
 	
 	// Handler de BluetoothService
@@ -142,7 +137,7 @@ public class BluetoothProtocol extends Thread{
 		public void handleMessage(Message msg) {
 			
 			// Tipo de mensaje recibido
-			BluetoothServiceMessage bluetoothServiceMessage = BluetoothServiceMessage.values(msg.what);
+			BluetoothConnectionMessage bluetoothServiceMessage = BluetoothConnectionMessage.values(msg.what);
 			
 			switch (bluetoothServiceMessage) {
 				
@@ -174,7 +169,7 @@ public class BluetoothProtocol extends Thread{
 				// Me conecté
 				case CONNECTED: 
 					// Informo
-					mHandler.obtainMessage(BluetoothProtocolMessage.CONNECTED.getValue()).sendToTarget();
+					mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.CONNECTED.getValue()).sendToTarget();
 					mConnected = true;
 					break;
 			
@@ -187,7 +182,7 @@ public class BluetoothProtocol extends Thread{
 				// Me desconecté
 				case DISCONNECTED:	
 					// Informo
-					mHandler.obtainMessage(BluetoothProtocolMessage.DISCONNECTED.getValue()).sendToTarget();
+					mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.DISCONNECTED.getValue()).sendToTarget();
 					mConnected = false;
 					mTotalBluetoothConnections--;
 					mConfigurationOk = false;
@@ -204,9 +199,10 @@ public class BluetoothProtocol extends Thread{
 	// Método que agrega una Conexión Bluetooth a la lista de conexiones
 
 	public void addSlaveBluetoothConnection() {
-		BluetoothService bluetoothService = new BluetoothService(mBluetoothServiceHandler, mTotalBluetoothConnections);
-		mBtConnections.put(mTotalBluetoothConnections, bluetoothService);
-		mBtConnections.get(mTotalBluetoothConnections).serverSide();
+		BluetoothConnection bluetoothConnection = 
+		new BluetoothConnection(ConnectionType.BLUETOOTH, mBluetoothServiceHandler);
+		mBtConnections.put(mTotalBluetoothConnections, bluetoothConnection);
+		mBtConnections.get(mTotalBluetoothConnections).slaveConnection();
 		mTotalBluetoothConnections++;
 	}
 	
@@ -219,7 +215,7 @@ public class BluetoothProtocol extends Thread{
 	// Método que transmite las muestras recibidas
 	private void newBatch(short[] batch, int channel) {
 		// Informo
-		mHandler.obtainMessage(BluetoothProtocolMessage.NEW_SAMPLES_BATCH.getValue()
+		mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.NEW_SAMPLES_BATCH.getValue()
 							   ,-1, channel, batch).sendToTarget();
 
 	}
@@ -361,7 +357,7 @@ public class BluetoothProtocol extends Thread{
 		createAdcInfo(voltages, amplitudes, fs, bits);
 		
 		// Informo
-		mHandler.obtainMessage(BluetoothProtocolMessage.ADC_DATA.getValue()
+		mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.ADC_DATA.getValue()
 				   ,-1, -1, adcData).sendToTarget();
 
 		byte[] mensajeAdcOk = new byte[1];
@@ -403,7 +399,7 @@ public class BluetoothProtocol extends Thread{
 		setAdcMessage(bytes);
 		
 		// Informo
-		mHandler.obtainMessage(BluetoothProtocolMessage.TOTAL_ADC_CHANNELS.getValue()
+		mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.TOTAL_ADC_CHANNELS.getValue()
 							   ,-1, -1, mTotalAdcChannels).sendToTarget();
 		
 		//byte[] mensajeCanalesOk = new byte[1];

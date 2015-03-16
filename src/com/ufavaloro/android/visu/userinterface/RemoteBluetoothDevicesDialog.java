@@ -28,8 +28,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.maininterface.MainInterface;
-import com.ufavaloro.android.visu.maininterface.StudyType;
+import com.ufavaloro.android.visu.main.MainInterface;
+import com.ufavaloro.android.visu.main.StudyType;
 import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
 
 public class RemoteBluetoothDevicesDialog extends Dialog {

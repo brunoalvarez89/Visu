@@ -1,16 +1,18 @@
 /*****************************************************************************************
- * BluetoothService.java																 *
+ * BluetoothConnection.java																 *
  * Clase que administra la conexión Bluetooth entre dos dispositivos.					 *
  ****************************************************************************************/
 
-package com.ufavaloro.android.visu.bluetooth;
+package com.ufavaloro.android.visu.connection.bluetooth;
 
 import java.io.IOException;
 import java.util.UUID;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.ufavaloro.android.visu.bluetooth.BluetoothServiceMessage;
+import com.ufavaloro.android.visu.connection.BluetoothConnectionMessage;
+import com.ufavaloro.android.visu.connection.Connection;
+import com.ufavaloro.android.visu.connection.ConnectionType;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -20,7 +22,7 @@ import android.os.Handler;
 import android.util.Log;
 
 
-public class BluetoothService {
+public class BluetoothConnection extends Connection {
 /*****************************************************************************************
 * Inicio de atributos de clase			        									     *
 *****************************************************************************************/
@@ -47,7 +49,7 @@ public class BluetoothService {
 	private final BluetoothAdapter mBluetoothAdapter;
 	
 	// Handler de la conexión 
-	private final Handler mHandler;
+	private final Handler mConnectionInterfaceHandler;
 	
 	// Threads
 	private ServerThread mServerThread = null;
@@ -56,9 +58,6 @@ public class BluetoothService {
 
 	// Nombre del dispositivo con el cual me conecté
 	private String mRemoteDevice;
-	
-	// Canal de conexión
-	private int mBluetoothChannel;
 
 	//region.end
 	
@@ -69,7 +68,8 @@ public class BluetoothService {
 * Métodos principales                                  								 	 *
 *****************************************************************************************/
 	// Constructor
-	public BluetoothService(Handler mHandler, int mBluetoothChannel) {
+	public BluetoothConnection(ConnectionType connectionType, Handler connectionInterfaceHandler) {
+		super(connectionType, connectionInterfaceHandler);
 		
 		// Log
 		if (mLog) Log.d(TAG, "Creando servicio Bluetooth...");
@@ -78,17 +78,15 @@ public class BluetoothService {
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		
 		// Referencio al Handler
-		this.mHandler = mHandler;
-		
-		// Número de canal bluetooth
-		this.mBluetoothChannel = mBluetoothChannel;
+		mConnectionInterfaceHandler = connectionInterfaceHandler;
 		
 		// Estado por defecto
 		mStatus = STATUS_DISCONNECTED;
 	}
 	
+	@Override
 	// Si el dispositivo se conecta como Servidor...
-	public synchronized void serverSide() {
+	public synchronized void slaveConnection() {
 		
 		// Log
 		if (mLog) Log.d(TAG, "Iniciando Servicio Bluetooth como servidor...");
@@ -109,7 +107,7 @@ public class BluetoothService {
 		setStatus(STATUS_LISTENING);
 		
 		// Informo
-		mHandler.obtainMessage(BluetoothServiceMessage.LISTENING_RFCOMM.getValue()).sendToTarget();
+		mConnectionInterfaceHandler.obtainMessage(BluetoothConnectionMessage.LISTENING_RFCOMM.getValue()).sendToTarget();
 	}
 
 	// Si el dispositivo se conecta como Cliente...
@@ -132,7 +130,7 @@ public class BluetoothService {
 		setStatus(STATUS_SEARCHING);
 		
 		// Informo
-		mHandler.obtainMessage(BluetoothServiceMessage.LOOKING_FOR_DEVICES.getValue()).sendToTarget();
+		mConnectionInterfaceHandler.obtainMessage(BluetoothConnectionMessage.LOOKING_FOR_DEVICES.getValue()).sendToTarget();
 
 	}
 	
@@ -159,7 +157,7 @@ public class BluetoothService {
 		setStatus(STATUS_CONNECTED);
 		
 		// Informo
-		mHandler.obtainMessage(BluetoothServiceMessage.CONNECTED.getValue()).sendToTarget();
+		mConnectionInterfaceHandler.obtainMessage(BluetoothConnectionMessage.CONNECTED.getValue()).sendToTarget();
 	}
 
 	// Metodo de escritura sobre el Socket
@@ -188,7 +186,7 @@ public class BluetoothService {
 		setStatus(STATUS_DISCONNECTED);
 		
 		// Informo
-		mHandler.obtainMessage(BluetoothServiceMessage.DISCONNECTED.getValue()).sendToTarget();
+		mConnectionInterfaceHandler.obtainMessage(BluetoothConnectionMessage.DISCONNECTED.getValue()).sendToTarget();
 	}
 
 	// Método que mata el Thread Cliente
@@ -292,7 +290,7 @@ public class BluetoothService {
 					mmRemoteDevice = remoteDevice.getName();
 					
 					// Informo
-					mHandler.obtainMessage(BluetoothServiceMessage.REMOTE_DEVICE.getValue()
+					mConnectionInterfaceHandler.obtainMessage(BluetoothConnectionMessage.REMOTE_DEVICE.getValue()
 										   ,-1, -1, mmRemoteDevice).sendToTarget();
 					
 					// Log
@@ -310,7 +308,7 @@ public class BluetoothService {
 			// Conexión aceptada	
 				if (mmBluetoothSocket != null) {
                    
-					synchronized (BluetoothService.this) {
+					synchronized (BluetoothConnection.this) {
                         
 						switch (mStatus) {
                         
@@ -531,7 +529,7 @@ public class BluetoothService {
 					// Envio los Bytes recibidos a la UI mediante el Handler
 					// @param Object = datos
 					// @param arg1 = canal
-					mHandler.obtainMessage(BluetoothServiceMessage.NEW_SAMPLE.getValue(), mBluetoothChannel, 
+					mConnectionInterfaceHandler.obtainMessage(BluetoothConnectionMessage.NEW_SAMPLE.getValue(), -1, 
 										   -1, mmInputBuffer[0]).sendToTarget();
 				
 				}// Desconexión! 
@@ -544,7 +542,7 @@ public class BluetoothService {
 					setStatus(STATUS_DISCONNECTED);
 				
 					// Informo
-					mHandler.obtainMessage(BluetoothServiceMessage.DISCONNECTED.getValue()).sendToTarget();
+					mConnectionInterfaceHandler.obtainMessage(BluetoothConnectionMessage.DISCONNECTED.getValue()).sendToTarget();
 					break; 
 				}	
 			}//while

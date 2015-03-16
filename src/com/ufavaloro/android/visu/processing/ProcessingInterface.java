@@ -133,7 +133,7 @@ public class ProcessingInterface {
 		public void run() {
 			while(mRun) {
 				
-				snore(50);
+				snore(0);
 				
 				if(mProcessingOperation != null) {
 				// For each channel

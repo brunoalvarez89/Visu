@@ -4,9 +4,9 @@
  * BluetoothService a BluetoothHelper													 *
  ****************************************************************************************/
 
-package com.ufavaloro.android.visu.bluetooth;
+package com.ufavaloro.android.visu.connection;
 
-public enum BluetoothProtocolMessage {
+public enum ProtocolMessage {
 
 	NEW_SAMPLES_BATCH(1),
 	ADC_DATA(2),
@@ -16,11 +16,11 @@ public enum BluetoothProtocolMessage {
 	
 	private final int value;
 
-	private BluetoothProtocolMessage(int value){
+	private ProtocolMessage(int value){
 		this.value=value;
 	}
 	
-	public static BluetoothProtocolMessage values(int what) {
+	public static ProtocolMessage values(int what) {
 		switch(what){
 		case 1: return NEW_SAMPLES_BATCH;
 		case 2: return ADC_DATA;

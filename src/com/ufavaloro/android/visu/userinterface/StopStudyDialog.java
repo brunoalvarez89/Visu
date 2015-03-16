@@ -1,6 +1,6 @@
 package com.ufavaloro.android.visu.userinterface;
 
-import com.ufavaloro.android.visu.maininterface.MainInterface;
+import com.ufavaloro.android.visu.main.MainInterface;
 
 import android.app.AlertDialog;
 import android.content.Context;

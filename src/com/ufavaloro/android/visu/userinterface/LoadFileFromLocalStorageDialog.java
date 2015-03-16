@@ -5,7 +5,7 @@ import android.widget.Toast;
 import com.samsung.sprc.fileselector.FileOperation;
 import com.samsung.sprc.fileselector.FileSelector;
 import com.samsung.sprc.fileselector.OnHandleFileListener;
-import com.ufavaloro.android.visu.maininterface.MainInterface;
+import com.ufavaloro.android.visu.main.MainInterface;
 
 public class LoadFileFromLocalStorageDialog {
 

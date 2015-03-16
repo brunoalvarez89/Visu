@@ -3,7 +3,7 @@ package com.ufavaloro.android.visu.userinterface;
 import org.apache.http.auth.MalformedChallengeException;
 
 import com.ufavaloro.android.visu.draw.channel.Channel;
-import com.ufavaloro.android.visu.maininterface.MainInterface;
+import com.ufavaloro.android.visu.main.MainInterface;
 
 import android.app.AlertDialog;
 import android.content.Context;
