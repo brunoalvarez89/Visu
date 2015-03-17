@@ -24,7 +24,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
-import com.ufavaloro.android.visu.connection.ProtocolMessage;
+import com.ufavaloro.android.visu.connection.protocol.ProtocolMessage;
 import com.ufavaloro.android.visu.main.MainInterface;
 import com.ufavaloro.android.visu.storage.datatypes.AcquisitionData;
 import com.ufavaloro.android.visu.storage.datatypes.AdcData;

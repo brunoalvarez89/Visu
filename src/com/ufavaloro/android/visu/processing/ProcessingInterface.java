@@ -104,8 +104,7 @@ public class ProcessingInterface {
 		return operationOrder;
 	}
 	
-	public synchronized void removeProcessingOperation(OperationType operationType, int channel) {
-		mProcessingOperation = null;
+	public synchronized void removeProcessingOperation(int channel, int operationIndex) {
 	}
 	
 	public synchronized void resume() {

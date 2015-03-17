@@ -30,5 +30,4 @@ public enum StorageInterfaceMessage {
 	
 	public int getValue(){return value;}
 	
-
-}//StorageHelperMessage
+}

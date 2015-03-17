@@ -21,5 +21,4 @@ public enum ProcessingInterfaceMessage {
 	
 	public int getValue(){return value;}
 	
-
-}//BluetoothHelperMessage
+}

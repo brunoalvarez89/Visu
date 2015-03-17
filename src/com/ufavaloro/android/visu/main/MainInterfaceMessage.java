@@ -24,5 +24,4 @@ public enum MainInterfaceMessage {
 	
 	public int getValue(){return value;}
 	
-
 }

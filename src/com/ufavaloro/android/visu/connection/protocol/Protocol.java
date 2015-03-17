@@ -1,8 +1,9 @@
-package com.ufavaloro.android.visu.connection;
+package com.ufavaloro.android.visu.connection.protocol;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import com.ufavaloro.android.visu.connection.ConnectionMessage;
 import com.ufavaloro.android.visu.connection.bluetooth.BluetoothConnection;
 import com.ufavaloro.android.visu.storage.datatypes.AdcData;
 
@@ -13,13 +14,14 @@ import android.util.Log;
 import android.util.SparseArray;
 
 
-public class Protocol extends Thread{
+public class Protocol extends Thread {
 
 /*****************************************************************************************
 * Inicio de atributos de clase											   				 *
 *****************************************************************************************/
-	// Handler que se comunica con las capas superiores
+	// Handler to Connection Interface
 	private Handler mConnectionInterfaceHandler;
+	private int mProtocolIndex;
 	
 	private boolean mDebugMode = true;
 	private int mPackageNumberByteCount = 0;
@@ -37,7 +39,7 @@ public class Protocol extends Thread{
 	private int mStatus = WAITING_FOR_CONTROL;
 	
 	// Cantidad de bytes de control (3 por defecto)
-	private int mControlBytes = 3;
+	private final int mControlBytes = 3;
 	
 	// Flags de configuración
 	private boolean mChannelsOk = false;
@@ -57,15 +59,9 @@ public class Protocol extends Thread{
 *****************************************************************************************/
 	// Array de conexiones (sockets) BT
 	private SparseArray<BluetoothConnection> mBtConnections = new SparseArray<BluetoothConnection>();
-	
-	// Contador de conexiones establecidas
-	private int mTotalBluetoothConnections = 0;
-	
-	// Array de dispositivos remotos
-	private ArrayList<String> mRemoteDevice = new ArrayList<String>();
-	
+
 	// Dispositivo remoto actual
-	public String mActualRemoteDevice;
+	public String mRemoteDevice;
 	
 	// Cantidad de muestras por paquete
 	private int mSamplesPerPackage;
@@ -80,19 +76,16 @@ public class Protocol extends Thread{
 * Mensajes de configuración													   			 *
 *****************************************************************************************/
 	/*************************************************************************************
-	* Mensaje de información del ADC								 				 	 *
+	* Mensaje de cantidad de canales							 				 	 *
 	*************************************************************************************/
 	// Cantidad de bytes para indicar el canal (4 bytes -int- por defecto)
-	private int mChannelBytes = 4;
+	private final int mChannelBytes = 4;
 	
 	// Mensaje de 4 Bytes con la cantidad de canales a procesar.
 	private byte[] mChannelMessage = new byte[mChannelBytes];
 	
 	// Buffers en bytes de la cantidad de canales
 	private byte[] mChannelByteBuffer = new byte[mChannelBytes];
-	
-	// Array de información del adc. Su tamaño es igual a la cantidad de canales de dicho ADC.
-	private AdcData[] adcData;
 	
 	/*************************************************************************************
 	* Mensaje de información del ADC								 				 	 *
@@ -103,6 +96,9 @@ public class Protocol extends Thread{
 	
 	// Mensaje de información del ADC
 	private byte[] mAdcMessage;
+	
+	// Array de información del adc. Su tamaño es igual a la cantidad de canales de dicho ADC.
+	private AdcData[] adcData;
 
 /*****************************************************************************************
 * Atributos del paquete de muestras del ADC											   				 	 *
@@ -124,99 +120,35 @@ public class Protocol extends Thread{
 * Mètodos principales																	 *
 *****************************************************************************************/
 	// Constructor
-	public Protocol(Handler handler) {
-		mConnectionInterfaceHandler = handler;
+	public Protocol(Handler connectionInterfaceHandler, int protocolIndex) {
+		mConnectionInterfaceHandler = connectionInterfaceHandler;
+		mProtocolIndex = protocolIndex;
+		mRemoteDevice = "Sin Nombre";
 	}
 	
-	// Handler de BluetoothService
-    @SuppressLint("HandlerLeak")
-	private final Handler mBluetoothServiceHandler = new Handler() {
-		
-    	// Método para manejar el mensaje
-		@Override
-		public void handleMessage(Message msg) {
-			
-			// Tipo de mensaje recibido
-			BluetoothConnectionMessage bluetoothServiceMessage = BluetoothConnectionMessage.values(msg.what);
-			
-			switch (bluetoothServiceMessage) {
-				
-				// Llegó una muestra nueva 
-				case NEW_SAMPLE:
-					// Obtengo muestra
-					byte sample = (Byte) msg.obj;
-					// Obtengo canal
-					int bluetoothChannel = msg.arg1;
-					
-					// Si el visualizador está configurado
-					if(mConfigurationOk == true) {
-						enqueueSample(sample);
-					} else {
-						// Si recibí la cantidad de canales
-						if(mChannelsOk == false) {
-							parseChannelMesssage(sample, bluetoothChannel);
-						} else {
-							parseAdcMessage(sample, bluetoothChannel);
-						}
-					}
-					
-					break;
-					
-				// Escuchando conexiones entrantes
-				case LISTENING_RFCOMM:
-					break;
-				
-				// Me conecté
-				case CONNECTED: 
-					// Informo
-					mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.CONNECTED.getValue()).sendToTarget();
-					mConnected = true;
-					break;
-			
-				// Obtengo nombre del dispositivo con el cual me conecté
-				case REMOTE_DEVICE: 
-					mActualRemoteDevice = (String) msg.obj;
-					mRemoteDevice.add(mActualRemoteDevice);
-					break;
-					
-				// Me desconecté
-				case DISCONNECTED:	
-					// Informo
-					mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.DISCONNECTED.getValue()).sendToTarget();
-					mConnected = false;
-					mTotalBluetoothConnections--;
-					mConfigurationOk = false;
-					mChannelsOk = false;
-					mStatus = WAITING_FOR_CONTROL;
-					break;
-
-				default: 
-					break;
-			}//switch
+	// Connection Sample Input
+	public void checkSample(byte sample) {
+		// Si el visualizador está configurado
+		if(mConfigurationOk == true) {
+			enqueueSample(sample);
+		} else {
+			// Si recibí la cantidad de canales
+			if(mChannelsOk == false) {
+				parseChannelMesssage(sample);
+			} else {
+				parseAdcMessage(sample);
+			}
 		}
-	};
-
-	// Método que agrega una Conexión Bluetooth a la lista de conexiones
-
-	public void addSlaveBluetoothConnection() {
-		BluetoothConnection bluetoothConnection = 
-		new BluetoothConnection(ConnectionType.BLUETOOTH, mBluetoothServiceHandler);
-		mBtConnections.put(mTotalBluetoothConnections, bluetoothConnection);
-		mBtConnections.get(mTotalBluetoothConnections).slaveConnection();
-		mTotalBluetoothConnections++;
 	}
 	
-	// Método que frena todas las conexiones
-	public void stopConnections() {
-		if (mBtConnections == null) return;	
-		for(int i=0; i < mTotalBluetoothConnections; i++) mBtConnections.get(i).stop();
-	}
-
+	
 	// Método que transmite las muestras recibidas
 	private void newBatch(short[] batch, int channel) {
 		// Informo
 		mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.NEW_SAMPLES_BATCH.getValue()
-							   ,-1, channel, batch).sendToTarget();
+							   						,-1
+							   						, mProtocolIndex
+							   						, batch).sendToTarget();
 
 	}
 
@@ -228,7 +160,7 @@ public class Protocol extends Thread{
 		double aMax;
 		double aMin;
 				
-		char[] remoteSensor = mActualRemoteDevice.toCharArray();
+		char[] remoteSensor = mRemoteDevice.toCharArray();
 		
 		adcData = new AdcData[mTotalAdcChannels];
 		
@@ -289,7 +221,7 @@ public class Protocol extends Thread{
 	}
 	
 	// Método que parsea el mensaje con las características del ADC
-	private void parseAdcMessage(Byte sample, int btChannel) {
+	private void parseAdcMessage(Byte sample) {
 		
 		if(checkControl(sample) == true) return;
 		
@@ -297,7 +229,7 @@ public class Protocol extends Thread{
 			mAdcMessage[mSampleByteCount] = sample;
 			mSampleByteCount++;
 			if(mSampleByteCount == mAdcMessageTotalBytes) {
-				configureAdc(mAdcMessage, btChannel);
+				configureAdc(mAdcMessage);
 				mConfigurationOk = true;
 				mStatus = WAITING_FOR_CONTROL;
 				mSampleByteCount = 0;
@@ -306,7 +238,7 @@ public class Protocol extends Thread{
 	}
 		
 	// Método que setea los parámetros del ADC
-	private void configureAdc(byte[] bytes, int btChannel) {
+	private void configureAdc(byte[] bytes) {
 		
 		// Contenido del paquete de control de LSB a MSB
 		// 1) Vmax y Vmin de cada canal (2 voltajes * mCantCanales * 8 bytes = 16*mCantCanales)
@@ -358,7 +290,9 @@ public class Protocol extends Thread{
 		
 		// Informo
 		mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.ADC_DATA.getValue()
-				   ,-1, -1, adcData).sendToTarget();
+				   									,-1
+				   									, mProtocolIndex
+				   									, adcData).sendToTarget();
 
 		byte[] mensajeAdcOk = new byte[1];
 		mensajeAdcOk[0] = '$';
@@ -370,12 +304,11 @@ public class Protocol extends Thread{
 		
 	}
 	
-	
 	/*************************************************************************************
 	* Parseo del mensaje con la cantidad de canales								         *
 	*************************************************************************************/
 	// Método que parsea el mensaje con la cantidad de canales
-	private void parseChannelMesssage(Byte sample, int btChannel) {
+	private void parseChannelMesssage(Byte sample) {
 	
 		if(checkControl(sample) == true) return;
 	
@@ -383,7 +316,7 @@ public class Protocol extends Thread{
 			mChannelMessage[mSampleByteCount] = sample;
 			mSampleByteCount++;
 			if(mSampleByteCount == mChannelBytes) {
-				configureChannelQuantity(mChannelMessage, btChannel);
+				configureChannelQuantity(mChannelMessage);
 				mChannelsOk = true;
 				mStatus = WAITING_FOR_CONTROL;
 				mSampleByteCount = 0;
@@ -392,7 +325,7 @@ public class Protocol extends Thread{
 	}
 	
 	// Método que recibe y setea la cantidad de canales
-	private void configureChannelQuantity(byte[] bytes, int btChannel) {
+	private void configureChannelQuantity(byte[] bytes) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
 		mTotalAdcChannels = byteArrayToInt(byteBuffer);
@@ -400,13 +333,14 @@ public class Protocol extends Thread{
 		
 		// Informo
 		mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.TOTAL_ADC_CHANNELS.getValue()
-							   ,-1, -1, mTotalAdcChannels).sendToTarget();
+							   						,-1
+							   						, mProtocolIndex
+							   						, mTotalAdcChannels).sendToTarget();
 		
 		//byte[] mensajeCanalesOk = new byte[1];
 		//mensajeCanalesOk[0] = '&';
 		//mConexionBT.get(canalBT).Escribir(mensajeCanalesOk);
 	}
-	
 	
 	/*************************************************************************************
 	* Control de muestras											         *
@@ -495,9 +429,7 @@ public class Protocol extends Thread{
 
 	// Getter de dispositivo remoto actual
 	public String getActualRemoteDevice() {
-	
-		return mActualRemoteDevice;
-		
+		return mRemoteDevice;
 	}
 	
 	// Getter de cantidad de canales del Adc 
@@ -542,9 +474,25 @@ public class Protocol extends Thread{
 		return ByteBuffer.wrap(intBytes).getInt();
 	}
 	
-	// Método para desconectarme
-	public void removeConnection() {
-		mBtConnections.valueAt(0).stop();
+	public void setConnected(boolean value) {
+		mConnected = value;
 	}
 	
+	public void setConfigured(boolean value) {
+		mConfigurationOk = value;
+	}
+	
+	public void setChannelsInfo(boolean value) {
+		mChannelsOk = value;
+	}
+
+	public void setStatus(int status) {
+		mStatus = status;
+	}
+
+	public void setRemoteDevice(String remoteDevice) {
+		int a = 1;
+		a = 3;
+		String v = remoteDevice;	
+	}
 }

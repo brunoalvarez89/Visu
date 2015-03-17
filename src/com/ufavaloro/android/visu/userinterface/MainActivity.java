@@ -8,6 +8,8 @@ package com.ufavaloro.android.visu.userinterface;
 import java.io.File;
 
 import com.ufavaloro.android.visu.R;
+import com.ufavaloro.android.visu.connection.ConnectionMode;
+import com.ufavaloro.android.visu.connection.ConnectionType;
 import com.ufavaloro.android.visu.main.MainInterface;
 import com.ufavaloro.android.visu.main.MainInterfaceMessage;
 import com.ufavaloro.android.visu.storage.StorageInterfaceMessage;
@@ -43,13 +45,12 @@ public class MainActivity extends Activity {
 	// Método que se ejecuta luego de haberse creado el SurfaceView asociado
 	public void setupAfterSurfaceCreated() {
 		mMainInterface = new MainInterface(this, mMainInterfaceHandler);
-		mMainInterface.getBluetoothProtocol().addSlaveBluetoothConnection();
+		mMainInterface.getConnectionInterface().addConnection(ConnectionType.BLUETOOTH, ConnectionMode.SLAVE);
 	}
 
-	/**
-	 * Dialogs
-	 */
-	
+/*****************************************************************************************
+* Dialogs
+*****************************************************************************************/
 	// Dialog de menú principal
 	public void mainMenuDialog() {
 		MainMenuDialog dialog = new MainMenuDialog(this, this, mDialogTheme);
@@ -112,7 +113,7 @@ public class MainActivity extends Activity {
 	}
 	
 	public void waitingForConnectionDialog() {
-		mMainInterface.getBluetoothProtocol().addSlaveBluetoothConnection();
+		mMainInterface.getConnectionInterface().addConnection(ConnectionType.BLUETOOTH, ConnectionMode.SLAVE);
 		mWaitingForConnectionDialog = ProgressDialog.show(this, "Conexión Bluetooth", "Esperando..."); 
 	}
 	
@@ -260,7 +261,7 @@ public class MainActivity extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		// Paro todos los Threads
-		if(mMainInterface != null) mMainInterface.getBluetoothProtocol().stopConnections();
+		//if(mMainInterface != null) mMainInterface.getBluetoothProtocol().stopConnections();
 	}
 	
 	// this.activity on back pressed

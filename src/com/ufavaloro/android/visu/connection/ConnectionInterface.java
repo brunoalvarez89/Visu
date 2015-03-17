@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import com.google.android.gms.internal.bl;
 import com.ufavaloro.android.visu.connection.bluetooth.BluetoothConnection;
+import com.ufavaloro.android.visu.connection.protocol.Protocol;
+import com.ufavaloro.android.visu.connection.protocol.ProtocolMessage;
 import com.ufavaloro.android.visu.storage.datatypes.AdcData;
 
 import android.annotation.SuppressLint;
@@ -13,22 +15,29 @@ import android.os.Message;
 public class ConnectionInterface {
 
  	private Handler mMainInterfaceHandler;
- 	private ArrayList<Connection> mConnection;
+ 	private ArrayList<Connection> mConnectionList;
+ 	private ArrayList<Protocol> mProtocolList;
 
  	public ConnectionInterface(Handler mainInterfaceHandler) {
  		mMainInterfaceHandler = mainInterfaceHandler;
- 		mConnection = new ArrayList<Connection>();
+ 		mConnectionList = new ArrayList<Connection>();
+ 		mProtocolList = new ArrayList<Protocol>();
  	}
  	
- 	public void addConnection(ConnectionType connectionType) {
+ 	public void addConnection(ConnectionType connectionType, ConnectionMode connectionMode) {
 
  		switch(connectionType) {
  		
  			case BLUETOOTH:
- 				Connection bluetoothConnection = 
- 				(Connection) new BluetoothConnection(connectionType, mConnectionHandler);
- 				bluetoothConnection.slaveConnection();
- 				mConnection.add(bluetoothConnection);
+ 				int connectionIndex = mConnectionList.size();
+ 				Connection bluetoothConnection = (Connection) 
+ 				new BluetoothConnection(connectionType, connectionMode, mConnectionHandler, connectionIndex);
+ 				mConnectionList.add(bluetoothConnection);
+ 				
+ 				int protocolIndex = connectionIndex;
+ 				Protocol protocol = new Protocol(mProtocolHandler, protocolIndex);
+ 				mProtocolList.add(protocol);
+ 				
  				break;
  			
  			default:
@@ -36,6 +45,21 @@ public class ConnectionInterface {
  		}
  	}
  	
+ 	public void removeConnection(int connectionIndex) {
+		//if(mMainInterface != null) mMainInterface.getBluetoothProtocol().stopConnections();
+ 	}
+ 	
+ 	public Connection getConnection(int connectionIndex) {
+ 		return mConnectionList.get(connectionIndex);
+ 	}
+ 	
+ 	public Protocol getProtocol(int protocolIndex) {
+ 		return mProtocolList.get(protocolIndex);
+ 	}
+ 	
+/*****************************************************************************************
+* Connection Handler
+*****************************************************************************************/
  	@SuppressLint("HandlerLeak")
 	private final Handler mConnectionHandler = new Handler() {
 		
@@ -45,7 +69,8 @@ public class ConnectionInterface {
 		public void handleMessage(Message msg) {
 		
 			// Tipo de mensaje recibido
-			BluetoothConnectionMessage connectionMessage = BluetoothConnectionMessage.values(msg.what);
+			ConnectionMessage connectionMessage = ConnectionMessage.values(msg.what);
+			int connectionIndex = msg.arg2;
 			
 			switch (connectionMessage) {
 				
@@ -53,21 +78,7 @@ public class ConnectionInterface {
 			case NEW_SAMPLE:
 				// Obtengo muestra
 				byte sample = (Byte) msg.obj;
-				// Obtengo canal
-				int bluetoothChannel = msg.arg1;
-				
-				// Si el visualizador está configurado
-				if(mConfigurationOk == true) {
-					enqueueSample(sample);
-				} else {
-					// Si recibí la cantidad de canales
-					if(mChannelsOk == false) {
-						parseChannelMesssage(sample, bluetoothChannel);
-					} else {
-						parseAdcMessage(sample, bluetoothChannel);
-					}
-				}
-				
+				mProtocolList.get(connectionIndex).checkSample(sample);
 				break;
 				
 			// Escuchando conexiones entrantes
@@ -77,25 +88,27 @@ public class ConnectionInterface {
 			// Me conecté
 			case CONNECTED: 
 				// Informo
-				mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.CONNECTED.getValue()).sendToTarget();
-				mConnected = true;
+				mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.CONNECTED.getValue()).sendToTarget();
+				mProtocolList.get(connectionIndex).setConnected(true);
 				break;
 		
 			// Obtengo nombre del dispositivo con el cual me conecté
 			case REMOTE_DEVICE: 
-				mActualRemoteDevice = (String) msg.obj;
-				mRemoteDevice.add(mActualRemoteDevice);
+				String remoteDevice = (String) msg.obj;
+				//mProtocolList.get(connectionIndex).setRemoteDevice(remoteDevice);
 				break;
 				
 			// Me desconecté
 			case DISCONNECTED:	
 				// Informo
-				mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.DISCONNECTED.getValue()).sendToTarget();
-				mConnected = false;
-				mTotalBluetoothConnections--;
-				mConfigurationOk = false;
-				mChannelsOk = false;
-				mStatus = WAITING_FOR_CONTROL;
+				mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.DISCONNECTED.getValue()).sendToTarget();
+				mProtocolList.get(connectionIndex).setConnected(false);
+				mProtocolList.get(connectionIndex).setConfigured(false);
+				mProtocolList.get(connectionIndex).setChannelsInfo(false);
+				mProtocolList.get(connectionIndex).setStatus(0);
+				//mConfigurationOk = false;
+				//mChannelsOk = false;
+				//mStatus = WAITING_FOR_CONTROL;
 				break;
 
 			default: 
@@ -104,7 +117,10 @@ public class ConnectionInterface {
 			}
 		}
 	};
- 	
+
+/*****************************************************************************************
+* Protocol Handler
+*****************************************************************************************/
  	@SuppressLint("HandlerLeak")
 	private final Handler mProtocolHandler = new Handler() {
 		
@@ -115,33 +131,26 @@ public class ConnectionInterface {
 		
 			// Tipo de mensaje recibido
 			ProtocolMessage protocolMessage = ProtocolMessage.values(msg.what);
+			int protocolIndex = msg.arg2;
 			
 			switch (protocolMessage) {
 				
 				case NEW_SAMPLES_BATCH:
 					short[] samples = (short[]) msg.obj;
-					int channel = msg.arg2;
-					//onNewSamplesBatch(samples, channel);
+					mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.NEW_SAMPLE.getValue()
+														, -1
+														, protocolIndex
+														, samples).sendToTarget();
 					break;
 				
 				case ADC_DATA:
 					AdcData[] adcData = (AdcData[]) msg.obj;
-					//onAdcData(adcData);
+					mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.CONFIGURED.getValue()
+														, -1
+														, protocolIndex
+														, adcData).sendToTarget();
 					break;
-					
-				case TOTAL_ADC_CHANNELS:
-					int totalAdcChannels = (Integer) msg.obj;
-					//onTotalAdcChannels(totalAdcChannels);
-					break;
-					
-				case CONNECTED:
-					//onBluetoothConnected();
-					break;
-				
-				case DISCONNECTED:
-					//onBluetoothDisconnected();
-					break;
-					
+		
 				default:
 					break;
 			

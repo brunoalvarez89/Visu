@@ -1,6 +1,6 @@
 package com.ufavaloro.android.visu.connection;
 
-public enum BluetoothConnectionMessage {
+public enum ConnectionMessage {
 
 	DISCONNECTED(1),
 	LOOKING_FOR_DEVICES(2),
@@ -11,11 +11,11 @@ public enum BluetoothConnectionMessage {
 	
 	private final int value;
 
-	private BluetoothConnectionMessage(int value){
+	private ConnectionMessage(int value){
 		this.value=value;
 	}
 	
-	public static BluetoothConnectionMessage values(int what) {
+	public static ConnectionMessage values(int what) {
 		switch(what){
 		case 1: return DISCONNECTED;
 		case 2: return LOOKING_FOR_DEVICES;
@@ -31,4 +31,4 @@ public enum BluetoothConnectionMessage {
 	public int getValue(){return value;}
 	
 
-}//BluetoothServiceMessage
+}

@@ -1,19 +1,21 @@
 package com.ufavaloro.android.visu.connection;
 
-public enum ConnectionType {
+public enum ConnectionMode {
 
 	NULL(-1),
-	BLUETOOTH(1);
+	SLAVE(1),
+	MASTER(2);
 	
 	private final int value;
 
-	private ConnectionType(int value){
+	private ConnectionMode(int value){
 		this.value=value;
 	}
 	
-	public static ConnectionType values(int what) {
+	public static ConnectionMode values(int what) {
 		switch(what) {
-		case 1: return BLUETOOTH;
+		case 1: return SLAVE;
+		case 2: return MASTER;
 		
 		default: return NULL;
 		}	

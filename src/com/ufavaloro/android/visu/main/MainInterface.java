@@ -11,8 +11,10 @@ import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.ufavaloro.android.visu.R;
-import com.ufavaloro.android.visu.connection.Protocol;
-import com.ufavaloro.android.visu.connection.ProtocolMessage;
+import com.ufavaloro.android.visu.connection.ConnectionInterface;
+import com.ufavaloro.android.visu.connection.ConnectionInterfaceMessage;
+import com.ufavaloro.android.visu.connection.protocol.Protocol;
+import com.ufavaloro.android.visu.connection.protocol.ProtocolMessage;
 import com.ufavaloro.android.visu.draw.DrawInterface;
 import com.ufavaloro.android.visu.processing.OperationType;
 import com.ufavaloro.android.visu.processing.ProcessingInterface;
@@ -32,17 +34,17 @@ import com.google.android.gms.internal.op;
 @SuppressLint("HandlerLeak")
 public class MainInterface {
 
-	// Storage System Interface (Local and Google Drive)
-	private StorageInterface storageInterface;
+	// Storage Interface (Local/Google Drive)
+	private StorageInterface mStorageInterface;
 	
-	// Bluetooth Protocol (needed for decoding incoming packages)
-	private Protocol bluetoothProtocol;
+	// Connection Interface
+	private ConnectionInterface mConnectionInterface;
 	
 	// Draw Interface
-	private DrawInterface drawInterface;
+	private DrawInterface mDrawInterface;
 	
 	// Processing Interface
-	private ProcessingInterface processingInterface;
+	private ProcessingInterface mProcessingInterface;
 	
 	// On-Line StudyData (data acquired in real-time from a sensor)
 	public StudyData[] onlineStudyData;
@@ -54,9 +56,6 @@ public class MainInterface {
 	private MainActivity mMainActivity;
 	private Handler mMainActivityHandler;
 
-	// Online ADC Channels
-	private int mTotalAdcChannels;
-		
 	
 	/**
 	 * Constructor.
@@ -65,10 +64,10 @@ public class MainInterface {
 	public MainInterface(MainActivity mainActivity, Handler mainActivityHandler) {
 		mMainActivity = mainActivity;
 		mMainActivityHandler = mainActivityHandler;
-		drawInterface = (DrawInterface) mainActivity.findViewById(R.id.drawSurface);
-		bluetoothProtocol = new Protocol(ConnectionInterfaceHandler);
-		storageInterface = new StorageInterface(mainActivity, mStorageInterfaceHandler);
-		processingInterface = new ProcessingInterface(mProcessingInterfaceHandler);
+		mDrawInterface = (DrawInterface) mainActivity.findViewById(R.id.drawSurface);
+		mConnectionInterface = new ConnectionInterface(ConnectionInterfaceHandler);
+		mStorageInterface = new StorageInterface(mainActivity, mStorageInterfaceHandler);
+		mProcessingInterface = new ProcessingInterface(mProcessingInterfaceHandler);
 	}
 
 	/**
@@ -86,16 +85,16 @@ public class MainInterface {
 		
 		for(int i = 0; i < onlineStudyData.length; i++) {
 			onlineStudyData[i].setPatientData(patientData);
-			drawInterface.getChannels().getChannelAtIndex(i).getStudyData().setPatientData(patientData);
+			mDrawInterface.getChannels().getChannelAtIndex(i).getStudyData().setPatientData(patientData);
 		}
 		
-		drawInterface.getChannels().update();
+		mDrawInterface.getChannels().update();
 		
 		// Creo carpetas locales y en google drive
-		storageInterface.createStudyFolders(onlineStudyData);
+		mStorageInterface.createStudyFolders(onlineStudyData);
 		
 		// Creo archivos .vis de los estudios
-		storageInterface.createLocalStudyFiles(onlineStudyData);
+		mStorageInterface.createLocalStudyFiles(onlineStudyData);
  	
  	}
  	
@@ -103,7 +102,7 @@ public class MainInterface {
 	 * Saves the current onlineStudyData array to Google Drive.
 	 */
 	public void saveStudyToGoogleDrive() {
-		storageInterface.createGoogleDriveStudyFiles(onlineStudyData);	
+		mStorageInterface.createGoogleDriveStudyFiles(onlineStudyData);	
 	}
 
 	/**
@@ -113,8 +112,8 @@ public class MainInterface {
 		// Guardo valor en los buffers de almacenamiento
 		onlineStudyData[channel].getAcquisitionData().setStudyType(studyType);
 		// Guardo valor en los buffers de dibujo
-		drawInterface.getChannels().getChannelAtIndex(channel).setStudyType(studyType);
-		drawInterface.getChannels().update();
+		mDrawInterface.getChannels().getChannelAtIndex(channel).setStudyType(studyType);
+		mDrawInterface.getChannels().update();
 	}
 	
 	/**
@@ -124,8 +123,8 @@ public class MainInterface {
 		// Guardo valor en los buffers de almacenamiento
 		onlineStudyData[channel].getAcquisitionData().setAMax(aMax);
 		// Guardo valor en los buffers de dibujo
-		drawInterface.getChannels().getChannelAtIndex(channel).setAMax(aMax);
-		drawInterface.getChannels().update();
+		mDrawInterface.getChannels().getChannelAtIndex(channel).setAMax(aMax);
+		mDrawInterface.getChannels().update();
 	}
 	
 	/**
@@ -135,8 +134,8 @@ public class MainInterface {
 		// Guardo valor en los buffers de almacenamiento
 		onlineStudyData[channel].getAcquisitionData().setAMin(aMin);
 		// Guardo valor en los buffers de dibujo
-		drawInterface.getChannels().getChannelAtIndex(channel).setAMin(aMin);
-		drawInterface.getChannels().update();
+		mDrawInterface.getChannels().getChannelAtIndex(channel).setAMin(aMin);
+		mDrawInterface.getChannels().update();
 	}
 	
 	/**
@@ -144,33 +143,37 @@ public class MainInterface {
 	 * @return True if connected, false otherwise.
 	 */
 	public boolean isGoogleDriveConnected() {
-		return storageInterface.googleDrive.isConnected();
+		return mStorageInterface.googleDrive.isConnected();
 	}
 		
  	public void startRecording() { 		
- 		drawInterface.currentlyRecording = true;
- 		storageInterface.recording = true;
+ 		mDrawInterface.currentlyRecording = true;
+ 		mStorageInterface.recording = true;
  	}
 
  	public void stopRecording() {		
- 		drawInterface.currentlyRecording = false;
-		storageInterface.recording = false;
+ 		mDrawInterface.currentlyRecording = false;
+		mStorageInterface.recording = false;
  	}
  	
  	public DrawInterface getDrawInterface() {
- 		return drawInterface;
+ 		return mDrawInterface;
  	}
  	
  	public StorageInterface getStorageInterface() {
- 		return storageInterface;
+ 		return mStorageInterface;
  	}
  	
- 	public Protocol getBluetoothProtocol() {
- 		return bluetoothProtocol;
+ 	public ConnectionInterface getConnectionInterface() {
+ 		return mConnectionInterface;
+ 	}
+
+ 	public ProcessingInterface getProcessingInterface() {
+ 		return mProcessingInterface;
  	}
 
 /*****************************************************************************************
-Protocol Event Handling
+Connection Interface Event Handling
 *****************************************************************************************/	
 	@SuppressLint("HandlerLeak")
 	private final Handler ConnectionInterfaceHandler = new Handler() {
@@ -181,34 +184,29 @@ Protocol Event Handling
 		public void handleMessage(Message msg) {
 		
 			// Tipo de mensaje recibido
-			ProtocolMessage protocolMessage = ProtocolMessage.values(msg.what);
+			ConnectionInterfaceMessage connectionInterfaceMessage = ConnectionInterfaceMessage.values(msg.what);
 			
-			switch (protocolMessage) {
+			switch (connectionInterfaceMessage) {
 				
-				case NEW_SAMPLES_BATCH:
+				case CONNECTED:
+					onBluetoothConnected();
+					break;
+			
+				case DISCONNECTED:
+					onBluetoothDisconnected();
+					break;
+					
+				case CONFIGURED:
+					AdcData[] adcData = (AdcData[]) msg.obj;
+					onAdcData(adcData);
+					break;
+				
+				case NEW_SAMPLE:
 					short[] samples = (short[]) msg.obj;
 					int channel = msg.arg2;
 					onNewSamplesBatch(samples, channel);
 					break;
 				
-				case ADC_DATA:
-					AdcData[] adcData = (AdcData[]) msg.obj;
-					onAdcData(adcData);
-					break;
-					
-				case TOTAL_ADC_CHANNELS:
-					int totalAdcChannels = (Integer) msg.obj;
-					onTotalAdcChannels(totalAdcChannels);
-					break;
-					
-				case CONNECTED:
-					onBluetoothConnected();
-					break;
-				
-				case DISCONNECTED:
-					onBluetoothDisconnected();
-					break;
-					
 				default:
 					break;
 			
@@ -217,16 +215,12 @@ Protocol Event Handling
 	};
 	
  	private void onNewSamplesBatch(short[] samples, int channel) {
- 		if(drawInterface.onlineDrawBuffersOk == true) drawInterface.drawSamples(samples, channel);
-		if(storageInterface.recording == true) storageInterface.setSamples(onlineStudyData[channel], samples);
+ 		if(mDrawInterface.onlineDrawBuffersOk == true) mDrawInterface.drawSamples(samples, channel);
+		if(mStorageInterface.recording == true) mStorageInterface.setSamples(onlineStudyData[channel], samples);
 		
-		processingInterface.writeSamples(samples, channel, 0);
+		//mProcessingInterface.writeSamples(samples, channel, 0);
  	}
- 	
- 	private void onTotalAdcChannels(int totalAdcChannels) {
- 		mTotalAdcChannels = totalAdcChannels;
- 	}
- 	
+
  	private void onBluetoothConnected() {
  		mMainActivityHandler.obtainMessage(MainInterfaceMessage.BLUETOOTH_CONNECTED.getValue()).sendToTarget();
  	}
@@ -236,11 +230,12 @@ Protocol Event Handling
  	}
  	
  	private void onAdcData(AdcData[] adcData) {
- 		onlineStudyData = new StudyData[mTotalAdcChannels];
+ 		int totalAdcChannels = adcData.length;
+ 		onlineStudyData = new StudyData[totalAdcChannels];
  		AcquisitionData acquisitionData = null;
  		SamplesBuffer samplesBuffer;
  		
- 		for(int i = 0; i < mTotalAdcChannels; i++) {
+ 		for(int i = 0; i < totalAdcChannels; i++) {
  			onlineStudyData[i] = new StudyData();
  			
  			acquisitionData = new AcquisitionData(adcData[i]);
@@ -250,33 +245,25 @@ Protocol Event Handling
  			onlineStudyData[i].setSamplesBuffer(samplesBuffer);
  		}
 
- 		for(int i = 0; i < bluetoothProtocol.getTotalAdcChannels(); i++) {
- 			drawInterface.addChannel(onlineStudyData[i], true);
+ 		/*
+ 		for(int i = 0; i < mProtocol.getTotalAdcChannels(); i++) {
+ 			mDrawInterface.addChannel(onlineStudyData[i], true);
 			
  			
-			processingInterface.addProcessingOperation(OperationType.TIME_DERIVATIVE
+			mProcessingInterface.addProcessingOperation(OperationType.TIME_DERIVATIVE
 									, acquisitionData.getFs()
 									, acquisitionData.getSamplesPerPackage()
 									, i);
 			
-			processingInterface.addProcessingOperation(OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE
-									, acquisitionData.getFs()
-									, acquisitionData.getSamplesPerPackage()
-									, i);
-			/*
-			processingInterface.addProcessingOperation(OperationType.EKG_QRS_ADAPTIVE_THRESHOLD
-					, acquisitionData.getFs()
-					, acquisitionData.getSamplesPerPackage()
-					, i);
-			*/
+		
 		}
+ 		*/
+ 		mDrawInterface.addChannel(onlineStudyData[0], true);
+ 		mDrawInterface.addChannel(onlineStudyData[0], true);
+ 		//mDrawInterface.addChannel(onlineStudyData[0], true);
  		
- 		drawInterface.addChannel(onlineStudyData[0], true);
- 		drawInterface.addChannel(onlineStudyData[0], true);
- 		//drawInterface.addChannel(onlineStudyData[0], true);
- 		
-		drawInterface.onlineDrawBuffersOk = true;
-		drawInterface.startDrawing();
+		mDrawInterface.onlineDrawBuffersOk = true;
+		mDrawInterface.startDrawing();
  	}
 		
 /*****************************************************************************************
@@ -335,7 +322,7 @@ Storage Interface Event Handling
  	private void onGoogleDriveFileOpened(Object object) {
  		StudyData studyData = (StudyData) object;
  		offlineStudyData.add(studyData);
- 		drawInterface.addChannel(studyData, false); 	
+ 		mDrawInterface.addChannel(studyData, false); 	
  	}
  	
  	private void onLocalStorageFileOpened(Object object) {
@@ -345,7 +332,7 @@ Storage Interface Event Handling
  			return;
  		} else {
 	 		offlineStudyData.add(studyData);
-	 		drawInterface.addChannel(studyData, false);
+	 		mDrawInterface.addChannel(studyData, false);
 	 	}
  	}
  	
@@ -417,8 +404,8 @@ Processing Operation Interface Event Handling
 
 	private void onTimeDerivative(double operationResult, int operationOrder) {
  		short adaptedResult = adaptResult(operationResult); 
- 		processingInterface.writeSample(adaptedResult, 0, 1);
- 		drawInterface.drawSample(adaptedResult, 1);
+ 		mProcessingInterface.writeSample(adaptedResult, 0, 1);
+ 		mDrawInterface.drawSample(adaptedResult, 1);
  	}
  	
  	private void onSelfMultiply(double operationResult, int operationOrder) {
@@ -431,34 +418,34 @@ Processing Operation Interface Event Handling
  	
  	private void onQrsAdaptiveThreshold(double operationResult) {
  		short adaptedResult = adaptResult(operationResult);
- 		drawInterface.drawSample(adaptedResult, 3);
+ 		mDrawInterface.drawSample(adaptedResult, 3);
  	}
  	
  	private void onQrsFirstDerivativeSlope(double operationResult) {
  		short adaptedResult = adaptResult(operationResult); 
- 		drawInterface.drawSample(adaptedResult, 2);
- 		if(operationResult == 1) drawInterface.heartBeat();
+ 		mDrawInterface.drawSample(adaptedResult, 2);
+ 		if(operationResult == 1) mDrawInterface.heartBeat();
  	}
  	
  	private void onTimeMAF(double operationResult, int operationOrder) {
  		short adaptedResult = adaptResult(operationResult); 
- 		processingInterface.writeSample(adaptedResult, 0, 1);
- 		drawInterface.drawSample(adaptedResult, 1);
+ 		mProcessingInterface.writeSample(adaptedResult, 0, 1);
+ 		mDrawInterface.drawSample(adaptedResult, 1);
  		//Log.d("", "MAF: " + adaptedResult);
  	}
 	
 	private void onTimeLowPass(double operationResult, int operationOrder) {
  		short adaptedResult = adaptResult(operationResult);
- 		//processingInterface.writeSample(adaptedResult, 0, 2);
- 		drawInterface.drawSample(adaptedResult, 1);
+ 		//mProcessingInterface.writeSample(adaptedResult, 0, 2);
+ 		mDrawInterface.drawSample(adaptedResult, 1);
  		Log.d("", "Low: " + operationResult);
  		Log.d("", "Low Adapted: " + adaptedResult);
 	}
 	
 	private void onTimeHighPass(double operationResult, int operationOrder) {
  		short adaptedResult = adaptResult(operationResult);
- 		//processingInterface.writeSample(adaptedResult, 0, 2);
- 		drawInterface.drawSample(adaptedResult, 1);
+ 		//mProcessingInterface.writeSample(adaptedResult, 0, 2);
+ 		mDrawInterface.drawSample(adaptedResult, 1);
  		//Log.d("", "High: " + adaptedResult);
 	}
 

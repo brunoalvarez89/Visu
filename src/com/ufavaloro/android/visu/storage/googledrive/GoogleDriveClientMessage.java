@@ -1,9 +1,3 @@
-/*****************************************************************************************
- * GoogleDriveMessage.java																 *
- * Enum que posee los distintos tipos de mensaje que puede enviar la clase 				 *
- * GoogleDriveManager			 														 *
- ****************************************************************************************/
-
 package com.ufavaloro.android.visu.storage.googledrive;
 
 public enum GoogleDriveClientMessage {
@@ -54,5 +48,4 @@ public enum GoogleDriveClientMessage {
 	
 	public int getValue(){return value;}
 	
-
-}//GoogleDriveClientMessage
+}

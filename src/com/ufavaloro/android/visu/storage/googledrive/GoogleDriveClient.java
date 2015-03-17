@@ -36,7 +36,6 @@ import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 
-
 public class GoogleDriveClient implements 
 com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks, 
 com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener {

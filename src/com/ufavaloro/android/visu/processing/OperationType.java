@@ -35,5 +35,4 @@ public enum OperationType {
 	
 	public int getValue(){return value;}
 	
-
-}//BluetoothHelperMessage
+}
