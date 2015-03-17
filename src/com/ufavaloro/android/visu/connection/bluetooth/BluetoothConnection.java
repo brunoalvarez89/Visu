@@ -49,8 +49,8 @@ public class BluetoothConnection extends Connection {
 	private BluetoothAdapter mBluetoothAdapter;
 	
 	// Threads
-	private ServerThread mServerThread = null;
-	private ClientThread mClientThread = null;
+	private ClientThread mSlaveThread = null;
+	private MasterThread mMasterThread = null;
 	private ConnectedThread mConnectedThread = null;
 
 	// Nombre del dispositivo con el cual me conecté
@@ -85,15 +85,15 @@ public class BluetoothConnection extends Connection {
 		if (mLog) Log.d(TAG, "Iniciando Servicio Bluetooth como servidor...");
 		
 		// Cancelo cualquier Thread de Establecer Conexion
-		stopClientThread();
+		stopMasterThread();
 		
 		// Cancelo cualquier Thread de Conexion Establecida
 	    stopConnectedThread();
 		
 	    // Inicializo el Thread de Dialogar Conexion para escuchar en un BluetoothServerSocket
-		if (mServerThread == null) {
-			mServerThread = new ServerThread(); 
-			mServerThread.start();
+		if (mSlaveThread == null) {
+			mSlaveThread = new ClientThread(); 
+			mSlaveThread.start();
 		}
 		
 		// Actualizo estado
@@ -104,20 +104,20 @@ public class BluetoothConnection extends Connection {
 	}
 
 	// Si el dispositivo se conecta como Cliente...
-	public synchronized void clientSide(BluetoothDevice device) {
+	public synchronized void masterConnection(BluetoothDevice device) {
 		
 		// Log
 		if (mLog) Log.d(TAG, "Iniciando Servicio BT como cliente...");	
 		
 		// Cancelo cualquier Thread de Establecer Conexion
-		if (mStatus == STATUS_SEARCHING) stopClientThread();
+		if (mStatus == STATUS_SEARCHING) stopMasterThread();
 		
 		// Cancelo cualquier Thread de Conexion Establecida
 		stopConnectedThread();
 		
 		// Inicializo el Thread de Establecer Conexion
-		mClientThread = new ClientThread(device);
-		mClientThread.start();
+		mMasterThread = new MasterThread(device);
+		mMasterThread.start();
 		
 		// Actualizo estado
 		setStatus(STATUS_SEARCHING);
@@ -134,10 +134,10 @@ public class BluetoothConnection extends Connection {
 		if (mLog) Log.d(TAG, "Intentando conectar dispositivos...");
 		
 		// Cierro cualquier Thread de Escuchar Conexion
-		stopServerThread();
+		stopSlaveThread();
 		
 		// Cancelo cualquier Thread de Establecer Conexion
-		stopClientThread();
+		stopMasterThread();
 		
 		// Cancelo cualquier Thread que este en una conexion
 	    stopConnectedThread();
@@ -171,8 +171,8 @@ public class BluetoothConnection extends Connection {
 	public void stop() {
 		
 		// Mato todo
-		stopClientThread();
-		stopServerThread();
+		stopMasterThread();
+		stopSlaveThread();
 		stopConnectedThread();
 		
 		// Actualizo estado
@@ -183,15 +183,15 @@ public class BluetoothConnection extends Connection {
 	}
 
 	// Método que mata el Thread Cliente
-	private void stopClientThread() {
+	private void stopMasterThread() {
 		// Mato Thread Cliente
-		if (mClientThread != null) mClientThread.cancel(); 		
+		if (mMasterThread != null) mMasterThread.cancel(); 		
 	}
 	
 	// Método que mata el Thread Servidor
-	private void stopServerThread() {
+	private void stopSlaveThread() {
 		// Mato Thread Servidor
-		if (mServerThread != null) mServerThread.cancel(); 
+		if (mSlaveThread != null) mSlaveThread.cancel(); 
 	}
 	
 	// Método que mata el Thread de Conexión Establecida
@@ -217,16 +217,16 @@ public class BluetoothConnection extends Connection {
 	
 	
 /*****************************************************************************************
-* THREAD SERVIDOR                                   								 	 *
+* THREAD SLAVE                                  								 	 *
 * Se utiliza para crear y escuchar un Bluetooth Server Socket. 							 *
 *****************************************************************************************/
-	private class ServerThread extends Thread {
+	private class ClientThread extends Thread {
 		
 		// Socket Bluetooth Servidor. Se utiliza para escuchar y aceptar conexiones entrantes.
 		private final BluetoothServerSocket mmBluetoothServerSocket;
 
 		// Constructor
-		public ServerThread() {
+		public ClientThread() {
 			
 			// Log
 			if (mLog) Log.d(TAG, "Inicializando ThreadServidor()...");
@@ -339,10 +339,10 @@ public class BluetoothConnection extends Connection {
 
 	
 /*****************************************************************************************
-* THREAD CLIENTE                           										    	 *
+* THREAD MASTER                           										    	 *
 * Se utiliza para crear un Bluetooth Socket. 											 *
 *****************************************************************************************/
-	private class ClientThread extends Thread {
+	private class MasterThread extends Thread {
 		
 		// Socket Bluetooth
 		private BluetoothSocket mmBluetoothSocket;
@@ -351,7 +351,7 @@ public class BluetoothConnection extends Connection {
 		private final BluetoothDevice mmLocalDevice;
 			
 		// Constructor
-		public ClientThread(BluetoothDevice localDevice) {
+		public MasterThread(BluetoothDevice localDevice) {
 			
 			// Log
 			if (mLog) Log.d(TAG, "Inicializando ThreadCliente()...");
