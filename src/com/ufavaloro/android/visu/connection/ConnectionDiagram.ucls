@@ -61,7 +61,7 @@
     </display>  
   </class>  
   <dependency id="7">    
-    <end type="SOURCE" refId="1"/>    
+    <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="3"/>  
   </dependency>  
   <nesting id="8">    
@@ -71,71 +71,63 @@
     <end type="TARGET" refId="4"/>  
   </nesting>  
   <dependency id="9">    
-    <end type="SOURCE" refId="2"/>    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="10">    
+    <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="3"/>  
   </dependency>  
-  <association id="10">    
+  <association id="11">    
     <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="11" name="mMasterThread">        
-        <position height="18" width="83" x="-2" y="59"/>      
-      </attribute>      
-      <multiplicity id="12" minimum="0" maximum="1">        
-        <position height="16" width="23" x="2" y="65"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="13">    
-    <bendpoint x="880" y="387"/>    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="6"/>  
-  </nesting>  
-  <association id="14">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="15" name="mSlaveThread">        
-        <position height="18" width="77" x="132" y="54"/>      
-      </attribute>      
-      <multiplicity id="16" minimum="0" maximum="1">        
-        <position height="16" width="23" x="99" y="16"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="17">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="18" name="mConnectedThread">        
+      <attribute id="12" name="mConnectedThread">        
         <position height="18" width="102" x="-144" y="36"/>      
       </attribute>      
-      <multiplicity id="19" minimum="0" maximum="1">        
+      <multiplicity id="13" minimum="0" maximum="1">        
         <position height="16" width="23" x="31" y="58"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="20">    
-    <end type="SOURCE" refId="21"/>    
+  <dependency id="14">    
+    <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="3"/>  
   </dependency>  
-  <nesting id="22">    
+  <association id="15">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="16" name="mMasterThread">        
+        <position height="18" width="83" x="-2" y="59"/>      
+      </attribute>      
+      <multiplicity id="17" minimum="0" maximum="1">        
+        <position height="16" width="23" x="2" y="65"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="18">    
     <bendpoint x="27" y="85"/>    
     <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="5"/>  
   </nesting>  
-  <association id="23">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="24" name="mProtocolList">        
-        <position height="18" width="72" x="148" y="69"/>      
+  <association id="19">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="20" name="mSlaveThread">        
+        <position height="18" width="77" x="132" y="54"/>      
       </attribute>      
-      <multiplicity id="25" minimum="0" maximum="2147483647">        
-        <position height="16" width="21" x="165" y="99"/>      
+      <multiplicity id="21" minimum="0" maximum="1">        
+        <position height="16" width="23" x="99" y="16"/>      
       </multiplicity>    
     </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
+    <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <nesting id="22">    
+    <bendpoint x="880" y="387"/>    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="6"/>  
+  </nesting>  
   <classifier-display autosize="true" stereotype="true" package="false" initial-value="true" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false" static="false"/>    

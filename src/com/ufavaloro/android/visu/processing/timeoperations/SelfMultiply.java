@@ -8,9 +8,9 @@ import android.util.Log;
 
 public class SelfMultiply extends ProcessingOperation {
 
-	public SelfMultiply(OperationType operationType, double fs, int samplesPerPackage, int operationOrder,
-			Handler processingInterfaceHandler, int channel) {
-		super(operationType, fs, samplesPerPackage, operationOrder, processingInterfaceHandler, channel);
+	public SelfMultiply(OperationType operationType, int operationChannel, int operationIndex
+			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
+		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
 	}
 
 	public void selfMultiply() {

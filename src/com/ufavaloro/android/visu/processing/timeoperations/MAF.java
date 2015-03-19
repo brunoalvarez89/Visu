@@ -10,9 +10,9 @@ public class MAF extends  ProcessingOperation {
 	private int M = 5;
 	private double mConstant = 1/(double)M;
 	
-	public MAF(OperationType operationType, double fs, int samplesPerPackage, int operationOrder,
-			Handler processingInterfaceHandler, int channel) {
-		super(operationType, fs, samplesPerPackage, operationOrder,processingInterfaceHandler, channel);
+	public MAF(OperationType operationType, int operationChannel, int operationIndex
+			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
+		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
 	}
 
 	private void calculateHighPassMAF() {

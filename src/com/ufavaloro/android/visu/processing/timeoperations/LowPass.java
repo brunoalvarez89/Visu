@@ -12,9 +12,9 @@ public class LowPass extends ProcessingOperation {
 	private double y_1;
 	private double y_2;
 	
-	public LowPass(OperationType operationType, double fs, int samplesPerPackage, int operationOrder,
-			Handler processingInterfaceHandler, int channel) {
-		super(operationType, fs, samplesPerPackage, operationOrder, processingInterfaceHandler, channel);
+	public LowPass(OperationType operationType, int operationChannel, int operationIndex
+			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
+		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
 	}
 
 	private void lowPass() {

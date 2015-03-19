@@ -161,6 +161,26 @@ public class StorageInterface {
 		return success;
 	}
 
+	public boolean setSample(StudyData studyData, short toStore) {
+
+		if(local.studyFilesOk == false || recording == false || studyData.isMarkedForStoring() == false) return false;
+		
+		SamplesBuffer samplesBuffer = studyData.getSamplesBuffer();
+		samplesBuffer.writeSample(toStore);
+		boolean success = false;
+		
+		// Llené el buffer?
+		int indexOverflow = samplesBuffer.getStoringIndex();
+
+		if(indexOverflow == 0) {
+			
+			File studyFile = studyData.getStorageData().getStudyFile();
+			local.saveFile(studyFile, samplesBuffer);
+			
+		}
+		
+		return success;
+	}
 /*****************************************************************************************
 * Métodos auxiliares																     *
 *****************************************************************************************/

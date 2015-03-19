@@ -103,6 +103,7 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 	private double mDxAcum = 0;
 	private double mDyAcum = 0;
 	private boolean mHeartBeat;
+	private int mHeartBeatChannel;
 	
 	IconsManager mIconsManager;
 /*****************************************************************************************
@@ -469,13 +470,14 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 			
 			// Dibujo Parameter Label y Bitmap
-			if(mHeartBeat == true) {
+			if(mHeartBeat == true && mHeartBeatChannel == channel.getChannelNumber()) {
 				ScreenBitmap bitmap = channel.getInfoBox().getParameterBitmap();
 				canvas.drawBitmap(bitmap.getBitmap()
 								  , bitmap.getX()
 								  , bitmap.getY()
 								  , mPaint);
 			}
+			
 			label = channel.getInfoBox().getParameterLabel();
 			mPaint.setTextSize(label.getTextSize());
 			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
@@ -1064,11 +1066,12 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 		mDrawOk = false;
 	}
 	
-	public synchronized void heartBeat() {
+	public synchronized void heartBeat(final int channel) {
 		
 		Runnable otherRunnable = new Runnable() {
 			  public void run() {
 					mHeartBeat = true;
+					mHeartBeatChannel = channel;
 					try {
 						Thread.sleep(200);
 					} catch (InterruptedException e) {

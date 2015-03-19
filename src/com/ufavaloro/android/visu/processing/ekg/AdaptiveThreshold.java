@@ -10,10 +10,10 @@ import android.os.Handler;
 
 public class AdaptiveThreshold extends QrsDetection {
 	
-	public AdaptiveThreshold(OperationType operationType, double fs, int samplesPerPackage, int operationOrder
-			   , Handler processingInterfaceHandler, int channel) {
+	public AdaptiveThreshold(OperationType operationType, int operationChannel, int operationIndex
+			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
 		
-		super(operationType, fs, samplesPerPackage, operationOrder, processingInterfaceHandler, channel);
+		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
 	}
 
 	private void qrs() {

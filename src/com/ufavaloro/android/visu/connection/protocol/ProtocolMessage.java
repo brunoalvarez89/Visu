@@ -10,8 +10,9 @@ public enum ProtocolMessage {
 	
 	NULL (-1),
 	NEW_SAMPLES_BATCH(1),
-	ADC_DATA(2),
-	TOTAL_ADC_CHANNELS(3);
+	NEW_SAMPLE(2),
+	ADC_DATA(3),
+	TOTAL_ADC_CHANNELS(4);
 	
 	private final int value;
 
@@ -22,8 +23,9 @@ public enum ProtocolMessage {
 	public static ProtocolMessage values(int what) {
 		switch(what){
 		case 1: return NEW_SAMPLES_BATCH;
-		case 2: return ADC_DATA;
-		case 3: return TOTAL_ADC_CHANNELS;
+		case 2: return NEW_SAMPLE;
+		case 3: return ADC_DATA;
+		case 4: return TOTAL_ADC_CHANNELS;
 		
 		default: return NULL;
 		}	

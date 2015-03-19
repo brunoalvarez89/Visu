@@ -7,10 +7,9 @@ import com.ufavaloro.android.visu.processing.ProcessingOperation;
 
 public class FFT extends ProcessingOperation {
 
-	public FFT(OperationType operationType, double fs, int samplesPerPackage,
-			int operationOrder, Handler processingInterfaceHandler, int channel) {
-		super(operationType, fs, samplesPerPackage, operationOrder,
-				processingInterfaceHandler, channel);
+	public FFT(OperationType operationType, int operationChannel, int operationIndex
+			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
+		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
 		// TODO Auto-generated constructor stub
 	}
 

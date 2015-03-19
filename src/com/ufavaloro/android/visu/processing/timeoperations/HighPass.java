@@ -10,9 +10,9 @@ public class HighPass extends ProcessingOperation {
 
 	private double y_prev;
 	
-	public HighPass(OperationType operationType, double fs, int samplesPerPackage, int operationOrder,
-			Handler processingInterfaceHandler, int channel) {
-		super(operationType, fs, samplesPerPackage, operationOrder, processingInterfaceHandler, channel);
+	public HighPass(OperationType operationType, int operationChannel, int operationIndex
+			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
+		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
 	}
 
 	private void highPass() {

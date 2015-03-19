@@ -7,9 +7,9 @@ import android.os.Handler;
 
 public class Derivative extends ProcessingOperation {
 	
-	public Derivative(OperationType operationType, double fs, int samplesPerPackage, int operationOrder,
-			Handler processingInterfaceHandler, int channel) {
-		super(operationType, fs, samplesPerPackage, operationOrder, processingInterfaceHandler, channel);
+	public Derivative(OperationType operationType, int operationChannel, int operationIndex
+			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
+		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
 	}
 
 	public void derivative() {

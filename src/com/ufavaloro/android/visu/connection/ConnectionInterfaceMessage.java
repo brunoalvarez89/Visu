@@ -6,7 +6,8 @@ public enum ConnectionInterfaceMessage {
 	CONNECTED(1),
 	DISCONNECTED(2),
 	CONFIGURED(3),
-	NEW_SAMPLE(4);
+	NEW_SAMPLES_BATCH(4),
+	NEW_SAMPLE(5);
 	
 	private final int value;
 
@@ -19,7 +20,8 @@ public enum ConnectionInterfaceMessage {
 		case 1: return CONNECTED;
 		case 2: return DISCONNECTED;
 		case 3: return CONFIGURED;
-		case 4: return NEW_SAMPLE;
+		case 4: return NEW_SAMPLES_BATCH;
+		case 5: return NEW_SAMPLE;
 		
 		default: return DISCONNECTED;
 		}	

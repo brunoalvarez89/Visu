@@ -48,8 +48,11 @@ public class Protocol extends Thread {
 	// Contador de '#' recibidos
 	private int mHashCount = 0;
 	
-	// Cantidad de muestras recibidas
-	private int mSampleByteCount = 0;
+	// Contador de cantidad de muestras actuales recibidas por buffer
+	private int mSamplesBufferByteCount = 0;
+	
+	// Contador de bytes de la muestra actual
+	private int mActualSampleByteCount = 0;
 	
 	// Cantidad de bytes del mensaje de canal recibidos
 	private int mChannelByteCount = 0;
@@ -112,6 +115,9 @@ public class Protocol extends Thread {
 	// Buffer de bytes para almacenar temporalmente las muestras recibidas por canal
 	private byte[] mByteBufferedInput;
 	
+	// Buffer de 2 bytes para almacenar una única muestra en Short
+	private byte[] mActualSampleBuffer;
+	
 
 /*****************************************************************************************
 * Inicio de métodos de clase														   	 *
@@ -124,6 +130,7 @@ public class Protocol extends Thread {
 		mConnectionInterfaceHandler = connectionInterfaceHandler;
 		mProtocolIndex = protocolIndex;
 		mRemoteDevice = "Sin Nombre";
+		mActualSampleBuffer = new byte[2];
 	}
 	
 	// Connection Sample Input
@@ -141,17 +148,38 @@ public class Protocol extends Thread {
 		}
 	}
 	
-	
-	// Método que transmite las muestras recibidas
-	private void newBatch(short[] batch, int channel) {
+	// Método que transmite las muestras recibidas en grupo
+	private void newBatch(short[] batch) {
 		// Informo
 		mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.NEW_SAMPLES_BATCH.getValue()
 							   						,-1
-							   						, mProtocolIndex
+							   						, mActualChannel
 							   						, batch).sendToTarget();
 
 	}
-
+	
+	// Método que transmite las muestras recibidas de a una
+	private void newSample(short sample) {
+		// Informo
+		mConnectionInterfaceHandler.obtainMessage(ProtocolMessage.NEW_SAMPLE.getValue()
+									   				,-1
+									   				, mActualChannel
+									   				, sample).sendToTarget();
+	}
+	
+	private void addSample(byte sample) {
+		mByteBufferedInput[mSamplesBufferByteCount] = sample;
+		mSamplesBufferByteCount++;
+		mActualSampleByteCount++;
+		
+		if(mActualSampleByteCount == 2) {
+			mActualSampleBuffer[0] = mByteBufferedInput[mSamplesBufferByteCount-2];
+			mActualSampleBuffer[1] = mByteBufferedInput[mSamplesBufferByteCount-1];
+			mActualSampleByteCount = 0;
+			short[] shortSample = byteArrayToShortArray(mActualSampleBuffer.clone());
+			newSample(shortSample[0]);
+		}
+	}
 	// Método que parsea los datos arrays con los datos obtenidos del ADC
 	public void createAdcInfo(double[] voltages, double[] amplitudes, double[] fs, int[] bits) {
 			
@@ -226,13 +254,13 @@ public class Protocol extends Thread {
 		if(checkControl(sample) == true) return;
 		
 		if(mStatus == WAITING_FOR_SAMPLES) {
-			mAdcMessage[mSampleByteCount] = sample;
-			mSampleByteCount++;
-			if(mSampleByteCount == mAdcMessageTotalBytes) {
+			mAdcMessage[mSamplesBufferByteCount] = sample;
+			mSamplesBufferByteCount++;
+			if(mSamplesBufferByteCount == mAdcMessageTotalBytes) {
 				configureAdc(mAdcMessage);
 				mConfigurationOk = true;
 				mStatus = WAITING_FOR_CONTROL;
-				mSampleByteCount = 0;
+				mSamplesBufferByteCount = 0;
 			}
 		}
 	}
@@ -313,13 +341,13 @@ public class Protocol extends Thread {
 		if(checkControl(sample) == true) return;
 	
 		if(mStatus == WAITING_FOR_SAMPLES) {
-			mChannelMessage[mSampleByteCount] = sample;
-			mSampleByteCount++;
-			if(mSampleByteCount == mChannelBytes) {
+			mChannelMessage[mSamplesBufferByteCount] = sample;
+			mSamplesBufferByteCount++;
+			if(mSamplesBufferByteCount == mChannelBytes) {
 				configureChannelQuantity(mChannelMessage);
 				mChannelsOk = true;
 				mStatus = WAITING_FOR_CONTROL;
-				mSampleByteCount = 0;
+				mSamplesBufferByteCount = 0;
 			}
 		}
 	}
@@ -377,16 +405,15 @@ public class Protocol extends Thread {
 				return;
 			}
 			
-			if(mSampleByteCount < mSamplesPerPackage*mBytesPerSample) {
-				mByteBufferedInput[mSampleByteCount] = sample;
-				mSampleByteCount++;
-					if(mSampleByteCount == mSamplesPerPackage*mBytesPerSample) {
-						short[] shortBufferedInput = byteArrayToShortArray(mByteBufferedInput.clone());	
-						newBatch(shortBufferedInput, mActualChannel);
+			if(mSamplesBufferByteCount < mSamplesPerPackage*mBytesPerSample) {
+				addSample(sample);
+					if(mSamplesBufferByteCount == mSamplesPerPackage*mBytesPerSample) {
+						//short[] shortBufferedInput = byteArrayToShortArray(mByteBufferedInput.clone());	
+						//newBatch(shortBufferedInput);
 						
 						if(!mDebugMode) {
 							mStatus = WAITING_FOR_CONTROL;
-							mSampleByteCount = 0;
+							mSamplesBufferByteCount = 0;
 							mChannelByteCount = 0;
 						}
 						return;
@@ -407,7 +434,7 @@ public class Protocol extends Thread {
 						if(mLog) Log.d("Bluetooth Reception", "Contador: " + mReceivedPackages);
 						
 						mStatus = WAITING_FOR_CONTROL;
-						mSampleByteCount = 0;
+						mSamplesBufferByteCount = 0;
 						mChannelByteCount = 0;
 						mPackageNumberByteCount = 0;						
 						return;
@@ -455,9 +482,9 @@ public class Protocol extends Thread {
 		byte[] aux = new byte[byteBuffer.length];
 		for(int i = 0; i < byteBuffer.length; i++) aux[i] = byteBuffer[i];
 		
-		short[] shortBufferedInput= new short[mSamplesPerPackage];
+		short[] shortBufferedInput= new short[byteBuffer.length/2];
 		
-		for(int i=0; i<mSamplesPerPackage; i++) {
+		for(int i=0; i<byteBuffer.length/2; i++) {
 			muestra = (short) (byteBuffer[(2*i)] & mascara);
 			muestra = (short) (muestra + ((byteBuffer[(2*i) + 1] & mascara) << 8));
 			shortBufferedInput[i] = muestra;

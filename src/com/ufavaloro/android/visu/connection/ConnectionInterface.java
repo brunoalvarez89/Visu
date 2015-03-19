@@ -137,12 +137,20 @@ public class ConnectionInterface {
 				
 				case NEW_SAMPLES_BATCH:
 					short[] samples = (short[]) msg.obj;
-					mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.NEW_SAMPLE.getValue()
+					mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.NEW_SAMPLES_BATCH.getValue()
 														, -1
 														, protocolIndex
 														, samples).sendToTarget();
 					break;
-				
+					
+				case NEW_SAMPLE:
+					short sample = (short) msg.obj;
+					mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.NEW_SAMPLE.getValue()
+														, -1
+														, protocolIndex
+														, sample).sendToTarget();
+					break;
+					
 				case ADC_DATA:
 					AdcData[] adcData = (AdcData[]) msg.obj;
 					mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.CONFIGURED.getValue()

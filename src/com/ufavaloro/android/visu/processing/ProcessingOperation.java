@@ -5,10 +5,13 @@ import android.util.Log;
 
 public class ProcessingOperation {
 	
+	protected OperationType mOperationType;
+	protected int mOperationChannel;
+	protected int mOperationIndex;
+	
 	protected ProcessingBuffer mProcessingBuffer;
 	protected boolean mIsProcessing;
-	protected OperationType mOperationType;
-	protected int mChannel;
+
 	protected Handler mProcessingInterfaceHandler;
 
 	protected double mOperationResult;
@@ -17,15 +20,14 @@ public class ProcessingOperation {
 	protected double[] mMinValues;
 	protected double[] mMaxValues;
 	protected double mMeanValue;
+		
+	private boolean mLog = false;
 	
-	protected int mOrder;
-	
-	private boolean mLog = true;
-	
-	public ProcessingOperation(OperationType operationType, double fs, int samplesPerPackage
-			   , int operationOrder, Handler processingInterfaceHandler, int channel) {
+	public ProcessingOperation(OperationType operationType, int operationChannel, int operationIndex
+								, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
 	mOperationType = operationType;
-	mChannel = channel;
+	mOperationChannel = operationChannel;
+	mOperationIndex = operationIndex;
 	mProcessingInterfaceHandler = processingInterfaceHandler;
 	mOperationResult = 0;
 	
@@ -34,7 +36,6 @@ public class ProcessingOperation {
 	
 	mProcessingBuffer = new ProcessingBuffer(samplesPerPackage*100);
 	
-	mOrder = operationOrder;
 	}
 	
 	public void nextOperation() {
@@ -61,57 +62,58 @@ public class ProcessingOperation {
 		
 		if(mOperationType == OperationType.TIME_DERIVATIVE) {
 			mProcessingInterfaceHandler.obtainMessage(OperationType.TIME_DERIVATIVE.getValue()
-														, mOrder
-														, -1
+														, mOperationChannel
+														, mOperationIndex
 														, mCorrectedOperationResult).sendToTarget();
 		}
 		
 		if(mOperationType == OperationType.TIME_SELF_MULTIPLY) {
 			mProcessingInterfaceHandler.obtainMessage(OperationType.TIME_SELF_MULTIPLY.getValue()
-														, mOrder
-														, -1
+														, mOperationChannel
+														, mOperationIndex
 														, mCorrectedOperationResult).sendToTarget();
 		}
 		
 		if(mOperationType == OperationType.TIME_MAF) {
+	 		 Log.d("", "MAF: " + mOperationResult);
 			mProcessingInterfaceHandler.obtainMessage(OperationType.TIME_MAF.getValue()
-														, mOrder
-														, -1
+														, mOperationChannel
+														, mOperationIndex
 														, mCorrectedOperationResult).sendToTarget();
 		}
 		
 		if(mOperationType == OperationType.TIME_LOWPASS) {
 			mProcessingInterfaceHandler.obtainMessage(OperationType.TIME_LOWPASS.getValue()
-														, mOrder
-														, -1
+														, mOperationChannel
+														, mOperationIndex
 														, mCorrectedOperationResult).sendToTarget();
 		}
 		
 		if(mOperationType == OperationType.TIME_HIGHPASS) {
 			mProcessingInterfaceHandler.obtainMessage(OperationType.TIME_HIGHPASS.getValue()
-														, mOrder
-														, -1
+														, mOperationChannel
+														, mOperationIndex
 														, mCorrectedOperationResult).sendToTarget();
 		}
 		
 		if(mOperationType == OperationType.FREQUENCY_FFT) {
 			mProcessingInterfaceHandler.obtainMessage(OperationType.FREQUENCY_FFT.getValue()
-														, mOrder
-														, -1
+														, mOperationChannel
+														, mOperationIndex
 														, mCorrectedOperationResult).sendToTarget();
 		}
 		
 		if(mOperationType == OperationType.EKG_QRS_ADAPTIVE_THRESHOLD) {
 			mProcessingInterfaceHandler.obtainMessage(OperationType.EKG_QRS_ADAPTIVE_THRESHOLD.getValue()
-														, mOrder
-														, -1
+														, mOperationChannel
+														, mOperationIndex
 														, mCorrectedOperationResult).sendToTarget();
 		}
 		
 		if(mOperationType == OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE) {
 			mProcessingInterfaceHandler.obtainMessage(OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE.getValue()
-														, mOrder
-														, -1
+														, mOperationChannel
+														, mOperationIndex
 														, mCorrectedOperationResult).sendToTarget();
 		}
 	}
@@ -194,11 +196,11 @@ public class ProcessingOperation {
 	}
 	
 	public int getChannel() {
-		return mChannel;
+		return mOperationChannel;
 	}
 
 	public void setChannel(int channel) {
-		mChannel = channel;
+		mOperationChannel = channel;
 	}
 
 	public ProcessingBuffer getProcessingBuffer() {
@@ -214,6 +216,6 @@ public class ProcessingOperation {
 	}
 
 	public int getOrder() {
-		return mOrder;
+		return mOperationIndex;
 	}
 }

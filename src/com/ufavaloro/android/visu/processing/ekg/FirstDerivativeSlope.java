@@ -9,9 +9,9 @@ import com.ufavaloro.android.visu.processing.OperationType;
 
 public class FirstDerivativeSlope extends QrsDetection {
  	
-	public FirstDerivativeSlope(OperationType operationType, double fs, int samplesPerPackage
-			,int operationOrder, Handler processingInterfaceHandler, int channel) {
-		super(operationType, fs, samplesPerPackage, operationOrder, processingInterfaceHandler, channel);
+	public FirstDerivativeSlope(OperationType operationType, int operationChannel, int operationIndex
+			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
+		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
 		// TODO Auto-generated constructor stub
 	}
 	

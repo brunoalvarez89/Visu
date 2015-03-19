@@ -50,6 +50,16 @@ public class SamplesBuffer {
 			if(mStoringIndex == mSamplesBuffer.length) mStoringIndex = 0;
 		}
 	}
+	
+	public void writeSample(short x) {
+		mSamplesBuffer[mStoringIndex] = x;
+		
+		// Incremento índices
+		mStoringIndex++;
+		
+		// Si llego al máximo, pongo índices en cero
+		if(mStoringIndex == mSamplesBuffer.length) mStoringIndex = 0;
+	}
 
 /*****************************************************************************************
 * Getters											      						         *

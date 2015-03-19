@@ -37,73 +37,66 @@ public class ProcessingInterface {
 		buffer.writeRawSample(sample);
 	}
 	
-	public synchronized void addProcessingOperation(OperationType operationType, double fs, int samplesPerPackage, int channel) {				
-		int operationNumber = 0;
-		
+	public synchronized void addProcessingOperation(OperationType operationType, double fs
+													, int samplesPerPackage, int operationChannel) {				
+		int operationIndex = 0;
 		for(int i = 0; i < mProcessingOperation.length ; i++) {
-			if(mProcessingOperation[channel][i] == null) {
-				operationNumber = i; 
+			if(mProcessingOperation[operationChannel][i] == null) {
+				operationIndex = i; 
 				break;
 			}
 		}
 		
 		if(operationType == OperationType.TIME_DERIVATIVE) {
-			int operationOrder = findOperationOrder(channel, operationType);
-			mProcessingOperation[channel][operationNumber] = (ProcessingOperation) 
-			new Derivative(operationType, fs, samplesPerPackage, operationOrder, mProcessingOperationHandler, channel);
+			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
+			new Derivative(operationType, operationChannel, operationIndex, fs, samplesPerPackage
+							, mProcessingOperationHandler);
 		}
 		
 		if(operationType == OperationType.TIME_SELF_MULTIPLY) {
-			int operationOrder = findOperationOrder(channel, operationType);
-			mProcessingOperation[channel][operationNumber] = (ProcessingOperation) 
-			new SelfMultiply(operationType, fs, samplesPerPackage, operationOrder, mProcessingOperationHandler, channel);
+			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
+			new SelfMultiply(operationType, operationChannel, operationIndex, fs, samplesPerPackage
+							, mProcessingOperationHandler);
 		}
 		
 		if(operationType == OperationType.TIME_MAF) {
-			mProcessingOperation[channel][operationNumber] = (ProcessingOperation) 
-			new MAF(operationType, fs, samplesPerPackage, 1, mProcessingOperationHandler, channel);
+			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
+			new MAF(operationType, operationChannel, operationIndex, fs, samplesPerPackage
+					, mProcessingOperationHandler);
 		}
 		
 		if(operationType == OperationType.TIME_LOWPASS) {
-			mProcessingOperation[channel][operationNumber] = (ProcessingOperation) 
-			new LowPass(operationType, fs, samplesPerPackage, 1, mProcessingOperationHandler, channel);
+			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
+			new LowPass(operationType, operationChannel, operationIndex, fs, samplesPerPackage
+						, mProcessingOperationHandler);
 		}
 		
 		if(operationType == OperationType.TIME_HIGHPASS) {
-			mProcessingOperation[channel][operationNumber] = (ProcessingOperation) 
-			new HighPass(operationType, fs, samplesPerPackage, 1, mProcessingOperationHandler, channel);
+			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
+			new HighPass(operationType, operationChannel, operationIndex, fs, samplesPerPackage
+						, mProcessingOperationHandler);
 		}
 		
 		if(operationType == OperationType.FREQUENCY_FFT) {			
-			mProcessingOperation[channel][operationNumber] = (ProcessingOperation) 
-			new FFT(operationType, fs, samplesPerPackage, 1, mProcessingOperationHandler, channel);
+			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
+			new FFT(operationType, operationChannel, operationIndex, fs, samplesPerPackage
+					, mProcessingOperationHandler);
 		}
 		
 		if(operationType == OperationType.EKG_QRS_ADAPTIVE_THRESHOLD) {
-			mProcessingOperation[channel][operationNumber] = (ProcessingOperation) 
-			new AdaptiveThreshold(operationType, fs, samplesPerPackage, 1, mProcessingOperationHandler, channel);
+			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
+			new AdaptiveThreshold(operationType, operationChannel, operationIndex, fs, samplesPerPackage
+									, mProcessingOperationHandler);
 		}
 		
 		if(operationType == OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE) {
-			mProcessingOperation[channel][operationNumber] = (ProcessingOperation) 
-			new FirstDerivativeSlope(operationType, fs, samplesPerPackage, 1, mProcessingOperationHandler, channel);
+			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
+			new FirstDerivativeSlope(operationType, operationChannel, operationIndex, fs, samplesPerPackage
+									, mProcessingOperationHandler);
 		}
 		
 	}
 
-	private synchronized int findOperationOrder(int channel, OperationType operationType) {
-		// Find derivative order
-		int operationOrder = 1;
-		for(int i = 0; i < mProcessingOperation[channel].length; i++) {
-			if(mProcessingOperation[channel][i] != null) {
-				if(mProcessingOperation[channel][i].getOperationType() == OperationType.TIME_DERIVATIVE) {
-					operationOrder++;
-				}
-			}
-		}
-		return operationOrder;
-	}
-	
 	public synchronized void removeProcessingOperation(int channel, int operationIndex) {
 	}
 	
@@ -115,8 +108,8 @@ public class ProcessingInterface {
 		mProcessingThread.onPause();
 	}
 	
-	public ProcessingOperation getOperation(int channel, int operationNumber) {
-		return mProcessingOperation[channel][operationNumber];
+	public ProcessingOperation getOperation(int channel, int operationIndex) {
+		return mProcessingOperation[channel][operationIndex];
 	}
 	
 	private class ProcessingThread extends Thread {
@@ -178,8 +171,8 @@ public class ProcessingInterface {
 		public void handleMessage(Message msg) {
 		
 			Object operationResult = msg.obj;
-			int operationOrder = msg.arg1;
-			int nothing = msg.arg2;
+			int operationChannel = msg.arg1;
+			int operationIndex = msg.arg2;
 			
 			// Tipo de mensaje recibido
 			OperationType operationType = OperationType.values(msg.what);
@@ -188,57 +181,57 @@ public class ProcessingInterface {
 				
 				case TIME_DERIVATIVE:
 					mMainInterfaceHandler.obtainMessage(OperationType.TIME_DERIVATIVE.getValue()
-														, operationOrder
-														, nothing
+														, operationChannel
+														, operationIndex
 														, operationResult).sendToTarget();
 					break;
 					
 				case TIME_SELF_MULTIPLY:
 					mMainInterfaceHandler.obtainMessage(OperationType.TIME_SELF_MULTIPLY.getValue()
-														, operationOrder
-														, nothing
+														, operationChannel
+														, operationIndex
 														, operationResult).sendToTarget();					
 					break;
 				
 				case TIME_MAF:
 					mMainInterfaceHandler.obtainMessage(OperationType.TIME_MAF.getValue()
-														, operationOrder
-														, nothing
+														, operationChannel
+														, operationIndex
 														, operationResult).sendToTarget();	
 					break;
 					
 				case TIME_LOWPASS:
 					mMainInterfaceHandler.obtainMessage(OperationType.TIME_LOWPASS.getValue()
-														, operationOrder
-														, nothing
+														, operationChannel
+														, operationIndex
 														, operationResult).sendToTarget();	
 					break;
 					
 				case TIME_HIGHPASS:
 					mMainInterfaceHandler.obtainMessage(OperationType.TIME_HIGHPASS.getValue()
-														, operationOrder
-														, nothing
+														, operationChannel
+														, operationIndex
 														, operationResult).sendToTarget();	
 					break;
 					
 				case FREQUENCY_FFT:
 					mMainInterfaceHandler.obtainMessage(OperationType.FREQUENCY_FFT.getValue()
-														, operationOrder
-														, nothing
+														, operationChannel
+														, operationIndex
 														, operationResult).sendToTarget();					
 					break;
 					
 				case EKG_QRS_ADAPTIVE_THRESHOLD:
 					mMainInterfaceHandler.obtainMessage(OperationType.EKG_QRS_ADAPTIVE_THRESHOLD.getValue()
-														, operationOrder
-														, nothing
+														, operationChannel
+														, operationIndex
 														, operationResult).sendToTarget();					
 					break;
 					
 				case EKG_QRS_FIRST_DERIVATIVE_SLOPE:
 					mMainInterfaceHandler.obtainMessage(OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE.getValue()
-														, operationOrder
-														, nothing
+														, operationChannel
+														, operationIndex
 														, operationResult).sendToTarget();					
 					break;
 					
