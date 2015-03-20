@@ -20,6 +20,9 @@ public class ProcessingOperation {
 	protected double[] mMinValues;
 	protected double[] mMaxValues;
 	protected double mMeanValue;
+	
+	protected double mFs;
+	protected double mTs;
 		
 	private boolean mLog = false;
 	
@@ -30,6 +33,8 @@ public class ProcessingOperation {
 	mOperationIndex = operationIndex;
 	mProcessingInterfaceHandler = processingInterfaceHandler;
 	mOperationResult = 0;
+	mFs = fs;
+	mTs = 1 / mFs;
 	
 	mMinValues = new double[2];
 	mMaxValues = new double[2];

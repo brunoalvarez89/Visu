@@ -1,6 +1,7 @@
 package com.ufavaloro.android.visu.processing.ekg;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.ufavaloro.android.visu.processing.OperationType;
 
@@ -28,8 +29,4 @@ public class FirstDerivativeSlope extends QrsDetection {
 		}
 	}
 	
-	@Override
-	public void operate() {
-		estimateQrs();
-	}
 }

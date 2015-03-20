@@ -66,7 +66,7 @@ public class ProcessingBuffer {
 		return mProcessingIndex;
 	}
 	
-	public int getSize() {
+	public int size() {
 		return mRawSamplesBuffer.length;
 	}
 	

@@ -55,7 +55,6 @@ public class MainInterface {
 	// Activity Context (needed for Google Drive API)
 	private MainActivity mMainActivity;
 	private Handler mMainActivityHandler;
-
 	
 	/**
 	 * Constructor.
@@ -265,7 +264,7 @@ Connection Interface Event Handling
  			mDrawInterface.addChannel(onlineStudyData[i], true);
 		}
  		
- 		addProcessingOperations();
+ 		//addProcessingOperations();
  		
 		mDrawInterface.onlineDrawBuffersOk = true;
 		mDrawInterface.startDrawing();

@@ -1,5 +1,6 @@
 package com.ufavaloro.android.visu.connection.protocol;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
@@ -8,11 +9,11 @@ import com.ufavaloro.android.visu.connection.bluetooth.BluetoothConnection;
 import com.ufavaloro.android.visu.storage.datatypes.AdcData;
 
 import android.annotation.SuppressLint;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.SparseArray;
-
 
 public class Protocol extends Thread {
 
@@ -28,7 +29,7 @@ public class Protocol extends Thread {
 	private double mPackageCount;
 	private double mReceivedPackages;
 	private byte[] mPackageNumberByteBuffer = new byte[Double.SIZE/8];
-	private boolean mLog = false;
+	private boolean mLog = true;
 	
 /*****************************************************************************************
 * Variables de control													   				 *
@@ -180,6 +181,7 @@ public class Protocol extends Thread {
 			newSample(shortSample[0]);
 		}
 	}
+	
 	// Método que parsea los datos arrays con los datos obtenidos del ADC
 	public void createAdcInfo(double[] voltages, double[] amplitudes, double[] fs, int[] bits) {
 			
@@ -427,11 +429,11 @@ public class Protocol extends Thread {
 					mPackageNumberByteCount++;
 					if(mPackageNumberByteCount == Double.SIZE/8) {
 						ByteBuffer auxBuffer = ByteBuffer.wrap(mPackageNumberByteBuffer);
+						
 						mPackageCount = auxBuffer.getDouble();
 						if(mLog) Log.d("Bluetooth Reception", "Paquete: " + mPackageCount);
-						
 						mReceivedPackages++;
-						if(mLog) Log.d("Bluetooth Reception", "Contador: " + mReceivedPackages);
+						//if(mLog) Log.d("Bluetooth Reception", "Contador: " + mReceivedPackages);
 						
 						mStatus = WAITING_FOR_CONTROL;
 						mSamplesBufferByteCount = 0;
