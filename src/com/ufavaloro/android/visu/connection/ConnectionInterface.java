@@ -153,7 +153,7 @@ public class ConnectionInterface {
 					
 				case ADC_DATA:
 					AdcData[] adcData = (AdcData[]) msg.obj;
-					mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.CONFIGURED.getValue()
+					mMainInterfaceHandler.obtainMessage(ConnectionInterfaceMessage.ADC_DATA.getValue()
 														, -1
 														, protocolIndex
 														, adcData).sendToTarget();

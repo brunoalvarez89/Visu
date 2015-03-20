@@ -196,7 +196,7 @@ Connection Interface Event Handling
 					onBluetoothDisconnected();
 					break;
 					
-				case CONFIGURED:
+				case ADC_DATA:
 					AdcData[] adcData = (AdcData[]) msg.obj;
 					onAdcData(adcData);
 					break;
@@ -224,16 +224,14 @@ Connection Interface Event Handling
  		if(mDrawInterface.onlineDrawBuffersOk == true) mDrawInterface.drawSamples(samples, channel);
 		if(mStorageInterface.recording == true) mStorageInterface.setSamples(onlineStudyData[channel], samples);
 		
-		mProcessingInterface.writeSamples(samples, channel, 0);
+		//mProcessingInterface.writeSamples(samples, channel, 0);
  	}
 
  	private void onNewSample(short sample, int channel) {
  		if(mDrawInterface.onlineDrawBuffersOk == true) mDrawInterface.drawSample(sample, channel);
 		if(mStorageInterface.recording == true) mStorageInterface.setSample(onlineStudyData[channel], sample);
 		
-		if(mProcessingInterface.getOperation(channel, 0) != null) {
-			mProcessingInterface.writeSample(sample, channel, 0);
-		}
+		//mProcessingInterface.writeSample(sample, channel, 0);	
  	}
  	
  	private void onBluetoothConnected() {
@@ -265,7 +263,7 @@ Connection Interface Event Handling
  			mDrawInterface.addChannel(onlineStudyData[i], true);
 		}
  		
- 		addProcessingOperations();
+ 		//addProcessingOperations();
  		
 		mDrawInterface.onlineDrawBuffersOk = true;
 		mDrawInterface.startDrawing();

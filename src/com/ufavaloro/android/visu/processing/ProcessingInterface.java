@@ -109,8 +109,13 @@ public class ProcessingInterface {
 	}
 	
 	public ProcessingOperation getOperation(int channel, int operationIndex) {
+		if(mProcessingOperation[channel][operationIndex] != null) {
 		return mProcessingOperation[channel][operationIndex];
+		} else {
+			return null;
+		}
 	}
+	
 	
 	private class ProcessingThread extends Thread {
 		

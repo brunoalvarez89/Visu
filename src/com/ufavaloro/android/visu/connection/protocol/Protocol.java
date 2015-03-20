@@ -22,13 +22,12 @@ public class Protocol extends Thread {
 	// Handler to Connection Interface
 	private Handler mConnectionInterfaceHandler;
 	private int mProtocolIndex;
-	
 	private boolean mDebugMode = true;
 	private int mPackageNumberByteCount = 0;
 	private double mPackageCount;
 	private double mReceivedPackages;
 	private byte[] mPackageNumberByteBuffer = new byte[Double.SIZE/8];
-	private boolean mLog = false;
+	private boolean mLog = true;
 	
 /*****************************************************************************************
 * Variables de control													   				 *
@@ -180,6 +179,7 @@ public class Protocol extends Thread {
 			newSample(shortSample[0]);
 		}
 	}
+	
 	// Método que parsea los datos arrays con los datos obtenidos del ADC
 	public void createAdcInfo(double[] voltages, double[] amplitudes, double[] fs, int[] bits) {
 			
