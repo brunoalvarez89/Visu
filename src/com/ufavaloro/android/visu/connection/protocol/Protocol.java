@@ -23,8 +23,7 @@ public class Protocol extends Thread {
 	// Handler to Connection Interface
 	private Handler mConnectionInterfaceHandler;
 	private int mProtocolIndex;
-	
-	private boolean mDebugMode = true;
+	private boolean mDebugMode = false;
 	private int mPackageNumberByteCount = 0;
 	private double mPackageCount;
 	private double mReceivedPackages;
@@ -431,7 +430,12 @@ public class Protocol extends Thread {
 						ByteBuffer auxBuffer = ByteBuffer.wrap(mPackageNumberByteBuffer);
 						
 						mPackageCount = auxBuffer.getDouble();
+<<<<<<< HEAD
 						if(mLog) Log.d("Bluetooth Reception", "Paquete: " + mPackageCount);
+=======
+						//if(mLog) Log.d("Bluetooth Reception", "Paquete: " + mPackageCount);
+						
+>>>>>>> 5a418c789175de20bbacbe828f5ef9f57c600d46
 						mReceivedPackages++;
 						//if(mLog) Log.d("Bluetooth Reception", "Contador: " + mReceivedPackages);
 						

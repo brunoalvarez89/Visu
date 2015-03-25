@@ -10,6 +10,9 @@ import com.ufavaloro.android.visu.processing.OperationType;
 
 public class FirstDerivativeSlope extends QrsDetection {
  	
+	double mX2;
+	double mX1;
+	
 	public FirstDerivativeSlope(OperationType operationType, int operationChannel, int operationIndex
 			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
 		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
@@ -17,12 +20,12 @@ public class FirstDerivativeSlope extends QrsDetection {
 	}
 	
 	@Override
-	protected void estimateQrs() {
-		int index = mProcessingBuffer.getProcessingIndex();
-		double x2 = mProcessingBuffer.getProcessingBufferSample(index);
-		double x1 = mProcessingBuffer.getProcessingBufferSample(index-1);
+	public void estimateQrs() {
+		mProcessingIndex = mProcessingBuffer.getProcessingIndex();
+		mX2 = mProcessingBuffer.getProcessingBufferSample(mProcessingIndex);
+		mX1 = mProcessingBuffer.getProcessingBufferSample(mProcessingIndex-1);
 		
-		if(x2 < mMeanValue && x1 > mMeanValue) { 
+		if(mX2 < mMeanValue && mX1 > mMeanValue) { 
 			mOperationResult = 1;	
 		} else {
 			mOperationResult = 0;

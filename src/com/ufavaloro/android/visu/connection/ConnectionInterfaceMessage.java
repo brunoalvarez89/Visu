@@ -5,7 +5,7 @@ public enum ConnectionInterfaceMessage {
 	NULL(-1),
 	CONNECTED(1),
 	DISCONNECTED(2),
-	CONFIGURED(3),
+	ADC_DATA(3),
 	NEW_SAMPLES_BATCH(4),
 	NEW_SAMPLE(5);
 	
@@ -19,7 +19,7 @@ public enum ConnectionInterfaceMessage {
 		switch(what){
 		case 1: return CONNECTED;
 		case 2: return DISCONNECTED;
-		case 3: return CONFIGURED;
+		case 3: return ADC_DATA;
 		case 4: return NEW_SAMPLES_BATCH;
 		case 5: return NEW_SAMPLE;
 		

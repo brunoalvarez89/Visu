@@ -1,9 +1,11 @@
-package com.ufavaloro.android.visu.draw.channel;
+package com.ufavaloro.android.visu.draw.channel.infobox;
 
 import java.util.ArrayList;
 
 import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.draw.RGB;
+import com.ufavaloro.android.visu.draw.channel.Label;
+import com.ufavaloro.android.visu.draw.channel.ScreenBitmap;
 import com.ufavaloro.android.visu.main.StudyType;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 
@@ -15,7 +17,7 @@ import android.graphics.Rect;
 
 public class InfoBox{
 	
-	protected StudyData studyData;
+	public StudyData studyData;
 	
 	// Ancho y Alto
 	private static float mWidth;
@@ -64,7 +66,7 @@ public class InfoBox{
 	// Application Context (needed for decodifying bitmaps)
 	private Context mContext;
 	
-	InfoBox(int channelNumber, Context context, StudyData studyData) {
+	public InfoBox(int channelNumber, Context context, StudyData studyData) {
 		this.studyData = studyData;
 		mContext = context;
 		mAdcChannelNumber = channelNumber;
@@ -76,7 +78,7 @@ public class InfoBox{
 	}
 	
 	// Cuando se agrega o elimina un canal, se redimensionan los boxes
-	protected void update(int height, int channelIndex) {
+	public void update(int height, int channelIndex) {
 		
 		setHeight(height);
 		setChannelIndex(channelIndex);
@@ -108,7 +110,7 @@ public class InfoBox{
 	}
 
 	// Channel Label
-	protected void createChannelLabel() {
+	public void createChannelLabel() {
 		String channelLabel;
 		char[] studyType =  studyData.getAcquisitionData().getStudyType();
 		if(studyType[0] != 0) {
@@ -145,16 +147,28 @@ public class InfoBox{
 	protected void createPatientLabel() {
 		String patientLabel;
 		if(studyData.getPatientData() != null) {
-			String patientName = String.valueOf(studyData.getPatientData().getPatientName());
-			patientName = patientName.trim().replace('_', ' ');
+			String patientName = "";
+			String patientSurname ="";
+			if(studyData.getPatientData().getPatientName() != null) {
+				patientName = String.valueOf(studyData.getPatientData().getPatientName());
+				patientName = patientName.trim().replace('_', ' ');
+			} else {
+				patientName = "";
+			}
 			
-			String patientSurname = String.valueOf(studyData.getPatientData().getPatientSurname());
-			patientSurname = patientSurname.trim().replace('_', ' ');
+			if(studyData.getPatientData().getPatientSurname() != null) {
+				patientSurname = String.valueOf(studyData.getPatientData().getPatientSurname());
+				patientSurname = patientSurname.trim().replace('_', ' ');
+			} else {
+				patientSurname = "";
+			}
 			
 			patientLabel = String.valueOf(patientSurname) + ", " + String.valueOf(patientName);
+		
 		} else {
 			patientLabel = "Sin Paciente";
 		}
+		
 		mPatientLabel = new Label(0, 0, 0, patientLabel);
 	}
 	

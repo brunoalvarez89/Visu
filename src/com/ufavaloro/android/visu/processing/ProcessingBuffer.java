@@ -78,54 +78,68 @@ public class ProcessingBuffer {
 		int length = mRawSamplesBuffer.length;
 		// Inicializo un índice dummy
 		int newIndex = 0;
+		boolean flag = false;
 		
 		// Si el índice es negativo
 		if(index < 0) {
 			// Le sumo el largo del Buffer
 			newIndex = index + length;
-		}
+			if(newIndex < 0) flag = true;
+		} else
 		
 		// Si el índice está en el rango permitido
 		if(index <= length - 1 && index >= 0) { 
 			// No hago nada
 			newIndex = index;
-		}
+		} else
 		
 		// Si el índice es mayor al largo total
 		if(index > length - 1) { 
 			// Le resto el índice al largo total
 			newIndex = index - length;
+			if(newIndex > length - 1) flag = true;
 		}
 		
 		// Devuelvo muestra
-		return mRawSamplesBuffer[newIndex];
+		if(flag == false) {
+			return mRawSamplesBuffer[newIndex];
+		} else {
+			return getRawSample(newIndex);
+		}
 	}
 
 	public short getProcessingBufferSample(int index) {
 		int length = mProcessingSamplesBuffer.length;
 		// Inicializo un índice dummy
 		int newIndex = 0;
+		boolean flag = false;
 		
 		// Si el índice es negativo
 		if(index < 0) {
 			// Le sumo el largo del Buffer
 			newIndex = index + length;
-		}
+			if(newIndex < 0) flag = true;
+		} else
 		
 		// Si el índice está en el rango permitido
 		if(index <= length - 1 && index >= 0) { 
 			// No hago nada
 			newIndex = index;
-		}
+		} else
 		
 		// Si el índice es mayor al largo total
 		if(index > length - 1) { 
 			// Le resto el índice al largo total
 			newIndex = index - length;
+			if(newIndex > length - 1) flag = true;
 		}
 		
 		// Devuelvo muestra
-		return mProcessingSamplesBuffer[newIndex];
+		if(flag == false) {
+			return mProcessingSamplesBuffer[newIndex];
+		} else {
+			return getProcessingBufferSample(newIndex);
+		}
 	}
 
 	public short[] getProcessingSamplesBuffer() {

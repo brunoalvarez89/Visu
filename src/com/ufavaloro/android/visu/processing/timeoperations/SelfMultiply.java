@@ -14,11 +14,10 @@ public class SelfMultiply extends ProcessingOperation {
 	}
 
 	public void selfMultiply() {
-		int index = mProcessingBuffer.getProcessingIndex();
+		mProcessingIndex = mProcessingBuffer.getProcessingIndex();
 		
-		int x = mProcessingBuffer.getProcessingBufferSample(index);
-
-		mOperationResult = x*x;
+		mOperationResult = mProcessingBuffer.getProcessingBufferSample(mProcessingIndex)
+							* mProcessingBuffer.getProcessingBufferSample(mProcessingIndex);;
 	}
 	
 	@Override

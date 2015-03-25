@@ -17,6 +17,7 @@ import com.ufavaloro.android.visu.connection.protocol.Protocol;
 import com.ufavaloro.android.visu.connection.protocol.ProtocolMessage;
 import com.ufavaloro.android.visu.draw.DrawInterface;
 import com.ufavaloro.android.visu.processing.OperationType;
+import com.ufavaloro.android.visu.processing.ParameterName;
 import com.ufavaloro.android.visu.processing.ProcessingInterface;
 import com.ufavaloro.android.visu.processing.ProcessingOperation;
 import com.ufavaloro.android.visu.storage.SamplesBuffer;
@@ -195,7 +196,7 @@ Connection Interface Event Handling
 					onBluetoothDisconnected();
 					break;
 					
-				case CONFIGURED:
+				case ADC_DATA:
 					AdcData[] adcData = (AdcData[]) msg.obj;
 					onAdcData(adcData);
 					break;
@@ -223,16 +224,14 @@ Connection Interface Event Handling
  		if(mDrawInterface.onlineDrawBuffersOk == true) mDrawInterface.drawSamples(samples, channel);
 		if(mStorageInterface.recording == true) mStorageInterface.setSamples(onlineStudyData[channel], samples);
 		
-		mProcessingInterface.writeSamples(samples, channel, 0);
+		//mProcessingInterface.writeSamples(samples, channel, 0);
  	}
 
  	private void onNewSample(short sample, int channel) {
  		if(mDrawInterface.onlineDrawBuffersOk == true) mDrawInterface.drawSample(sample, channel);
 		if(mStorageInterface.recording == true) mStorageInterface.setSample(onlineStudyData[channel], sample);
 		
-		if(mProcessingInterface.getOperation(channel, 0) != null) {
-			mProcessingInterface.writeSample(sample, channel, 0);
-		}
+		if(channel == 0) mProcessingInterface.writeSample(sample, channel, 0);	
  	}
  	
  	private void onBluetoothConnected() {
@@ -381,6 +380,10 @@ Processing Operation Interface Event Handling
 					onTimeHighPass(operationResult, operationChannel, operationIndex);
 					break;
 					
+				case TIME_MOVING_AVERAGE:
+					onTimeMovingAverage(operationResult, operationChannel, operationIndex);
+					break;
+					
 				case FREQUENCY_FFT:
 					onFFT(operationResult, operationChannel, operationIndex);
 					break;
@@ -409,53 +412,86 @@ Processing Operation Interface Event Handling
 
 	private void onTimeDerivative(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult); 
- 		mProcessingInterface.writeSample(adaptedResult, 0, 1);
- 		mDrawInterface.drawSample(adaptedResult, 1);
+ 		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
+ 		//mDrawInterface.drawSample(adaptedResult, operationIndex+1);
  	}
  	
  	private void onSelfMultiply(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult); 
+ 		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
+ 		//mDrawInterface.drawSample(adaptedResult, operationIndex+1);
  	}
  	
  	private void onFFT(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult); 
+ 		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
+ 		//mDrawInterface.drawSample(adaptedResult, operationIndex+1);
  	}
  	
  	private void onQrsAdaptiveThreshold(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult);
- 		mDrawInterface.drawSample(adaptedResult, 3);
+ 		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
+ 		mDrawInterface.drawSample(adaptedResult, operationIndex+1);
+ 		if(operationResult == 1)  {
+ 			mDrawInterface.heartBeat(operationChannel);
+ 			double bpm = mProcessingInterface.getOperation(operationChannel, operationIndex)
+ 												.getParameter(ParameterName.BPM);
+ 		}
  	}
  	
  	private void onQrsFirstDerivativeSlope(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult); 
- 		mDrawInterface.drawSample(adaptedResult, 2);
- 		if(operationResult == 1) mDrawInterface.heartBeat(operationChannel);
+ 		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
+ 		//mDrawInterface.drawSample(adaptedResult, operationIndex+1);
  	}
  	
  	private void onTimeMAF(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult); 
  		mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
- 		//mDrawInterface.drawSample(adaptedResult, 2);
+ 		mDrawInterface.drawSample(adaptedResult, operationIndex+1);
  	}
 	
 	private void onTimeLowPass(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult);
- 		//mProcessingInterface.writeSample(adaptedResult, 0, 2);
- 		//mDrawInterface.drawSample(adaptedResult, 1);
+ 		mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
+ 		mDrawInterface.drawSample(adaptedResult, operationIndex+1);
 	}
 	
 	private void onTimeHighPass(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult);
- 		//mProcessingInterface.writeSample(adaptedResult, 0, 2);
- 		mDrawInterface.drawSample(adaptedResult, 1);
+ 		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
+ 		//mDrawInterface.drawSample(adaptedResult, operationIndex+1);
+	}
+	
+	private void onTimeMovingAverage(double operationResult, int operationChannel, int operationIndex) {
+ 		short adaptedResult = adaptResult(operationResult);
+ 		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
+ 		//mDrawInterface.drawSample(adaptedResult, operationIndex+1);
 	}
 
 	private void addProcessingOperations() {
 		int channel = 0;
 		double fs = onlineStudyData[channel].getAcquisitionData().getFs();
 		int samplesPerPackage = onlineStudyData[channel].getAcquisitionData().getSamplesPerPackage();
+		
+		/*
 		mProcessingInterface.addProcessingOperation(OperationType.TIME_DERIVATIVE, fs, samplesPerPackage, channel);
-		mProcessingInterface.addProcessingOperation(OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE, fs, samplesPerPackage, channel);
- 		//mDrawInterface.addChannel(onlineStudyData[0], true);
+		mDrawInterface.addChannel(onlineStudyData[channel], true);
+ 		mProcessingInterface.addProcessingOperation(OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE, fs, samplesPerPackage, channel);
+		mDrawInterface.addChannel(onlineStudyData[channel], true);
+		*/
+		
+		mProcessingInterface.addProcessingOperation(OperationType.TIME_MAF, fs, samplesPerPackage, channel);
+		mDrawInterface.addChannel(onlineStudyData[0], true);
+ 		
+		mProcessingInterface.addProcessingOperation(OperationType.TIME_LOWPASS, fs, samplesPerPackage, channel);
+		mDrawInterface.addChannel(onlineStudyData[0], true);
+		
+		mProcessingInterface.addProcessingOperation(OperationType.EKG_QRS_ADAPTIVE_THRESHOLD, fs, samplesPerPackage, channel);
+		mDrawInterface.addChannel(onlineStudyData[0], true);
+
+		mDrawInterface.getChannels().update();
+
 	}
+
 }//MainInterface

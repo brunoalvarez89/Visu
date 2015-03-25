@@ -16,13 +16,13 @@ public class HighPass extends ProcessingOperation {
 	}
 
 	private void highPass() {
-		int index = mProcessingBuffer.getProcessingIndex();
+		mProcessingIndex = mProcessingBuffer.getProcessingIndex();
 
 		mOperationResult = y_prev
-							- (1/32) * mProcessingBuffer.getProcessingBufferSample(index)
-							+ mProcessingBuffer.getProcessingBufferSample(index-16)
-							- mProcessingBuffer.getProcessingBufferSample(index-17)
-							+ (1/32) * mProcessingBuffer.getProcessingBufferSample(index-32);
+							- (1/32) * mProcessingBuffer.getProcessingBufferSample(mProcessingIndex)
+							+ mProcessingBuffer.getProcessingBufferSample(mProcessingIndex-16)
+							- mProcessingBuffer.getProcessingBufferSample(mProcessingIndex-17)
+							+ (1/32) * mProcessingBuffer.getProcessingBufferSample(mProcessingIndex-32);
 	
 		y_prev = mOperationResult;
 							

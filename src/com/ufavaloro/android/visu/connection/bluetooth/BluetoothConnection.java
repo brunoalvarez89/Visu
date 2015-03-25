@@ -21,6 +21,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 
 
@@ -485,9 +486,14 @@ public class BluetoothConnection extends Connection {
 		// Flag de pausa
 		private boolean mPaused = false;
 		
-		// Byte que recibo
-		@SuppressWarnings("unused")
-		int mmByte;
+		private int mmReadBytes;
+		private int mmAvailableBytes;
+		private int mmDeltaBytes;
+		
+		private StringBuilder mmStringBuilder = new StringBuilder();
+		private long mmCurrentTime;
+		private long mmPreviousTime;
+		private long mmDeltaTime;
 		
 		// Thread.run()
 		public void run() {
@@ -515,16 +521,31 @@ public class BluetoothConnection extends Connection {
 						}
 					}
 
-					// Leo InputStream
-					mmByte = mmInputStream.read(mmInputBuffer);
+					/* DEBUG
+					mmAvailableBytes = mmInputStream.available();
+					mmCurrentTime = System.currentTimeMillis();
+					mmDeltaTime = mmCurrentTime - mmPreviousTime;
+					mmPreviousTime = mmCurrentTime;
 					
+					mmStringBuilder.append(mmDeltaTime);
+					mmStringBuilder.append("\n");
+					mmStringBuilder.append(mmAvailableBytes);
+					mmStringBuilder.append("\n");
+										
+					mmDeltaBytes = mmAvailableBytes - mmReadBytes;
+					*/
+					
+					// Lectura de puerto
+					mmReadBytes = mmInputStream.read(mmInputBuffer);
 					// Envio los Bytes recibidos a la UI mediante el Handler
 					// @param Object = datos
 					// @param arg1 = canal
-					mConnectionInterfaceHandler.obtainMessage(ConnectionMessage.NEW_SAMPLE.getValue()
-											, -1 
-											, mConnectionIndex
-											, mmInputBuffer[0]).sendToTarget();
+					//for(int i = 0; i < mmReadBytes; i++) {
+						mConnectionInterfaceHandler.obtainMessage(ConnectionMessage.NEW_SAMPLE.getValue()
+												, -1 
+												, mConnectionIndex
+												, mmInputBuffer[0]).sendToTarget();
+					//}
 				
 				}// Desconexión! 
 				 catch (IOException e) { 
@@ -537,6 +558,9 @@ public class BluetoothConnection extends Connection {
 				
 					// Informo
 					mConnectionInterfaceHandler.obtainMessage(ConnectionMessage.DISCONNECTED.getValue()).sendToTarget();
+					
+					// Muestro tiempos de lectura de mmInputStream
+					Log.d("", mmStringBuilder.toString());
 					break; 
 				}	
 			}//while
