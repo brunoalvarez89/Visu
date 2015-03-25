@@ -8,6 +8,7 @@ import com.ufavaloro.android.visu.processing.timeoperations.HighPass;
 import com.ufavaloro.android.visu.processing.timeoperations.LowPass;
 import com.ufavaloro.android.visu.processing.timeoperations.MAF;
 import com.ufavaloro.android.visu.processing.timeoperations.SelfMultiply;
+import com.ufavaloro.android.visu.processing.timeoperations.MovingAverage;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
@@ -74,6 +75,12 @@ public class ProcessingInterface {
 		if(operationType == OperationType.TIME_HIGHPASS) {
 			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
 			new HighPass(operationType, operationChannel, operationIndex, fs, samplesPerPackage
+						, mProcessingOperationHandler);
+		}
+		
+		if(operationType == OperationType.TIME_MOVING_AVERAGE) {
+			mProcessingOperation[operationChannel][operationIndex] = (ProcessingOperation) 
+			new MovingAverage(operationType, operationChannel, operationIndex, fs, samplesPerPackage
 						, mProcessingOperationHandler);
 		}
 		
@@ -219,6 +226,13 @@ public class ProcessingInterface {
 														, operationResult).sendToTarget();	
 					break;
 					
+				case TIME_MOVING_AVERAGE:
+					mMainInterfaceHandler.obtainMessage(OperationType.TIME_MOVING_AVERAGE.getValue()
+														, operationChannel
+														, operationIndex
+														, operationResult).sendToTarget();	
+					break;
+					
 				case FREQUENCY_FFT:
 					mMainInterfaceHandler.obtainMessage(OperationType.FREQUENCY_FFT.getValue()
 														, operationChannel
@@ -230,7 +244,7 @@ public class ProcessingInterface {
 					mMainInterfaceHandler.obtainMessage(OperationType.EKG_QRS_ADAPTIVE_THRESHOLD.getValue()
 														, operationChannel
 														, operationIndex
-														, operationResult).sendToTarget();					
+														, operationResult).sendToTarget();	
 					break;
 					
 				case EKG_QRS_FIRST_DERIVATIVE_SLOPE:

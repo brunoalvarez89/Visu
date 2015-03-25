@@ -13,12 +13,12 @@ public class Derivative extends ProcessingOperation {
 	}
 
 	public void derivative() {
-		int index = mProcessingBuffer.getProcessingIndex();
+		mProcessingIndex = mProcessingBuffer.getProcessingIndex();
 		
-		int x2 = mProcessingBuffer.getProcessingBufferSample(index);
+		int x2 = mProcessingBuffer.getProcessingBufferSample(mProcessingIndex);
 		//Log.d("", "y2: " + String.valueOf(y2));
 		
-		int x1 = mProcessingBuffer.getProcessingBufferSample(index-2);
+		int x1 = mProcessingBuffer.getProcessingBufferSample(mProcessingIndex-2);
 		//Log.d("", "y1: " + String.valueOf(y1));
 
 		mOperationResult = (x2 - x1)/2;

@@ -8,7 +8,7 @@ public abstract class ScreenElement {
 	protected float x;
 	protected float y;
 	protected float mHeight;
-	protected float mWidth;
+	public float mWidth;
 	protected Rect mBoundingBox;
 	
 	public float getX() {

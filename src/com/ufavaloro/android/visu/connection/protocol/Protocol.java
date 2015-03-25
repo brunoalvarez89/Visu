@@ -22,7 +22,7 @@ public class Protocol extends Thread {
 	// Handler to Connection Interface
 	private Handler mConnectionInterfaceHandler;
 	private int mProtocolIndex;
-	private boolean mDebugMode = true;
+	private boolean mDebugMode = false;
 	private int mPackageNumberByteCount = 0;
 	private double mPackageCount;
 	private double mReceivedPackages;
@@ -428,10 +428,10 @@ public class Protocol extends Thread {
 					if(mPackageNumberByteCount == Double.SIZE/8) {
 						ByteBuffer auxBuffer = ByteBuffer.wrap(mPackageNumberByteBuffer);
 						mPackageCount = auxBuffer.getDouble();
-						if(mLog) Log.d("Bluetooth Reception", "Paquete: " + mPackageCount);
+						//if(mLog) Log.d("Bluetooth Reception", "Paquete: " + mPackageCount);
 						
 						mReceivedPackages++;
-						if(mLog) Log.d("Bluetooth Reception", "Contador: " + mReceivedPackages);
+						//if(mLog) Log.d("Bluetooth Reception", "Contador: " + mReceivedPackages);
 						
 						mStatus = WAITING_FOR_CONTROL;
 						mSamplesBufferByteCount = 0;

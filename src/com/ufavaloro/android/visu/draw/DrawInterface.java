@@ -8,10 +8,10 @@ package com.ufavaloro.android.visu.draw;
 import com.ufavaloro.android.visu.R;
 import com.ufavaloro.android.visu.draw.channel.Channel;
 import com.ufavaloro.android.visu.draw.channel.ChannelList;
-import com.ufavaloro.android.visu.draw.channel.InfoBox;
 import com.ufavaloro.android.visu.draw.channel.Label;
 import com.ufavaloro.android.visu.draw.channel.ScreenBitmap;
 import com.ufavaloro.android.visu.draw.channel.SignalBox;
+import com.ufavaloro.android.visu.draw.channel.infobox.InfoBox;
 import com.ufavaloro.android.visu.storage.datatypes.StudyData;
 import com.ufavaloro.android.visu.userinterface.MainActivity;
 
@@ -480,7 +480,7 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 			
 			label = channel.getInfoBox().getParameterLabel();
 			mPaint.setTextSize(label.getTextSize());
-			canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
+			//canvas.drawText(label.getText(), label.getX(), label.getY(), mPaint);
 						
 
 			// Dibujo Label de Pausa

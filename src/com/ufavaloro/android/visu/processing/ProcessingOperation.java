@@ -1,5 +1,7 @@
 package com.ufavaloro.android.visu.processing;
 
+import com.ufavaloro.android.visu.processing.ekg.QrsDetection;
+
 import android.os.Handler;
 import android.util.Log;
 
@@ -10,6 +12,7 @@ public class ProcessingOperation {
 	protected int mOperationIndex;
 	
 	protected ProcessingBuffer mProcessingBuffer;
+	protected int mProcessingIndex;
 	protected boolean mIsProcessing;
 
 	protected Handler mProcessingInterfaceHandler;
@@ -21,6 +24,9 @@ public class ProcessingOperation {
 	protected double[] mMaxValues;
 	protected double mMeanValue;
 		
+	protected double mFs;
+	protected double mTs;
+	
 	private boolean mLog = false;
 	
 	public ProcessingOperation(OperationType operationType, int operationChannel, int operationIndex
@@ -34,8 +40,10 @@ public class ProcessingOperation {
 	mMinValues = new double[2];
 	mMaxValues = new double[2];
 	
-	mProcessingBuffer = new ProcessingBuffer(samplesPerPackage*100);
+	mProcessingBuffer = new ProcessingBuffer(samplesPerPackage*10);
 	
+	mFs = fs;
+	mTs = 1 / fs;
 	}
 	
 	public void nextOperation() {
@@ -53,8 +61,11 @@ public class ProcessingOperation {
 	public void increaseProcessingIndex() {
 		mProcessingBuffer.increaseProcessingIndex();
 		if(mProcessingBuffer.getProcessingIndex() == 0) {
-			//mMinValues = new double[2];
-			//mMaxValues = new double[2];
+			double alpha = 1 - Math.random()*0.15;
+			mMinValues[0] = alpha*mMinValues[0];
+			mMinValues[1] = alpha*mMinValues[1];
+			mMaxValues[0] = alpha*mMaxValues[0];
+			mMaxValues[1] = alpha*mMaxValues[1];
 		}
 	}
 	
@@ -75,7 +86,6 @@ public class ProcessingOperation {
 		}
 		
 		if(mOperationType == OperationType.TIME_MAF) {
-	 		 Log.d("", "MAF: " + mOperationResult);
 			mProcessingInterfaceHandler.obtainMessage(OperationType.TIME_MAF.getValue()
 														, mOperationChannel
 														, mOperationIndex
@@ -91,6 +101,13 @@ public class ProcessingOperation {
 		
 		if(mOperationType == OperationType.TIME_HIGHPASS) {
 			mProcessingInterfaceHandler.obtainMessage(OperationType.TIME_HIGHPASS.getValue()
+														, mOperationChannel
+														, mOperationIndex
+														, mCorrectedOperationResult).sendToTarget();
+		}
+		
+		if(mOperationType == OperationType.TIME_MOVING_AVERAGE) {
+			mProcessingInterfaceHandler.obtainMessage(OperationType.TIME_MOVING_AVERAGE.getValue()
 														, mOperationChannel
 														, mOperationIndex
 														, mCorrectedOperationResult).sendToTarget();
@@ -118,7 +135,23 @@ public class ProcessingOperation {
 		}
 	}
 
-	public void correctSample() {		
+	public double getParameter(ParameterName parameterName) {
+		
+		if(mOperationType == OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE
+			|| mOperationType == OperationType.EKG_QRS_ADAPTIVE_THRESHOLD) {
+			return ((QrsDetection)this).getBpm();
+		}
+		
+		return 0;
+	}
+	
+	public void correctSample() {	
+		// If the value is logical, do not correct
+		if(mOperationResult == 1) { 
+			mCorrectedOperationResult = mOperationResult;
+			return;
+		}
+		
 		mOperationResult = mOperationResult + Math.abs(mMinValues[0]);
 		if((mMaxValues[0] + Math.abs(mMinValues[0])) != 0) {
 			mCorrectedOperationResult = mOperationResult / (mMaxValues[0] + Math.abs(mMinValues[0]));

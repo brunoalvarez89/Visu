@@ -83,11 +83,13 @@ public class DrawBuffer {
 		if(mStoringIndex == mSize) mStoringIndex = 0;
 		if(mDrawingIndex == mSize) mDrawingIndex = 0;
 	}
+	
 	// Método para recibir muestras
 	public int getSample(int index) {
 		
 		// Resto offset de muestras
 		index = index + (mDrawingIndex - mSize/mTotalPages);
+		boolean flag = false;
 		
 		// Inicializo un índice dummy
 		int newIndex = 0;
@@ -96,6 +98,7 @@ public class DrawBuffer {
 		if(index < 0) {
 			// Le sumo el largo del Buffer
 			newIndex = index + mSize;
+			if(newIndex < 0) flag = true;
 		}
 		
 		// Si el índice está en el rango permitido
@@ -108,10 +111,15 @@ public class DrawBuffer {
 		if(index > mSize - 1) { 
 			// Le resto el índice al largo total
 			newIndex = index - mSize;
+			if(newIndex > mSize - 1) flag = true;
 		}
 		
 		// Devuelvo muestra
-		return mSamplesBuffer[newIndex];
+		if(flag == false) {
+			return mSamplesBuffer[newIndex];
+		} else {
+			return getSample(newIndex);
+		}
 	}
 	
 	// Método para incrementar el índice de graficación

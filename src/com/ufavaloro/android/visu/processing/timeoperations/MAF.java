@@ -16,16 +16,16 @@ public class MAF extends  ProcessingOperation {
 	}
 
 	private void calculateHighPassMAF() {
-		int index = mProcessingBuffer.getProcessingIndex();
+		mProcessingIndex = mProcessingBuffer.getProcessingIndex();
 		
         double x1_sum = 0;
-        for(int j = index; j > index - M; j--) {
+        for(int j = mProcessingIndex; j > mProcessingIndex - M; j--) {
         	double sample = mProcessingBuffer.getProcessingBufferSample(j);
         	x1_sum = x1_sum + sample;
         }
         double x1 = mConstant * x1_sum;
         
-        double x2 = mProcessingBuffer.getProcessingBufferSample(index-((M+1)/2));
+        double x2 = mProcessingBuffer.getProcessingBufferSample(mProcessingIndex-((M+1)/2));
 
        	mOperationResult = x2-x1;       
 	}
