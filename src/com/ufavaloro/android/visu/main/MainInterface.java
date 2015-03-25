@@ -263,7 +263,7 @@ Connection Interface Event Handling
  			mDrawInterface.addChannel(onlineStudyData[i], true);
 		}
  		
- 		//addProcessingOperations();
+ 		addProcessingOperations();
  		
 		mDrawInterface.onlineDrawBuffersOk = true;
 		mDrawInterface.startDrawing();
@@ -433,7 +433,7 @@ Processing Operation Interface Event Handling
  		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
  		mDrawInterface.drawSample(adaptedResult, operationIndex+1);
  		if(operationResult == 1)  {
- 			mDrawInterface.heartBeat(operationChannel);
+ 			//mDrawInterface.heartBeat(operationChannel);
  			double bpm = mProcessingInterface.getOperation(operationChannel, operationIndex)
  												.getParameter(ParameterName.BPM);
  		}

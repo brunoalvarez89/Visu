@@ -34,33 +34,34 @@ public class AdaptiveThreshold extends QrsDetection {
 	public void estimateQrs() {
 		mProcessingIndex = mProcessingBuffer.getProcessingIndex();
 		
+		/*
 		if(mRefractoryCounter > 0) {
 			mRefractoryCounter--;
 			mOperationResult = 0;
 			return;
 		}
-		
+		*/
 		// Searh for local peak
-		if(mProcessingBuffer.getProcessingBufferSample(mProcessingIndex) >= mLocalPeak) {
+		if(mProcessingBuffer.getProcessingBufferSample(mProcessingIndex) > mThreshold) {
 			mLocalPeak = mProcessingBuffer.getProcessingBufferSample(mProcessingIndex);
-		}
-		
-		// If local peak exceeds threshold, update theshold and QRS detected
-		if(mLocalPeak >= mThreshold) { 
+			
 			mGamma = (Math.random() > 0.5) ? 0.15 : 0.20;
 			mAlpha = 0.01 + (Math.random() * ((0.1 - 0.01)));
 		    mThreshold = mAlpha*mGamma*mLocalPeak + (1-mAlpha)*mThreshold;
 		    
-		    mOperationResult = 1;
 			mRefractoryCounter = mRefractoryWindowSize;
+			
+			Log.d("", String.valueOf(mThreshold));
+			
+			if(mAdded == false) {
+				mAdded= true;
+				mOperationResult = 1;
+			} else {
+				mOperationResult = 0;
+			}
+			
 		} else {
-			mOperationResult = 0;
-		}
-	    
-		if(mProcessingBuffer.getProcessingBufferSample(mProcessingIndex) >= mThreshold) {
-			mOperationResult = 1;
-			mRefractoryCounter = mRefractoryWindowSize;
-		} else {
+			mAdded = false;
 			mOperationResult = 0;
 		}
 

@@ -27,9 +27,6 @@ public class ProcessingOperation {
 	protected double mFs;
 	protected double mTs;
 		
-	protected double mFs;
-	protected double mTs;
-	
 	private boolean mLog = false;
 	
 	public ProcessingOperation(OperationType operationType, int operationChannel, int operationIndex
@@ -65,8 +62,10 @@ public class ProcessingOperation {
 
 	public void increaseProcessingIndex() {
 		mProcessingBuffer.increaseProcessingIndex();
-		if(mProcessingBuffer.getProcessingIndex() == 0) {
-			double alpha = 1 - Math.random()*0.15;
+		// When reached a multiplier of the 30% of the Processing Buffer length, inject a
+		// variability from 0 to 0.1
+		if((mProcessingBuffer.getProcessingIndex()%(mProcessingBuffer.size()*30/100)) == 0) {
+			double alpha = 1 - Math.random()*0.1;
 			mMinValues[0] = alpha*mMinValues[0];
 			mMinValues[1] = alpha*mMinValues[1];
 			mMaxValues[0] = alpha*mMaxValues[0];
