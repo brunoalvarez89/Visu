@@ -21,7 +21,7 @@ public class AdaptiveThreshold extends QrsDetection {
 	int mWindow;
 	int mQrsCandidateIndex;
 	// QRS time ~ 80-120 ms
-	private int mRefractoryWindowSize = (int) (0.2 / (mTs));
+	private int mRefractoryWindowSize = (int) (0.15 / (mTs));
 	private int mRefractoryCounter;
 	
 	public AdaptiveThreshold(OperationType operationType, int operationChannel, int operationIndex
@@ -34,13 +34,13 @@ public class AdaptiveThreshold extends QrsDetection {
 	public void estimateQrs() {
 		mProcessingIndex = mProcessingBuffer.getProcessingIndex();
 		
-		/*
+		
 		if(mRefractoryCounter > 0) {
 			mRefractoryCounter--;
 			mOperationResult = 0;
 			return;
 		}
-		*/
+	
 		// Searh for local peak
 		if(mProcessingBuffer.getProcessingBufferSample(mProcessingIndex) > mThreshold) {
 			mLocalPeak = mProcessingBuffer.getProcessingBufferSample(mProcessingIndex);

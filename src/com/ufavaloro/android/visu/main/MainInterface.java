@@ -231,7 +231,7 @@ Connection Interface Event Handling
  		if(mDrawInterface.onlineDrawBuffersOk == true) mDrawInterface.drawSample(sample, channel);
 		if(mStorageInterface.recording == true) mStorageInterface.setSample(onlineStudyData[channel], sample);
 		
-		if(channel == 0) mProcessingInterface.writeSample(sample, channel, 0);	
+		addProcessingSample(sample, channel); 	
  	}
  	
  	private void onBluetoothConnected() {
@@ -492,6 +492,19 @@ Processing Operation Interface Event Handling
 
 		mDrawInterface.getChannels().update();
 
+	}
+	
+	private void addProcessingSample(short sample, int channel) {
+		if(mProcessingInterface.getOperation(channel, 0) == null) return;
+		
+		switch(channel) {
+			case 0:
+				mProcessingInterface.writeSample(sample, channel, 0);
+				break;
+			
+			default:
+				break;
+		}
 	}
 
 }//MainInterface
