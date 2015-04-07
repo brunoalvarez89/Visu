@@ -37,7 +37,7 @@ public class QrsDetection extends ProcessingOperation {
 			}
 
 			mPeakToPeakTime = mPeakToPeakSamples*mTs;
-			Log.d("", String.valueOf(mPeakToPeakTime));
+			//Log.d("", String.valueOf(mPeakToPeakTime));
 			mCardiacFrecuency = 1 / (60 * mPeakToPeakSamples * mTs);
 			mBPM = mCardiacFrecuency;
 			

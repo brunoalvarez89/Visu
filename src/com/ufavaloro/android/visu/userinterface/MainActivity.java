@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
 	// Dialog para abrir un archivo desde Google Drive
 	public void loadFileFromGoogleDriveDialog() {
 		LoadFileFromGoogleDriveDialog dialog = new LoadFileFromGoogleDriveDialog(this, mMainInterface);
-		//dialog.setup();
+		dialog.setup();
 	}
 		
 	// Dialog de parar estudio

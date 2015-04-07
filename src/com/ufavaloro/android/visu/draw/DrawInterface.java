@@ -519,7 +519,7 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 
 	// Dibujo otros labels
 	private synchronized void drawOtherLabels(Canvas canvas) {
-		// Label de los canales ocultados
+		// Labels de los canales ocultos
 		if(mChannelList.getHiddenChannelsLabels().size() > 0 && mUiVisibility == true || mChannelList.size() == 0) {
 			for(int i = 0; i < mChannelList.getHiddenChannelsLabels().size(); i++) {
 				int channelKey = mChannelList.getHiddenChannelsLabels().keyAt(i);
@@ -527,9 +527,9 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 				label.setTextSize(getBoundedTextSize(label, mIconsManager.getIconsWidth(), mIconsManager.getIconsHeight()));
 				label.setX((int) ((0.05 * mTotalHeight) + (i*mIconsManager.getIconsWidth())));
 				label.setY(mTotalHeight - mIconsManager.getIconsHeight());
-				Channel deletedChannel = mChannelList.getHiddenChannels().get(channelKey);
+				Channel hiddenChannel = mChannelList.getHiddenChannels().get(channelKey);
 				
-				int[] rgb = deletedChannel.getColor().getRGB();
+				int[] rgb = hiddenChannel.getColor().getRGB();
 				setPaint(Color.rgb(rgb[0], rgb[1], rgb[2]), 5);
 				
 				mPaint.setAlpha(100);

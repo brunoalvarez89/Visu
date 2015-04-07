@@ -11,7 +11,7 @@ import com.ufavaloro.android.visu.processing.ProcessingOperation;
 public class LowPass extends ProcessingOperation {
 
 	private double correction = Math.pow(2, 12)/2;
-	private int mWindowSize = (int) (0.12 / (mTs));
+	private int mWindowSize = (int) (0.15 / (mTs));
 
 	public LowPass(OperationType operationType, int operationChannel, int operationIndex
 			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {

@@ -454,6 +454,7 @@ Processing Operation Interface Event Handling
 	
 	private void onTimeLowPass(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult);
+		Log.d("","LowPass: " + adaptedResult);
  		mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
  		mDrawInterface.drawSample(adaptedResult, operationIndex+1);
 	}
