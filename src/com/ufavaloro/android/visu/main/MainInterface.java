@@ -56,7 +56,6 @@ public class MainInterface {
 	// Activity Context (needed for Google Drive API)
 	private MainActivity mMainActivity;
 	private Handler mMainActivityHandler;
-
 	
 	/**
 	 * Constructor.
@@ -232,7 +231,7 @@ Connection Interface Event Handling
  		if(mDrawInterface.onlineDrawBuffersOk == true) mDrawInterface.drawSample(sample, channel);
 		if(mStorageInterface.recording == true) mStorageInterface.setSample(onlineStudyData[channel], sample);
 		
-		if(channel == 0) mProcessingInterface.writeSample(sample, channel, 0);	
+		addProcessingSample(sample, channel); 	
  	}
  	
  	private void onBluetoothConnected() {
@@ -434,7 +433,7 @@ Processing Operation Interface Event Handling
  		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
  		mDrawInterface.drawSample(adaptedResult, operationIndex+1);
  		if(operationResult == 1)  {
- 			mDrawInterface.heartBeat(operationChannel);
+ 			//mDrawInterface.heartBeat(operationChannel);
  			double bpm = mProcessingInterface.getOperation(operationChannel, operationIndex)
  												.getParameter(ParameterName.BPM);
  		}
@@ -494,6 +493,19 @@ Processing Operation Interface Event Handling
 
 		mDrawInterface.getChannels().update();
 
+	}
+	
+	private void addProcessingSample(short sample, int channel) {
+		if(mProcessingInterface.getOperation(channel, 0) == null) return;
+		
+		switch(channel) {
+			case 0:
+				mProcessingInterface.writeSample(sample, channel, 0);
+				break;
+			
+			default:
+				break;
+		}
 	}
 
 }//MainInterface

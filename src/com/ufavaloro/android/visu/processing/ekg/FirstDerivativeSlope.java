@@ -1,6 +1,7 @@
 package com.ufavaloro.android.visu.processing.ekg;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.ufavaloro.android.visu.processing.OperationType;
 

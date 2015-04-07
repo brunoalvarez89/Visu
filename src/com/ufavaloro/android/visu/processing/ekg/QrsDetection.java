@@ -8,13 +8,14 @@ import com.ufavaloro.android.visu.processing.ProcessingOperation;
 
 public class QrsDetection extends ProcessingOperation {
 
+
 	private double mCardiacFrecuency;
 	private double mBPM;
 	private double mPeakToPeakSamples;
 	private double mPeakToPeakTime;
 	private int mCurrentQrsIndex;
 	private int mPreviousQrsIndex;
-	
+
 	public QrsDetection(OperationType operationType, int operationChannel, int operationIndex
 			, double fs, int samplesPerPackage, Handler processingInterfaceHandler) {
 		super(operationType, operationChannel, operationIndex, fs, samplesPerPackage, processingInterfaceHandler);
