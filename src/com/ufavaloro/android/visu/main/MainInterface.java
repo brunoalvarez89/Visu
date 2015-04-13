@@ -430,10 +430,8 @@ Processing Operation Interface Event Handling
  	
  	private void onQrsAdaptiveThreshold(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult);
- 		//mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
- 		mDrawInterface.drawSample(adaptedResult, operationIndex+1);
  		if(operationResult == 1)  {
- 			//mDrawInterface.heartBeat(operationChannel);
+ 			mDrawInterface.heartBeat(operationChannel);
  			double bpm = mProcessingInterface.getOperation(operationChannel, operationIndex)
  												.getParameter(ParameterName.BPM);
  		}
@@ -448,14 +446,11 @@ Processing Operation Interface Event Handling
  	private void onTimeMAF(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult); 
  		mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
- 		mDrawInterface.drawSample(adaptedResult, operationIndex+1);
  	}
 	
 	private void onTimeLowPass(double operationResult, int operationChannel, int operationIndex) {
  		short adaptedResult = adaptResult(operationResult);
-		Log.d("","LowPass: " + adaptedResult);
  		mProcessingInterface.writeSample(adaptedResult, operationChannel, operationIndex+1);
- 		mDrawInterface.drawSample(adaptedResult, operationIndex+1);
 	}
 	
 	private void onTimeHighPass(double operationResult, int operationChannel, int operationIndex) {
@@ -475,24 +470,9 @@ Processing Operation Interface Event Handling
 		double fs = onlineStudyData[channel].getAcquisitionData().getFs();
 		int samplesPerPackage = onlineStudyData[channel].getAcquisitionData().getSamplesPerPackage();
 		
-		/*
-		mProcessingInterface.addProcessingOperation(OperationType.TIME_DERIVATIVE, fs, samplesPerPackage, channel);
-		mDrawInterface.addChannel(onlineStudyData[channel], true);
- 		mProcessingInterface.addProcessingOperation(OperationType.EKG_QRS_FIRST_DERIVATIVE_SLOPE, fs, samplesPerPackage, channel);
-		mDrawInterface.addChannel(onlineStudyData[channel], true);
-		*/
-		
 		mProcessingInterface.addProcessingOperation(OperationType.TIME_MAF, fs, samplesPerPackage, channel);
-		mDrawInterface.addChannel(onlineStudyData[0], true);
- 		
 		mProcessingInterface.addProcessingOperation(OperationType.TIME_LOWPASS, fs, samplesPerPackage, channel);
-		mDrawInterface.addChannel(onlineStudyData[0], true);
-		
 		mProcessingInterface.addProcessingOperation(OperationType.EKG_QRS_ADAPTIVE_THRESHOLD, fs, samplesPerPackage, channel);
-		mDrawInterface.addChannel(onlineStudyData[0], true);
-
-		mDrawInterface.getChannels().update();
-
 	}
 	
 	private void addProcessingSample(short sample, int channel) {
