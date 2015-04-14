@@ -27,7 +27,7 @@ public class MainMenuDialog extends AlertDialog {
 		AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
 		builder.setTitle("Menú principal");
 		
-		if(mMainActivity.getMainInterface().getConnectionInterface().getConnection(0).isConnected()) {
+		if(mMainActivity.getMainInterface().getConnectionInterface().getConnection(0) != null) {
 			builder.setItems(mConnectedOptions, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 	        		switch(item) {

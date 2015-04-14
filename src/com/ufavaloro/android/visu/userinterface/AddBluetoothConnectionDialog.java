@@ -44,7 +44,6 @@ public class AddBluetoothConnectionDialog extends AlertDialog {
 		AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
 		builder.setTitle("Agregar conexión Bluetooth");
 		
-		
 		builder.setItems(mDialogOptions, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
         		switch(item) {

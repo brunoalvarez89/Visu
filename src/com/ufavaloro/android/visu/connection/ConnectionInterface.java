@@ -50,7 +50,11 @@ public class ConnectionInterface {
  	}
  	
  	public Connection getConnection(int connectionIndex) {
- 		return mConnectionList.get(connectionIndex);
+ 		if(mConnectionList.size() == connectionIndex) {
+ 			return null;
+ 		} else {
+ 			return mConnectionList.get(connectionIndex);
+ 		}
  	}
  	
  	public Protocol getProtocol(int protocolIndex) {

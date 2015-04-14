@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
 	// Método que se ejecuta luego de haberse creado el SurfaceView asociado
 	public void setupAfterSurfaceCreated() {
 		mMainInterface = new MainInterface(this, mMainInterfaceHandler);
-		mMainInterface.getConnectionInterface().addConnection(ConnectionType.BLUETOOTH, ConnectionMode.SLAVE);
+		//mMainInterface.getConnectionInterface().addConnection(ConnectionType.BLUETOOTH, ConnectionMode.SLAVE);
 	}
 
 /*****************************************************************************************
@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
 					break;
 					
 				case BLUETOOTH_CONNECTED:
-					//mWaitingForConnectionDialog.cancel();
+					mWaitingForConnectionDialog.cancel();
 					shortToast("Conectado");
 					break;
 					

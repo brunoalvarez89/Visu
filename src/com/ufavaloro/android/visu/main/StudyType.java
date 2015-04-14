@@ -4,10 +4,11 @@ public enum StudyType {
 
 	Ninguno(0),
 	ECG(1),
-	Presion(2);
+	Presion(2),
+	CO2(3);
 	
 	private final int value;
-	private static int totalStudyTypes = 3;
+	private static int totalStudyTypes = 4;
 	
 	private StudyType(int value) {
 		this.value=value;
@@ -38,6 +39,8 @@ public enum StudyType {
 			case ECG:
 				return "mV";
 			case Presion:
+				return "mmHg";
+			case CO2:
 				return "mmHg";
 			default:
 				return "?";
