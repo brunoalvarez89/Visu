@@ -37,7 +37,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 	private int mSelectedChannel;
 	private Context mContext;
 	
-	private MainInterface mStudy;
+	private MainInterface mMainInterface;
 	
 	public OnlineChannelPropertiesDialog(Context context, int theme, int channel) {
 		super(context);	
@@ -46,6 +46,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 	}
 	
 	public void setup() {
+		mMainInterface.getDrawInterface().stopDrawing();
 		setCanceledOnTouchOutside(true);
 		setTitle("Configuración de los canales");
 		inflate();
@@ -87,7 +88,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				
 				mSelectedChannel = arg2;
-				AcquisitionData acquisitionData = mStudy.onlineStudyData[mSelectedChannel].getAcquisitionData();
+				AcquisitionData acquisitionData = mMainInterface.onlineStudyData[mSelectedChannel].getAcquisitionData();
 				char[] charStudyType = acquisitionData.getStudyType();
 				int intStudyType = charStudyType[0];
 				mSpinnerStudyType.setSelection(intStudyType);
@@ -123,7 +124,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				int intStudyType = arg2;
-				mStudy.setStudyType(intStudyType, mSelectedChannel);
+				mMainInterface.setStudyType(intStudyType, mSelectedChannel);
 				mTextViewAMax.setText("Valor Máximo (" + StudyType.getUnits(StudyType.values(intStudyType)) + ")");
 				mTextViewAMin.setText("Valor Mínimo (" + StudyType.getUnits(StudyType.values(intStudyType)) + ")");
 			}
@@ -196,7 +197,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 				if(String.valueOf(text).isEmpty()) return;
 				if(text.charAt(0) == '-' && text.length() == 1) return;
 
-				AcquisitionData acquisitionData = mStudy.onlineStudyData[mSelectedChannel].getAcquisitionData();
+				AcquisitionData acquisitionData = mMainInterface.onlineStudyData[mSelectedChannel].getAcquisitionData();
 				double d = 0;
 				
 				try {
@@ -212,7 +213,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 					return;
 				}
 				
-				mStudy.setAMax(d, mSelectedChannel);
+				mMainInterface.setAMax(d, mSelectedChannel);
 			}
 
 			@Override
@@ -232,7 +233,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 				if(String.valueOf(text).isEmpty()) return;
 				if(text.charAt(0) == '-' && text.length() == 1) return;
 
-				AcquisitionData acquisitionData = mStudy.onlineStudyData[mSelectedChannel].getAcquisitionData();
+				AcquisitionData acquisitionData = mMainInterface.onlineStudyData[mSelectedChannel].getAcquisitionData();
 				double d = 0;
 				
 				try {
@@ -248,7 +249,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 					return;
 				}
 				
-				mStudy.setAMin(d, mSelectedChannel);
+				mMainInterface.setAMin(d, mSelectedChannel);
 			}
 
 			@Override
@@ -264,7 +265,7 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 		
 		// Populate Channel Spinner
 		ArrayList<String> channels = new ArrayList<String>();
-		for(int i = 0; i < mStudy.getConnectionInterface().getProtocol(0).getTotalAdcChannels(); i++) {
+		for(int i = 0; i < mMainInterface.getConnectionInterface().getProtocol(0).getTotalAdcChannels(); i++) {
 			channels.add("Canal " + String.valueOf(i+1));
 		}
 	    
@@ -284,7 +285,13 @@ public class OnlineChannelPropertiesDialog extends Dialog {
 	}
 	
 	public void setStudy(MainInterface study) {
-		mStudy = study;
+		mMainInterface = study;
 	}
 
+	@Override
+	public void onStop() {
+		mMainInterface.getDrawInterface().startDrawing();
+		mMainInterface.getDrawInterface().getChannels().update();
+	}
+	
 }

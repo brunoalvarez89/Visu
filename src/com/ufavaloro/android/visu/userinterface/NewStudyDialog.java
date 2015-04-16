@@ -40,6 +40,7 @@ public class NewStudyDialog extends Dialog {
 	}
 	
 	public void setup() {
+		mMainActivity.getMainInterface().getDrawInterface().stopDrawing();
 		setCanceledOnTouchOutside(false);
 		setTitle("Seleccione una acción");
 		inflate();
@@ -142,7 +143,10 @@ public class NewStudyDialog extends Dialog {
 			
 			// Creo estudios y empiezo a almacenar
 			mMainActivity.getMainInterface().newStudy(patientName, patientSurname, studyName, mChannelsToStore);
+			mMainActivity.getMainInterface().getDrawInterface().getChannels().update();
 			mMainActivity.getMainInterface().startRecording();
+			
+			Toast.makeText(mContext, "Iniciando estudio", Toast.LENGTH_SHORT).show();
 		
 		} else {
 			Toast.makeText(mContext, "Por favor complete los campos requeridos", Toast.LENGTH_SHORT).show();
@@ -153,4 +157,8 @@ public class NewStudyDialog extends Dialog {
 		
 	}
 
+	@Override
+	public void onStop() {
+		mMainActivity.getMainInterface().getDrawInterface().startDrawing();
+	}
 }

@@ -34,6 +34,8 @@ public class ProcessingInterface {
 	}
 	
 	public void writeSample(short sample, int channel, int operationIndex) {
+		if(mProcessingOperation[channel][operationIndex] == null) return;
+		
 		ProcessingBuffer buffer = mProcessingOperation[channel][operationIndex].getProcessingBuffer();
 		buffer.writeRawSample(sample);
 	}
@@ -105,6 +107,7 @@ public class ProcessingInterface {
 	}
 
 	public synchronized void removeProcessingOperation(int channel, int operationIndex) {
+		mProcessingOperation[channel][operationIndex] = null;
 	}
 	
 	public synchronized void resume() {

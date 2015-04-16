@@ -24,6 +24,7 @@ public class MainMenuDialog extends AlertDialog {
 	}
 	
 	public void setup() {
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
 		builder.setTitle("Menú principal");
 		
@@ -50,7 +51,7 @@ public class MainMenuDialog extends AlertDialog {
 	        		// Desconecto
 	        		case 3:
 	        			//TODO
-	        			//mMainActivity.getMainInterface().getBluetoothProtocol().removeConnection();
+	        			mMainActivity.getMainInterface().getConnectionInterface().removeConnection(0);
 	     
 	        		default:
 	        			break;

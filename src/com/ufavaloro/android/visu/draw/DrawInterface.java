@@ -529,6 +529,8 @@ public class DrawInterface extends SurfaceView implements SurfaceHolder.Callback
 				label.setY(mTotalHeight - mIconsManager.getIconsHeight());
 				Channel hiddenChannel = mChannelList.getHiddenChannels().get(channelKey);
 				
+				if(hiddenChannel == null) return;
+				
 				int[] rgb = hiddenChannel.getColor().getRGB();
 				setPaint(Color.rgb(rgb[0], rgb[1], rgb[2]), 5);
 				

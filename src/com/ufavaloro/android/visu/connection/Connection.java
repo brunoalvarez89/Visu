@@ -31,4 +31,6 @@ public class Connection {
 	public void setConnected(boolean value) {
 		mIsConnected = value;
 	}
+	
+	public void stop() {}
 }

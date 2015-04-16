@@ -27,6 +27,7 @@ public class Channel {
 	private static double mInfoBoxWidthPercent = 1 - mSignalBoxWidthPercent;
 	private RGB mColor;
 	private StudyData mStudyData;
+	private boolean mIsProcessing;
 	
 	// Offline channel constructor
 	public Channel(int channelNumber, int totalScreenHeight, int totalScreenWidth
@@ -189,4 +190,11 @@ public class Channel {
 		mSignalBox.studyData.getAcquisitionData().setAMin(aMin);
 	}
 	
+	public void setProcessing(boolean isProcessing) {
+		mIsProcessing = isProcessing;
+	}
+	
+	public boolean isProcessing() {
+		return mIsProcessing;
+	}
 }

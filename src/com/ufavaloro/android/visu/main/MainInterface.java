@@ -87,9 +87,7 @@ public class MainInterface {
 			onlineStudyData[i].setPatientData(patientData);
 			mDrawInterface.getChannels().getChannelAtIndex(i).getStudyData().setPatientData(patientData);
 		}
-		
-		mDrawInterface.getChannels().update();
-		
+				
 		// Creo carpetas locales y en google drive
 		mStorageInterface.createStudyFolders(onlineStudyData);
 		
@@ -113,7 +111,7 @@ public class MainInterface {
 		onlineStudyData[channel].getAcquisitionData().setStudyType(studyType);
 		// Guardo valor en los buffers de dibujo
 		mDrawInterface.getChannels().getChannelAtIndex(channel).setStudyType(studyType);
-		mDrawInterface.getChannels().update();
+		//mDrawInterface.getChannels().update();
 	}
 	
 	/**
@@ -124,8 +122,9 @@ public class MainInterface {
 		onlineStudyData[channel].getAcquisitionData().setAMax(aMax);
 		// Guardo valor en los buffers de dibujo
 		mDrawInterface.getChannels().getChannelAtIndex(channel).setAMax(aMax);
-		mDrawInterface.getChannels().update();
+		//mDrawInterface.getChannels().update();
 	}
+	
 	
 	/**
 	 * Sets the Minimum Amplitude of a given channel.
@@ -135,7 +134,7 @@ public class MainInterface {
 		onlineStudyData[channel].getAcquisitionData().setAMin(aMin);
 		// Guardo valor en los buffers de dibujo
 		mDrawInterface.getChannels().getChannelAtIndex(channel).setAMin(aMin);
-		mDrawInterface.getChannels().update();
+		//mDrawInterface.getChannels().update();
 	}
 	
 	/**
@@ -263,7 +262,7 @@ Connection Interface Event Handling
  			mDrawInterface.addChannel(onlineStudyData[i], true);
 		}
  		
- 		addProcessingOperations();
+ 		//addProcessingOperations();
  		
 		mDrawInterface.onlineDrawBuffersOk = true;
 		mDrawInterface.startDrawing();
@@ -465,14 +464,23 @@ Processing Operation Interface Event Handling
  		//mDrawInterface.drawSample(adaptedResult, operationIndex+1);
 	}
 
-	private void addProcessingOperations() {
-		int channel = 0;
+	public void addBeatDetection(int channel) {
 		double fs = onlineStudyData[channel].getAcquisitionData().getFs();
 		int samplesPerPackage = onlineStudyData[channel].getAcquisitionData().getSamplesPerPackage();
 		
 		mProcessingInterface.addProcessingOperation(OperationType.TIME_MAF, fs, samplesPerPackage, channel);
 		mProcessingInterface.addProcessingOperation(OperationType.TIME_LOWPASS, fs, samplesPerPackage, channel);
 		mProcessingInterface.addProcessingOperation(OperationType.EKG_QRS_ADAPTIVE_THRESHOLD, fs, samplesPerPackage, channel);
+		
+		mDrawInterface.getChannels().getChannelAtIndex(channel).setProcessing(true);
+	}
+	
+	public void removeBeatDetection(int channel) {
+		mProcessingInterface.removeProcessingOperation(channel, 0);
+		mProcessingInterface.removeProcessingOperation(channel, 1);
+		mProcessingInterface.removeProcessingOperation(channel, 2);
+		
+		mDrawInterface.getChannels().getChannelAtIndex(channel).setProcessing(false);
 	}
 	
 	private void addProcessingSample(short sample, int channel) {

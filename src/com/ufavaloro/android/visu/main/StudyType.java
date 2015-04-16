@@ -23,6 +23,7 @@ public enum StudyType {
 		case 0: return Ninguno;
 		case 1: return ECG;
 		case 2: return Presion;
+		case 3: return CO2;
 		
 		default: return Ninguno;
 		}	

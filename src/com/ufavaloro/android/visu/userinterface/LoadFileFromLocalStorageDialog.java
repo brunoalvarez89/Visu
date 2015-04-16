@@ -11,15 +11,16 @@ public class LoadFileFromLocalStorageDialog {
 
 	private final String[] mFileFilter = { "*.*", ".txt"};
 	private MainActivity mMainActivity;
-	private MainInterface mStudy;
+	private MainInterface mMainInterface;
 	
 	public LoadFileFromLocalStorageDialog(MainActivity mainActivity, MainInterface study) {
 		mMainActivity = mainActivity;
-		mStudy = study;
+		mMainInterface = study;
 	}
 	
 	// Método para abrir archivo desde memoria interna
 	public void setup() {
+		mMainInterface.getDrawInterface().stopDrawing();
 		
 		FileSelector fileSelector = new FileSelector(mMainActivity, FileOperation.LOAD, 
 									mLoadFileListener, mFileFilter);
@@ -32,8 +33,9 @@ public class LoadFileFromLocalStorageDialog {
 	OnHandleFileListener mLoadFileListener = new OnHandleFileListener() {
 		@Override
 		public void handleFile(final String filePath) {
-			mStudy.getStorageInterface().loadFileFromLocalStorage(filePath);
+			mMainInterface.getStorageInterface().loadFileFromLocalStorage(filePath);
 			Toast.makeText(mMainActivity, "Abriendo estudio...", Toast.LENGTH_SHORT).show();
+			mMainInterface.getDrawInterface().startDrawing();
 		}
 	};
 }

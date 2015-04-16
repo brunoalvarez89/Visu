@@ -46,7 +46,9 @@ public class ConnectionInterface {
  	}
  	
  	public void removeConnection(int connectionIndex) {
-		//if(mMainInterface != null) mMainInterface.getBluetoothProtocol().stopConnections();
+		if(connectionIndex > mConnectionList.size()) return;
+		mConnectionList.get(connectionIndex).stop();
+		mConnectionList.remove(connectionIndex);
  	}
  	
  	public Connection getConnection(int connectionIndex) {

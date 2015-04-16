@@ -281,6 +281,7 @@ public class MainActivity extends Activity {
         		mMainInterface.getStorageInterface().loadFileFromGoogleDrive(driveId);
         		shortToast("Abriendo archivo...");
         	}    
+    		getMainInterface().getDrawInterface().startDrawing();
         	break;
         	
 		case REQUEST_CODE_ENABLE_BLUETOOTH:

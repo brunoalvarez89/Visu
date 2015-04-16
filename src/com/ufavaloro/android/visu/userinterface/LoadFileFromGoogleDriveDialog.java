@@ -11,18 +11,19 @@ import android.widget.Toast;
 public class LoadFileFromGoogleDriveDialog{
 
 	private MainInterface mStudy;
-	private MainActivity mStudyActivity;
+	private MainActivity mMainActivity;
 	private static final int REQUEST_CODE_OPENER = 1;
 
 	public LoadFileFromGoogleDriveDialog(MainActivity studyActivity, MainInterface study) {
-		mStudyActivity = studyActivity;
+		mMainActivity = studyActivity;
 		mStudy = study;
 	}
 	
 	public void setup() {
-		
+		mMainActivity.getMainInterface().getDrawInterface().stopDrawing();
+
 		if(!mStudy.isGoogleDriveConnected()) {
-			Toast.makeText(mStudyActivity, "No se encuentra conectado a Google Drive", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mMainActivity, "No se encuentra conectado a Google Drive", Toast.LENGTH_SHORT).show();
 			return;
 		}
 		
@@ -33,7 +34,7 @@ public class LoadFileFromGoogleDriveDialog{
                 						 .setMimeType(new String[] {})
                 						 .build(googleApiClient);
         try {
-        	mStudyActivity.startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
+        	mMainActivity.startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
         } 
         catch (SendIntentException e) {}
         

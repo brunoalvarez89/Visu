@@ -169,6 +169,7 @@ public class BluetoothConnection extends Connection {
 * Otros métodos		                                								 	 *
 *****************************************************************************************/
 	// Metodo que para todos los Threads
+	@Override
 	public void stop() {
 		
 		// Mato todo
