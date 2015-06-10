@@ -11,3 +11,5 @@ With this program you can:
 * Configure the visualization depending on the study type.
 * Save the data to the local external memory and Google Drive.
 * Load and display saved data.
+
+The thesis can be found [here](https://drive.google.com/open?id=0B72lvocrm-L4cG1NRmstbk1nZlU&authuser=0) (spanish).
