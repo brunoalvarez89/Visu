@@ -1,7 +1,7 @@
 Visu
 ====
 
-Visu is the final project of my college degree. It is a multi-channel ADC data visualization tool. 
+Visu is the final project of my MSc. Eng. degree. It is a multi-channel ADC data visualization tool. 
 
 ![Alt text](https://github.com/brunoalvarez89/Visu/blob/master/Screenshot.png)
 
